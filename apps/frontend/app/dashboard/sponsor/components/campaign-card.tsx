@@ -1,5 +1,3 @@
-'use client';
-
 import type { Campaign } from '@/lib/types';
 
 interface CampaignCardProps {
@@ -53,7 +51,6 @@ export function CampaignCard({ campaign }: CampaignCardProps) {
         {new Date(campaign.endDate).toLocaleDateString()}
       </div>
 
-      {/* TODO: Add edit/view buttons */}
     </div>
   );
 }
