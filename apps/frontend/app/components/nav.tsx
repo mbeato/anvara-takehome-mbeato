@@ -13,18 +13,35 @@ export function Nav() {
 
   // TODO: Convert to server component and fetch role server-side
   // Fetch user role from backend when user is logged in
+  const userId = user?.id;
+
   useEffect(() => {
-    if (user?.id) {
-      fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4291'}/api/auth/role/${user.id}`
-      )
-        .then((res) => res.json())
-        .then((data) => setRole(data.role))
-        .catch(() => setRole(null));
-    } else {
-      setRole(null);
+    if (!userId) {
+      // No user - no need to fetch role; reset will happen on next render
+      // via the initializer or when session changes
+      return;
     }
-  }, [user?.id]);
+
+    let cancelled = false;
+
+    fetch(
+      `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4291'}/api/auth/role/${userId}`
+    )
+      .then((res) => res.json())
+      .then((data: { role: UserRole }) => {
+        if (!cancelled) setRole(data.role);
+      })
+      .catch(() => {
+        if (!cancelled) setRole(null);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [userId]);
+
+  // Derive effective role: if no user, role is always null
+  const effectiveRole = userId ? role : null;
 
   // TODO: Add active link styling using usePathname() from next/navigation
   // The current page's link should be highlighted differently
@@ -44,7 +61,7 @@ export function Nav() {
             Marketplace
           </Link>
 
-          {user && role === 'sponsor' && (
+          {user && effectiveRole === 'sponsor' && (
             <Link
               href="/dashboard/sponsor"
               className="text-[--color-muted] hover:text-[--color-foreground]"
@@ -52,7 +69,7 @@ export function Nav() {
               My Campaigns
             </Link>
           )}
-          {user && role === 'publisher' && (
+          {user && effectiveRole === 'publisher' && (
             <Link
               href="/dashboard/publisher"
               className="text-[--color-muted] hover:text-[--color-foreground]"
@@ -66,7 +83,7 @@ export function Nav() {
           ) : user ? (
             <div className="flex items-center gap-4">
               <span className="text-sm text-[--color-muted]">
-                {user.name} {role && `(${role})`}
+                {user.name} {effectiveRole && `(${effectiveRole})`}
               </span>
               <button
                 onClick={async () => {

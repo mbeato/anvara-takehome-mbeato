@@ -4,20 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { getAdSlot } from '@/lib/api';
 import { authClient } from '@/auth-client';
-
-interface AdSlot {
-  id: string;
-  name: string;
-  description?: string;
-  type: string;
-  basePrice: number;
-  isAvailable: boolean;
-  publisher?: {
-    id: string;
-    name: string;
-    website?: string;
-  };
-}
+import type { AdSlot } from '@/lib/types';
 
 interface User {
   id: string;
@@ -137,8 +124,8 @@ export function AdSlotDetail({ id }: Props) {
       setBookingSuccess(false);
       setAdSlot({ ...adSlot, isAvailable: true });
       setMessage('');
-    } catch (err) {
-      console.error('Failed to unbook:', err);
+    } catch (_err) {
+      // Silently handle unbook failure - UI state remains unchanged
     }
   };
 

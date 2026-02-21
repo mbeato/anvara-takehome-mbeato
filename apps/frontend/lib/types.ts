@@ -152,7 +152,7 @@ export interface AdSlot {
   createdAt: string;
   updatedAt: string;
   publisherId: string;
-  publisher?: { id: string; name: string };
+  publisher?: { id: string; name: string; website?: string | null };
 }
 
 export interface CreateAdSlotRequest {
