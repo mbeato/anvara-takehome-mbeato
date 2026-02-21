@@ -1,6 +1,6 @@
 import { Router, type Response, type IRouter } from 'express';
 import { requireAuth, type AuthRequest } from '../auth.js';
-import { prisma } from '../db.js';
+import { prisma, CampaignStatus } from '../db.js';
 import { getParam } from '../utils/helpers.js';
 
 const router: IRouter = Router();
@@ -128,7 +128,123 @@ router.post('/', async (req: AuthRequest, res: Response) => {
   }
 });
 
-// TODO: Add PUT /api/campaigns/:id endpoint
-// Update campaign details (name, budget, dates, status, etc.)
+// PUT /api/campaigns/:id - Update campaign details
+router.put('/:id', async (req: AuthRequest, res: Response) => {
+  try {
+    const id = getParam(req.params.id);
+    const campaign = await prisma.campaign.findUnique({ where: { id } });
+
+    if (!campaign) {
+      res.status(404).json({
+        error: { code: 'NOT_FOUND', status: 404, message: 'Campaign not found' },
+      });
+      return;
+    }
+
+    if (campaign.sponsorId !== req.user!.sponsorId) {
+      res.status(403).json({
+        error: { code: 'FORBIDDEN', status: 403, message: "You don't own this campaign" },
+      });
+      return;
+    }
+
+    const {
+      name,
+      description,
+      budget,
+      cpmRate,
+      cpcRate,
+      startDate,
+      endDate,
+      targetCategories,
+      targetRegions,
+      status,
+    } = req.body;
+
+    // Validate status enum if provided
+    if (status !== undefined) {
+      const validStatuses = Object.values(CampaignStatus);
+      if (!validStatuses.includes(status)) {
+        res.status(400).json({
+          error: {
+            code: 'VALIDATION_ERROR',
+            status: 400,
+            message: `Invalid status. Valid values: ${validStatuses.join(', ')}`,
+          },
+        });
+        return;
+      }
+    }
+
+    // Build update data conditionally — only include provided fields
+    const data: Record<string, unknown> = {};
+    if (name !== undefined) data.name = name;
+    if (description !== undefined) data.description = description;
+    if (budget !== undefined) data.budget = budget;
+    if (cpmRate !== undefined) data.cpmRate = cpmRate;
+    if (cpcRate !== undefined) data.cpcRate = cpcRate;
+    if (startDate !== undefined) data.startDate = new Date(startDate);
+    if (endDate !== undefined) data.endDate = new Date(endDate);
+    if (targetCategories !== undefined) data.targetCategories = targetCategories;
+    if (targetRegions !== undefined) data.targetRegions = targetRegions;
+    if (status !== undefined) data.status = status;
+
+    if (Object.keys(data).length === 0) {
+      res.status(400).json({
+        error: {
+          code: 'VALIDATION_ERROR',
+          status: 400,
+          message: 'At least one field must be provided for update',
+        },
+      });
+      return;
+    }
+
+    const updated = await prisma.campaign.update({
+      where: { id },
+      data,
+      include: {
+        sponsor: { select: { id: true, name: true } },
+      },
+    });
+
+    res.json(updated);
+  } catch (error) {
+    console.error('Error updating campaign:', error);
+    res.status(500).json({
+      error: { code: 'INTERNAL_ERROR', status: 500, message: 'Failed to update campaign' },
+    });
+  }
+});
+
+// DELETE /api/campaigns/:id - Remove a campaign
+router.delete('/:id', async (req: AuthRequest, res: Response) => {
+  try {
+    const id = getParam(req.params.id);
+    const campaign = await prisma.campaign.findUnique({ where: { id } });
+
+    if (!campaign) {
+      res.status(404).json({
+        error: { code: 'NOT_FOUND', status: 404, message: 'Campaign not found' },
+      });
+      return;
+    }
+
+    if (campaign.sponsorId !== req.user!.sponsorId) {
+      res.status(403).json({
+        error: { code: 'FORBIDDEN', status: 403, message: "You don't own this campaign" },
+      });
+      return;
+    }
+
+    await prisma.campaign.delete({ where: { id } });
+    res.status(204).send();
+  } catch (error) {
+    console.error('Error deleting campaign:', error);
+    res.status(500).json({
+      error: { code: 'INTERNAL_ERROR', status: 500, message: 'Failed to delete campaign' },
+    });
+  }
+});
 
 export default router;
