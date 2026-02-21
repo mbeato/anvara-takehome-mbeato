@@ -21,6 +21,7 @@ export async function api<T>(endpoint: string, options?: RequestInit): Promise<T
     const message = body?.error?.message || 'API request failed';
     throw new Error(message);
   }
+  if (res.status === 204) return undefined as T;
   return res.json();
 }
 
@@ -30,7 +31,10 @@ export const getCampaigns = (sponsorId?: string) =>
 export const getCampaign = (id: string) => api<Campaign>(`/api/campaigns/${id}`);
 export const createCampaign = (data: CreateCampaignRequest) =>
   api<Campaign>('/api/campaigns', { method: 'POST', body: JSON.stringify(data) });
-// TODO: Add updateCampaign and deleteCampaign functions
+export const updateCampaign = (id: string, data: Partial<Campaign>) =>
+  api<Campaign>(`/api/campaigns/${id}`, { method: 'PUT', body: JSON.stringify(data) });
+export const deleteCampaign = (id: string) =>
+  api<void>(`/api/campaigns/${id}`, { method: 'DELETE' });
 
 // Ad Slots
 export const getAdSlots = (publisherId?: string) =>
