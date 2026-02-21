@@ -8,14 +8,16 @@ const router: IRouter = Router();
 // All ad-slot routes require authentication
 router.use(requireAuth);
 
-// GET /api/ad-slots - List authenticated publisher's ad slots
+// GET /api/ad-slots - List ad slots
+// Publishers see only their own ad slots (dashboard)
+// Sponsors see all ad slots (marketplace browsing)
 router.get('/', async (req: AuthRequest, res: Response) => {
   try {
     const { type, available } = req.query;
 
     const adSlots = await prisma.adSlot.findMany({
       where: {
-        publisherId: req.user!.publisherId,
+        ...(req.user!.role === 'PUBLISHER' && { publisherId: req.user!.publisherId }),
         ...(type && {
           type: type as string as 'DISPLAY' | 'VIDEO' | 'NATIVE' | 'NEWSLETTER' | 'PODCAST',
         }),
@@ -60,7 +62,8 @@ router.get('/:id', async (req: AuthRequest, res: Response) => {
       return;
     }
 
-    if (adSlot.publisherId !== req.user!.publisherId) {
+    // Publishers can only view their own ad slots; sponsors can view any (marketplace)
+    if (req.user!.role === 'PUBLISHER' && adSlot.publisherId !== req.user!.publisherId) {
       res.status(403).json({
         error: { code: 'FORBIDDEN', status: 403, message: "You don't own this ad slot" },
       });

@@ -28,9 +28,13 @@ export default async function SponsorDashboard() {
 
   if (roleData.sponsorId) {
     try {
+      const requestHeaders = await headers();
       const res = await fetch(
-        `${API_URL}/api/campaigns?sponsorId=${roleData.sponsorId}`,
-        { cache: 'no-store' },
+        `${API_URL}/api/campaigns`,
+        {
+          cache: 'no-store',
+          headers: { cookie: requestHeaders.get('cookie') ?? '' },
+        },
       );
       if (!res.ok) {
         fetchError = 'Failed to load campaigns';

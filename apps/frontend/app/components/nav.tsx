@@ -25,7 +25,8 @@ export function Nav() {
     let cancelled = false;
 
     fetch(
-      `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4291'}/api/auth/role/${userId}`
+      `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4291'}/api/auth/role/${userId}`,
+      { credentials: 'include' }
     )
       .then((res) => res.json())
       .then((data: { role: UserRole }) => {

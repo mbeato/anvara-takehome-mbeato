@@ -1,4 +1,5 @@
 import { Router, type Request, type Response, type IRouter } from 'express';
+import { requireAuth, type AuthRequest } from '../auth.js';
 import { prisma } from '../db.js';
 import { getParam } from '../utils/helpers.js';
 
@@ -23,9 +24,17 @@ router.get('/me', async (req: Request, res: Response) => {
 });
 
 // GET /api/auth/role/:userId - Get user role based on Sponsor/Publisher records
-router.get('/role/:userId', async (req: Request, res: Response) => {
+router.get('/role/:userId', requireAuth, async (req: AuthRequest, res: Response) => {
   try {
     const userId = getParam(req.params.userId);
+
+    // Only allow looking up your own role
+    if (userId !== req.user!.id) {
+      res.status(403).json({
+        error: { code: 'FORBIDDEN', status: 403, message: 'Can only look up your own role' },
+      });
+      return;
+    }
 
     // Check if user is a sponsor
     const sponsor = await prisma.sponsor.findUnique({
