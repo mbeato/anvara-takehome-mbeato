@@ -4,6 +4,7 @@ import { auth } from '@/auth';
 import { getUserRole } from '@/lib/auth-helpers';
 import type { Campaign } from '@/lib/types';
 import { CampaignList } from './components/campaign-list';
+import { CreateCampaignButton } from './components/campaign-form';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4291';
 
@@ -50,6 +51,7 @@ export default async function SponsorDashboard() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">My Campaigns</h1>
+        <CreateCampaignButton />
       </div>
 
       {fetchError ? (
