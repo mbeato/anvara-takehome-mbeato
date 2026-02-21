@@ -42,7 +42,10 @@ export const getAdSlots = (publisherId?: string) =>
 export const getAdSlot = (id: string) => api<AdSlot>(`/api/ad-slots/${id}`);
 export const createAdSlot = (data: CreateAdSlotRequest) =>
   api<AdSlot>('/api/ad-slots', { method: 'POST', body: JSON.stringify(data) });
-// TODO: Add updateAdSlot, deleteAdSlot functions
+export const updateAdSlot = (id: string, data: Partial<AdSlot>) =>
+  api<AdSlot>(`/api/ad-slots/${id}`, { method: 'PUT', body: JSON.stringify(data) });
+export const deleteAdSlot = (id: string) =>
+  api<void>(`/api/ad-slots/${id}`, { method: 'DELETE' });
 
 // Placements
 export const getPlacements = () => api<Placement[]>('/api/placements');
