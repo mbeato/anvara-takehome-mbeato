@@ -1,17 +1,21 @@
-import { Router, type Request, type Response, type IRouter } from 'express';
+import { Router, type Response, type IRouter } from 'express';
+import { requireAuth, type AuthRequest } from '../auth.js';
 import { prisma } from '../db.js';
 import { getParam } from '../utils/helpers.js';
 
 const router: IRouter = Router();
 
-// GET /api/ad-slots - List available ad slots
-router.get('/', async (req: Request, res: Response) => {
+// All ad-slot routes require authentication
+router.use(requireAuth);
+
+// GET /api/ad-slots - List authenticated publisher's ad slots
+router.get('/', async (req: AuthRequest, res: Response) => {
   try {
-    const { publisherId, type, available } = req.query;
+    const { type, available } = req.query;
 
     const adSlots = await prisma.adSlot.findMany({
       where: {
-        ...(publisherId && { publisherId: getParam(publisherId) }),
+        publisherId: req.user!.publisherId,
         ...(type && {
           type: type as string as 'DISPLAY' | 'VIDEO' | 'NATIVE' | 'NEWSLETTER' | 'PODCAST',
         }),
@@ -27,12 +31,14 @@ router.get('/', async (req: Request, res: Response) => {
     res.json(adSlots);
   } catch (error) {
     console.error('Error fetching ad slots:', error);
-    res.status(500).json({ error: 'Failed to fetch ad slots' });
+    res.status(500).json({
+      error: { code: 'INTERNAL_ERROR', status: 500, message: 'Failed to fetch ad slots' },
+    });
   }
 });
 
 // GET /api/ad-slots/:id - Get single ad slot with details
-router.get('/:id', async (req: Request, res: Response) => {
+router.get('/:id', async (req: AuthRequest, res: Response) => {
   try {
     const id = getParam(req.params.id);
     const adSlot = await prisma.adSlot.findUnique({
@@ -48,32 +54,43 @@ router.get('/:id', async (req: Request, res: Response) => {
     });
 
     if (!adSlot) {
-      res.status(404).json({ error: 'Ad slot not found' });
+      res.status(404).json({
+        error: { code: 'NOT_FOUND', status: 404, message: 'Ad slot not found' },
+      });
+      return;
+    }
+
+    if (adSlot.publisherId !== req.user!.publisherId) {
+      res.status(403).json({
+        error: { code: 'FORBIDDEN', status: 403, message: "You don't own this ad slot" },
+      });
       return;
     }
 
     res.json(adSlot);
   } catch (error) {
     console.error('Error fetching ad slot:', error);
-    res.status(500).json({ error: 'Failed to fetch ad slot' });
+    res.status(500).json({
+      error: { code: 'INTERNAL_ERROR', status: 500, message: 'Failed to fetch ad slot' },
+    });
   }
 });
 
 // POST /api/ad-slots - Create new ad slot
-router.post('/', async (req: Request, res: Response) => {
+router.post('/', async (req: AuthRequest, res: Response) => {
   try {
-    const { name, description, type, position, width, height, basePrice, publisherId } = req.body;
+    const { name, description, type, position, width, height, basePrice } = req.body;
 
-    if (!name || !type || !basePrice || !publisherId) {
+    if (!name || !type || !basePrice) {
       res.status(400).json({
-        error: 'Name, type, basePrice, and publisherId are required',
+        error: {
+          code: 'VALIDATION_ERROR',
+          status: 400,
+          message: 'Name, type, and basePrice are required',
+        },
       });
       return;
     }
-
-    // TODO: Add authentication middleware to verify user owns publisherId
-    // TODO: Validate that basePrice is positive
-    // TODO: Validate that 'type' is valid enum value
 
     const adSlot = await prisma.adSlot.create({
       data: {
@@ -84,7 +101,7 @@ router.post('/', async (req: Request, res: Response) => {
         width: width != null ? parseInt(String(width), 10) : undefined,
         height: height != null ? parseInt(String(height), 10) : undefined,
         basePrice,
-        publisherId,
+        publisherId: req.user!.publisherId!,
       },
       include: {
         publisher: { select: { id: true, name: true } },
@@ -94,19 +111,25 @@ router.post('/', async (req: Request, res: Response) => {
     res.status(201).json(adSlot);
   } catch (error) {
     console.error('Error creating ad slot:', error);
-    res.status(500).json({ error: 'Failed to create ad slot' });
+    res.status(500).json({
+      error: { code: 'INTERNAL_ERROR', status: 500, message: 'Failed to create ad slot' },
+    });
   }
 });
 
 // POST /api/ad-slots/:id/book - Book an ad slot (simplified booking flow)
-// This marks the slot as unavailable and creates a simple booking record
-router.post('/:id/book', async (req: Request, res: Response) => {
+// This is a sponsor action -- any authenticated sponsor can book an available slot
+router.post('/:id/book', async (req: AuthRequest, res: Response) => {
   try {
     const id = getParam(req.params.id);
-    const { sponsorId, message } = req.body;
+    const { message } = req.body;
 
-    if (!sponsorId) {
-      res.status(400).json({ error: 'sponsorId is required' });
+    // Only sponsors can book ad slots
+    const authenticatedSponsorId = req.user!.sponsorId;
+    if (!authenticatedSponsorId) {
+      res.status(403).json({
+        error: { code: 'FORBIDDEN', status: 403, message: 'Only sponsors can book ad slots' },
+      });
       return;
     }
 
@@ -117,12 +140,20 @@ router.post('/:id/book', async (req: Request, res: Response) => {
     });
 
     if (!adSlot) {
-      res.status(404).json({ error: 'Ad slot not found' });
+      res.status(404).json({
+        error: { code: 'NOT_FOUND', status: 404, message: 'Ad slot not found' },
+      });
       return;
     }
 
     if (!adSlot.isAvailable) {
-      res.status(400).json({ error: 'Ad slot is no longer available' });
+      res.status(400).json({
+        error: {
+          code: 'VALIDATION_ERROR',
+          status: 400,
+          message: 'Ad slot is no longer available',
+        },
+      });
       return;
     }
 
@@ -135,9 +166,9 @@ router.post('/:id/book', async (req: Request, res: Response) => {
       },
     });
 
-    // In a real app, you'd create a Placement record here
-    // For now, we just mark it as booked
-    console.log(`Ad slot ${id} booked by sponsor ${sponsorId}. Message: ${message || 'None'}`);
+    console.log(
+      `Ad slot ${id} booked by sponsor ${authenticatedSponsorId}. Message: ${message || 'None'}`,
+    );
 
     res.json({
       success: true,
@@ -146,12 +177,14 @@ router.post('/:id/book', async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error('Error booking ad slot:', error);
-    res.status(500).json({ error: 'Failed to book ad slot' });
+    res.status(500).json({
+      error: { code: 'INTERNAL_ERROR', status: 500, message: 'Failed to book ad slot' },
+    });
   }
 });
 
 // POST /api/ad-slots/:id/unbook - Reset ad slot to available (for testing)
-router.post('/:id/unbook', async (req: Request, res: Response) => {
+router.post('/:id/unbook', async (req: AuthRequest, res: Response) => {
   try {
     const id = getParam(req.params.id);
 
@@ -170,7 +203,9 @@ router.post('/:id/unbook', async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error('Error unbooking ad slot:', error);
-    res.status(500).json({ error: 'Failed to unbook ad slot' });
+    res.status(500).json({
+      error: { code: 'INTERNAL_ERROR', status: 500, message: 'Failed to unbook ad slot' },
+    });
   }
 });
 
