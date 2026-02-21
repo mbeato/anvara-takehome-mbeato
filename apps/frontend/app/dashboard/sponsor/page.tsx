@@ -2,7 +2,10 @@ import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { auth } from '@/auth';
 import { getUserRole } from '@/lib/auth-helpers';
+import type { Campaign } from '@/lib/types';
 import { CampaignList } from './components/campaign-list';
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4291';
 
 export default async function SponsorDashboard() {
   const session = await auth.api.getSession({
@@ -19,14 +22,39 @@ export default async function SponsorDashboard() {
     redirect('/');
   }
 
+  // Fetch campaigns server-side
+  let campaigns: Campaign[] = [];
+  let fetchError: string | null = null;
+
+  if (roleData.sponsorId) {
+    try {
+      const res = await fetch(
+        `${API_URL}/api/campaigns?sponsorId=${roleData.sponsorId}`,
+        { cache: 'no-store' },
+      );
+      if (!res.ok) {
+        fetchError = 'Failed to load campaigns';
+      } else {
+        campaigns = await res.json();
+      }
+    } catch {
+      fetchError = 'Unable to connect to the server. Please try again later.';
+    }
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">My Campaigns</h1>
-        {/* TODO: Add CreateCampaignButton here */}
       </div>
 
-      <CampaignList />
+      {fetchError ? (
+        <div className="rounded border border-red-200 bg-red-50 p-4 text-red-600">
+          {fetchError}
+        </div>
+      ) : (
+        <CampaignList campaigns={campaigns} />
+      )}
     </div>
   );
 }
