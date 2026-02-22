@@ -99,7 +99,7 @@ export interface CreateCampaignRequestDto {
   endDate: string;
   targetCategories?: string[];
   targetRegions?: string[];
-  sponsorId: string;
+  sponsorId?: string; // Derived from session on the backend; not sent by clients
 }
 
 // ============================================================================
@@ -150,7 +150,7 @@ export interface CreateAdSlotRequestDto {
   width?: number;
   height?: number;
   basePrice: string;
-  publisherId: string;
+  publisherId?: string; // Derived from session on the backend; not sent by clients
 }
 
 // ============================================================================
