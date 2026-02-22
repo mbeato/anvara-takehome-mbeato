@@ -54,9 +54,14 @@ export default async function MarketplacePage({ searchParams }: Props) {
         <div className="rounded border border-red-200 bg-red-50 p-4 text-red-600">{fetchError}</div>
       ) : (
         <>
+          {pagination && pagination.total > 0 && (
+            <p className="text-sm text-[--color-muted]">
+              Showing {(currentPage - 1) * pagination.limit + 1}–{Math.min(currentPage * pagination.limit, pagination.total)} of {pagination.total} results
+            </p>
+          )}
           <AdSlotGrid adSlots={adSlots} />
           {totalPages > 1 && (
-            <PaginationControls currentPage={currentPage} totalPages={totalPages} />
+            <PaginationControls currentPage={currentPage} totalPages={totalPages} total={pagination?.total ?? 0} limit={pagination?.limit ?? PAGE_SIZE} />
           )}
         </>
       )}

@@ -6,9 +6,11 @@ import { useState, useEffect, useCallback, useTransition } from 'react';
 interface Props {
   currentPage: number;
   totalPages: number;
+  total: number;
+  limit: number;
 }
 
-export function PaginationControls({ currentPage, totalPages }: Props) {
+export function PaginationControls({ currentPage, totalPages, total, limit }: Props) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -61,27 +63,29 @@ export function PaginationControls({ currentPage, totalPages }: Props) {
   return (
     <nav
       aria-label="Pagination"
-      className={`mt-10 flex items-center justify-center gap-3 ${isPending ? 'opacity-50' : ''}`}
+      className={`mt-10 grid grid-cols-[1fr_auto_1fr] items-center gap-3 ${isPending ? 'opacity-50' : ''}`}
     >
-      {currentPage > 1 && (
-        <>
-          <button
-            disabled={isPending}
-            onClick={() => navigateToPage(1)}
-            className={buttonClass}
-          >
-            First
-          </button>
-          <button
-            disabled={isPending}
-            onClick={() => navigateToPage(currentPage - 1)}
-            className={buttonClass}
-          >
-            Prev
-          </button>
-        </>
-      )}
-      <span className="flex items-center gap-2 text-sm text-[--color-muted]">
+      <div className="flex items-center gap-3 justify-self-end">
+        {currentPage > 1 && (
+          <>
+            <button
+              disabled={isPending}
+              onClick={() => navigateToPage(1)}
+              className={buttonClass}
+            >
+              First
+            </button>
+            <button
+              disabled={isPending}
+              onClick={() => navigateToPage(currentPage - 1)}
+              className={buttonClass}
+            >
+              Prev
+            </button>
+          </>
+        )}
+      </div>
+      <span className="flex items-center justify-center gap-2 text-sm text-[--color-muted]">
         <input
           type="text"
           inputMode="numeric"
@@ -95,24 +99,26 @@ export function PaginationControls({ currentPage, totalPages }: Props) {
         />
         of {totalPages} pages
       </span>
-      {currentPage < totalPages && (
-        <>
-          <button
-            disabled={isPending}
-            onClick={() => navigateToPage(currentPage + 1)}
-            className={buttonClass}
-          >
-            Next
-          </button>
-          <button
-            disabled={isPending}
-            onClick={() => navigateToPage(totalPages)}
-            className={buttonClass}
-          >
-            Last
-          </button>
-        </>
-      )}
+      <div className="flex items-center gap-3 justify-self-start">
+        {currentPage < totalPages && (
+          <>
+            <button
+              disabled={isPending}
+              onClick={() => navigateToPage(currentPage + 1)}
+              className={buttonClass}
+            >
+              Next
+            </button>
+            <button
+              disabled={isPending}
+              onClick={() => navigateToPage(totalPages)}
+              className={buttonClass}
+            >
+              Last
+            </button>
+          </>
+        )}
+      </div>
     </nav>
   );
 }
