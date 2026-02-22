@@ -295,7 +295,7 @@ router.post('/:id/book', async (req: AuthRequest, res: Response) => {
     });
 
     console.log(
-      `Ad slot ${id} booked by sponsor ${authenticatedSponsorId}. Message: ${message || 'None'}`,
+      `Ad slot ${id} booked by sponsor ${authenticatedSponsorId}. Message: ${message || 'None'}`
     );
 
     res.json({

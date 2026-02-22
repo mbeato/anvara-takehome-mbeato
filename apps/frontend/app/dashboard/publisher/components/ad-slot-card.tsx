@@ -22,17 +22,16 @@ const typeColors: Record<string, string> = {
 export function AdSlotCard({ adSlot }: AdSlotCardProps) {
   const [showEditForm, setShowEditForm] = useState(false);
   const initialState: ActionState = {};
-  const [deleteState, deleteAction] = useFormState(
-    deleteAdSlot,
-    initialState,
-  );
+  const [deleteState, deleteAction] = useFormState(deleteAdSlot, initialState);
 
   return (
     <>
       <div className="rounded-lg border border-[--color-border] p-4">
         <div className="mb-2 flex items-start justify-between">
           <h3 className="font-semibold">{adSlot.name}</h3>
-          <span className={`rounded px-2 py-0.5 text-xs ${typeColors[adSlot.type] || 'bg-gray-100'}`}>
+          <span
+            className={`rounded px-2 py-0.5 text-xs ${typeColors[adSlot.type] || 'bg-gray-100'}`}
+          >
             {adSlot.type}
           </span>
         </div>
@@ -84,10 +83,7 @@ export function AdSlotCard({ adSlot }: AdSlotCardProps) {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
           <div className="w-full max-w-lg rounded-lg bg-white p-6 shadow-xl">
             <h2 className="mb-4 text-lg font-semibold">Edit Ad Slot</h2>
-            <AdSlotForm
-              adSlot={adSlot}
-              onClose={() => setShowEditForm(false)}
-            />
+            <AdSlotForm adSlot={adSlot} onClose={() => setShowEditForm(false)} />
           </div>
         </div>
       )}

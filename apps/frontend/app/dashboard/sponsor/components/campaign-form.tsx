@@ -24,8 +24,7 @@ export function CampaignForm({ campaign, onClose }: CampaignFormProps) {
     }
   }, [state.success, onClose]);
 
-  const inputClass =
-    'mt-1 w-full rounded border border-[--color-border] px-3 py-2 text-sm';
+  const inputClass = 'mt-1 w-full rounded border border-[--color-border] px-3 py-2 text-sm';
 
   return (
     <form ref={formRef} action={formAction} className="space-y-4">
@@ -35,12 +34,7 @@ export function CampaignForm({ campaign, onClose }: CampaignFormProps) {
         <label htmlFor="name" className="block text-sm font-medium">
           Name
         </label>
-        <input
-          id="name"
-          name="name"
-          defaultValue={campaign?.name ?? ''}
-          className={inputClass}
-        />
+        <input id="name" name="name" defaultValue={campaign?.name ?? ''} className={inputClass} />
         {state.fieldErrors?.name && (
           <p className="mt-1 text-sm text-red-600">{state.fieldErrors.name}</p>
         )}
@@ -58,9 +52,7 @@ export function CampaignForm({ campaign, onClose }: CampaignFormProps) {
           className={inputClass}
         />
         {state.fieldErrors?.budget && (
-          <p className="mt-1 text-sm text-red-600">
-            {state.fieldErrors.budget}
-          </p>
+          <p className="mt-1 text-sm text-red-600">{state.fieldErrors.budget}</p>
         )}
       </div>
 
@@ -73,15 +65,11 @@ export function CampaignForm({ campaign, onClose }: CampaignFormProps) {
             id="startDate"
             name="startDate"
             type="date"
-            defaultValue={
-              campaign?.startDate ? campaign.startDate.split('T')[0] : ''
-            }
+            defaultValue={campaign?.startDate ? campaign.startDate.split('T')[0] : ''}
             className={inputClass}
           />
           {state.fieldErrors?.startDate && (
-            <p className="mt-1 text-sm text-red-600">
-              {state.fieldErrors.startDate}
-            </p>
+            <p className="mt-1 text-sm text-red-600">{state.fieldErrors.startDate}</p>
           )}
         </div>
 
@@ -93,15 +81,11 @@ export function CampaignForm({ campaign, onClose }: CampaignFormProps) {
             id="endDate"
             name="endDate"
             type="date"
-            defaultValue={
-              campaign?.endDate ? campaign.endDate.split('T')[0] : ''
-            }
+            defaultValue={campaign?.endDate ? campaign.endDate.split('T')[0] : ''}
             className={inputClass}
           />
           {state.fieldErrors?.endDate && (
-            <p className="mt-1 text-sm text-red-600">
-              {state.fieldErrors.endDate}
-            </p>
+            <p className="mt-1 text-sm text-red-600">{state.fieldErrors.endDate}</p>
           )}
         </div>
       </div>
@@ -124,12 +108,7 @@ export function CampaignForm({ campaign, onClose }: CampaignFormProps) {
           <label htmlFor="status" className="block text-sm font-medium">
             Status
           </label>
-          <select
-            id="status"
-            name="status"
-            defaultValue={campaign.status}
-            className={inputClass}
-          >
+          <select id="status" name="status" defaultValue={campaign.status} className={inputClass}>
             <option value="DRAFT">Draft</option>
             <option value="ACTIVE">Active</option>
             <option value="PAUSED">Paused</option>
@@ -160,9 +139,7 @@ export function CampaignForm({ campaign, onClose }: CampaignFormProps) {
             Cancel
           </button>
         )}
-        <SubmitButton>
-          {campaign ? 'Update Campaign' : 'Create Campaign'}
-        </SubmitButton>
+        <SubmitButton>{campaign ? 'Update Campaign' : 'Create Campaign'}</SubmitButton>
       </div>
     </form>
   );

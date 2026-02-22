@@ -30,13 +30,10 @@ export default async function SponsorDashboard() {
   if (roleData.sponsorId) {
     try {
       const requestHeaders = await headers();
-      const res = await fetch(
-        `${API_URL}/api/campaigns`,
-        {
-          cache: 'no-store',
-          headers: { cookie: requestHeaders.get('cookie') ?? '' },
-        },
-      );
+      const res = await fetch(`${API_URL}/api/campaigns`, {
+        cache: 'no-store',
+        headers: { cookie: requestHeaders.get('cookie') ?? '' },
+      });
       if (!res.ok) {
         fetchError = 'Failed to load campaigns';
       } else {
@@ -55,9 +52,7 @@ export default async function SponsorDashboard() {
       </div>
 
       {fetchError ? (
-        <div className="rounded border border-red-200 bg-red-50 p-4 text-red-600">
-          {fetchError}
-        </div>
+        <div className="rounded border border-red-200 bg-red-50 p-4 text-red-600">{fetchError}</div>
       ) : (
         <CampaignList campaigns={campaigns} />
       )}

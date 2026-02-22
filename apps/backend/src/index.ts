@@ -6,10 +6,12 @@ const app: Application = express();
 const PORT = process.env.BACKEND_PORT || 4291;
 
 // Middleware
-app.use(cors({
-  origin: process.env.BETTER_AUTH_URL || 'http://localhost:3847',
-  credentials: true,
-}));
+app.use(
+  cors({
+    origin: process.env.BETTER_AUTH_URL || 'http://localhost:3847',
+    credentials: true,
+  })
+);
 app.use(express.json());
 
 // Mount all API routes

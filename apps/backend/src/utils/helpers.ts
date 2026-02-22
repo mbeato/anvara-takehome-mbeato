@@ -45,7 +45,7 @@ export function isValidEmail(email: string): boolean {
 // Helper to build filter object from query params
 export const buildFilters = (
   query: Record<string, string | string[] | undefined>,
-  allowedFields: string[],
+  allowedFields: string[]
 ): Record<string, string | string[] | undefined> => {
   const filters: Record<string, string | string[] | undefined> = {};
 

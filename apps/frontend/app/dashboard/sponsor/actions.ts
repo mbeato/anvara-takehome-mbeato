@@ -13,7 +13,7 @@ export type ActionState = {
 
 export async function createCampaign(
   prevState: ActionState,
-  formData: FormData,
+  formData: FormData
 ): Promise<ActionState> {
   const name = formData.get('name') as string;
   const budget = formData.get('budget') as string;
@@ -68,7 +68,7 @@ export async function createCampaign(
 
 export async function updateCampaign(
   prevState: ActionState,
-  formData: FormData,
+  formData: FormData
 ): Promise<ActionState> {
   const id = formData.get('id') as string;
   const name = formData.get('name') as string;
@@ -129,7 +129,7 @@ export async function updateCampaign(
 
 export async function deleteCampaign(
   prevState: ActionState,
-  formData: FormData,
+  formData: FormData
 ): Promise<ActionState> {
   const id = formData.get('id') as string;
   if (!id) return { error: 'Missing campaign ID' };

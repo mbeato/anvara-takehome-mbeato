@@ -13,7 +13,7 @@ export type ActionState = {
 
 export async function createAdSlot(
   prevState: ActionState,
-  formData: FormData,
+  formData: FormData
 ): Promise<ActionState> {
   const name = formData.get('name') as string;
   const type = formData.get('type') as string;
@@ -65,7 +65,7 @@ export async function createAdSlot(
 
 export async function updateAdSlot(
   prevState: ActionState,
-  formData: FormData,
+  formData: FormData
 ): Promise<ActionState> {
   const id = formData.get('id') as string;
   const name = formData.get('name') as string;
@@ -119,7 +119,7 @@ export async function updateAdSlot(
 
 export async function deleteAdSlot(
   prevState: ActionState,
-  formData: FormData,
+  formData: FormData
 ): Promise<ActionState> {
   const id = formData.get('id') as string;
   if (!id) return { error: 'Missing ad slot ID' };

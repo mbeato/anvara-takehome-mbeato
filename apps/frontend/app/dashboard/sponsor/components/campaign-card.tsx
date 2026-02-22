@@ -22,10 +22,7 @@ const statusColors: Record<string, string> = {
 export function CampaignCard({ campaign }: CampaignCardProps) {
   const [showEditForm, setShowEditForm] = useState(false);
   const initialState: ActionState = {};
-  const [deleteState, deleteAction] = useFormState(
-    deleteCampaign,
-    initialState,
-  );
+  const [deleteState, deleteAction] = useFormState(deleteCampaign, initialState);
 
   const budgetNum = Number(campaign.budget);
   const spentNum = Number(campaign.spent);
@@ -44,9 +41,7 @@ export function CampaignCard({ campaign }: CampaignCardProps) {
         </div>
 
         {campaign.description && (
-          <p className="mb-3 text-sm text-[--color-muted] line-clamp-2">
-            {campaign.description}
-          </p>
+          <p className="mb-3 text-sm text-[--color-muted] line-clamp-2">{campaign.description}</p>
         )}
 
         <div className="mb-2">
@@ -102,10 +97,7 @@ export function CampaignCard({ campaign }: CampaignCardProps) {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
           <div className="w-full max-w-lg rounded-lg bg-white p-6 shadow-xl">
             <h2 className="mb-4 text-lg font-semibold">Edit Campaign</h2>
-            <CampaignForm
-              campaign={campaign}
-              onClose={() => setShowEditForm(false)}
-            />
+            <CampaignForm campaign={campaign} onClose={() => setShowEditForm(false)} />
           </div>
         </div>
       )}

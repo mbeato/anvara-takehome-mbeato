@@ -24,8 +24,7 @@ export function AdSlotForm({ adSlot, onClose }: AdSlotFormProps) {
     }
   }, [state.success, onClose]);
 
-  const inputClass =
-    'mt-1 w-full rounded border border-[--color-border] px-3 py-2 text-sm';
+  const inputClass = 'mt-1 w-full rounded border border-[--color-border] px-3 py-2 text-sm';
 
   return (
     <form ref={formRef} action={formAction} className="space-y-4">
@@ -35,12 +34,7 @@ export function AdSlotForm({ adSlot, onClose }: AdSlotFormProps) {
         <label htmlFor="name" className="block text-sm font-medium">
           Name
         </label>
-        <input
-          id="name"
-          name="name"
-          defaultValue={adSlot?.name ?? ''}
-          className={inputClass}
-        />
+        <input id="name" name="name" defaultValue={adSlot?.name ?? ''} className={inputClass} />
         {state.fieldErrors?.name && (
           <p className="mt-1 text-sm text-red-600">{state.fieldErrors.name}</p>
         )}
@@ -50,12 +44,7 @@ export function AdSlotForm({ adSlot, onClose }: AdSlotFormProps) {
         <label htmlFor="type" className="block text-sm font-medium">
           Type
         </label>
-        <select
-          id="type"
-          name="type"
-          defaultValue={adSlot?.type ?? ''}
-          className={inputClass}
-        >
+        <select id="type" name="type" defaultValue={adSlot?.type ?? ''} className={inputClass}>
           <option value="">Select type...</option>
           <option value="DISPLAY">Display</option>
           <option value="VIDEO">Video</option>
@@ -80,9 +69,7 @@ export function AdSlotForm({ adSlot, onClose }: AdSlotFormProps) {
           className={inputClass}
         />
         {state.fieldErrors?.basePrice && (
-          <p className="mt-1 text-sm text-red-600">
-            {state.fieldErrors.basePrice}
-          </p>
+          <p className="mt-1 text-sm text-red-600">{state.fieldErrors.basePrice}</p>
         )}
       </div>
 
@@ -121,9 +108,7 @@ export function AdSlotForm({ adSlot, onClose }: AdSlotFormProps) {
             Cancel
           </button>
         )}
-        <SubmitButton>
-          {adSlot ? 'Update Ad Slot' : 'Create Ad Slot'}
-        </SubmitButton>
+        <SubmitButton>{adSlot ? 'Update Ad Slot' : 'Create Ad Slot'}</SubmitButton>
       </div>
     </form>
   );
