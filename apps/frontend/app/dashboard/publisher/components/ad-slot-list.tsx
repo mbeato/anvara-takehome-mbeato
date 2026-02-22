@@ -1,5 +1,7 @@
 import type { AdSlot } from '@/lib/types';
+import { EmptyState } from '@/app/components/empty-state';
 import { AdSlotCard } from './ad-slot-card';
+import { CreateAdSlotButton } from './ad-slot-form';
 
 interface AdSlotListProps {
   adSlots: AdSlot[];
@@ -8,9 +10,11 @@ interface AdSlotListProps {
 export function AdSlotList({ adSlots }: AdSlotListProps) {
   if (adSlots.length === 0) {
     return (
-      <div className="rounded-lg border border-dashed border-[--color-border] p-8 text-center text-[--color-muted]">
-        No ad slots yet. Create your first ad slot to start earning.
-      </div>
+      <EmptyState
+        heading="No ad slots yet"
+        description="Create your first ad slot to start connecting with sponsors and earning revenue."
+        action={<CreateAdSlotButton />}
+      />
     );
   }
 

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { getAdSlots } from '@/lib/api';
 import type { AdSlot } from '@/lib/types';
+import { EmptyState } from '@/app/components/empty-state';
 
 const typeColors: Record<string, string> = {
   DISPLAY: 'bg-blue-100 text-blue-700',
@@ -34,9 +35,10 @@ export function AdSlotGrid() {
 
   if (adSlots.length === 0) {
     return (
-      <div className="rounded-lg border border-dashed border-[--color-border] p-12 text-center text-[--color-muted]">
-        No ad slots available at the moment.
-      </div>
+      <EmptyState
+        heading="No ad slots available"
+        description="There are no ad slots listed at the moment. Check back soon for new opportunities from our publishers."
+      />
     );
   }
 

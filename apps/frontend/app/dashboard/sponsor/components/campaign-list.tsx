@@ -1,5 +1,7 @@
 import type { Campaign } from '@/lib/types';
+import { EmptyState } from '@/app/components/empty-state';
 import { CampaignCard } from './campaign-card';
+import { CreateCampaignButton } from './campaign-form';
 
 interface CampaignListProps {
   campaigns: Campaign[];
@@ -8,9 +10,11 @@ interface CampaignListProps {
 export function CampaignList({ campaigns }: CampaignListProps) {
   if (campaigns.length === 0) {
     return (
-      <div className="rounded-lg border border-dashed border-[--color-border] p-8 text-center text-[--color-muted]">
-        No campaigns yet. Create your first campaign to get started.
-      </div>
+      <EmptyState
+        heading="No campaigns yet"
+        description="Create your first campaign to start reaching your target audience through premium publishers."
+        action={<CreateCampaignButton />}
+      />
     );
   }
 
