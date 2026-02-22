@@ -158,7 +158,7 @@ export function CreateCampaignButton() {
 
       {open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="w-full max-w-lg rounded-lg bg-white p-6 shadow-xl">
+          <div className="w-full max-w-lg rounded-lg bg-white p-6 text-gray-900 shadow-xl">
             <h2 className="mb-4 text-lg font-semibold">Create Campaign</h2>
             <CampaignForm onClose={() => setOpen(false)} />
           </div>
