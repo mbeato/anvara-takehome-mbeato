@@ -1,7 +1,6 @@
 'use client';
 
-import { useState } from 'react';
-import { useFormState } from 'react-dom';
+import { useActionState, useState } from 'react';
 import type { Campaign } from '@/lib/types';
 import { deleteCampaign } from '../actions';
 import type { ActionState } from '../actions';
@@ -22,7 +21,7 @@ const statusColors: Record<string, string> = {
 export function CampaignCard({ campaign }: CampaignCardProps) {
   const [showEditForm, setShowEditForm] = useState(false);
   const initialState: ActionState = {};
-  const [deleteState, deleteAction] = useFormState(deleteCampaign, initialState);
+  const [deleteState, deleteAction] = useActionState(deleteCampaign, initialState);
 
   const budgetNum = Number(campaign.budget);
   const spentNum = Number(campaign.spent);

@@ -1,7 +1,6 @@
 'use client';
 
-import { useState } from 'react';
-import { useFormState } from 'react-dom';
+import { useActionState, useState } from 'react';
 import type { AdSlot } from '@/lib/types';
 import { deleteAdSlot } from '../actions';
 import type { ActionState } from '../actions';
@@ -22,7 +21,7 @@ const typeColors: Record<string, string> = {
 export function AdSlotCard({ adSlot }: AdSlotCardProps) {
   const [showEditForm, setShowEditForm] = useState(false);
   const initialState: ActionState = {};
-  const [deleteState, deleteAction] = useFormState(deleteAdSlot, initialState);
+  const [deleteState, deleteAction] = useActionState(deleteAdSlot, initialState);
 
   return (
     <>

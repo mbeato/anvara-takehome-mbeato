@@ -1,7 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import { useFormState } from 'react-dom';
+import { useActionState, useEffect, useRef, useState } from 'react';
 import { createAdSlot, updateAdSlot } from '../actions';
 import type { ActionState } from '../actions';
 import { SubmitButton } from '@/app/components/submit-button';
@@ -15,7 +14,7 @@ interface AdSlotFormProps {
 export function AdSlotForm({ adSlot, onClose }: AdSlotFormProps) {
   const action = adSlot ? updateAdSlot : createAdSlot;
   const initialState: ActionState = {};
-  const [state, formAction] = useFormState(action, initialState);
+  const [state, formAction] = useActionState(action, initialState);
   const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
