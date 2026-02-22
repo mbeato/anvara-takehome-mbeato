@@ -1,7 +1,7 @@
 import { Router, type Response, type IRouter } from 'express';
 import { requireAuth, type AuthRequest } from '../auth.js';
 import { prisma, AdSlotType } from '../db.js';
-import { getParam } from '../utils/helpers.js';
+import { getParam, parsePagination } from '../utils/helpers.js';
 
 const router: IRouter = Router();
 
@@ -11,25 +11,56 @@ router.use(requireAuth);
 // GET /api/ad-slots - List ad slots
 // Publishers see only their own ad slots (dashboard)
 // Sponsors see all ad slots (marketplace browsing)
+// Optional pagination: pass ?page=1&limit=12 to get { data, pagination } response
+// Without page param: returns plain array (backward compatibility for publisher dashboard)
 router.get('/', async (req: AuthRequest, res: Response) => {
   try {
     const { type, available } = req.query;
 
-    const adSlots = await prisma.adSlot.findMany({
-      where: {
-        ...(req.user!.role === 'PUBLISHER' && { publisherId: req.user!.publisherId }),
-        ...(type && {
-          type: type as string as 'DISPLAY' | 'VIDEO' | 'NATIVE' | 'NEWSLETTER' | 'PODCAST',
-        }),
-        ...(available === 'true' && { isAvailable: true }),
-      },
-      include: {
-        publisher: { select: { id: true, name: true, category: true, monthlyViews: true } },
-        _count: { select: { placements: true } },
-      },
-      orderBy: { basePrice: 'desc' },
-    });
+    const where = {
+      ...(req.user!.role === 'PUBLISHER' && { publisherId: req.user!.publisherId }),
+      ...(type && {
+        type: type as string as 'DISPLAY' | 'VIDEO' | 'NATIVE' | 'NEWSLETTER' | 'PODCAST',
+      }),
+      ...(available === 'true' && { isAvailable: true }),
+    };
 
+    const include = {
+      publisher: { select: { id: true, name: true, category: true, monthlyViews: true } },
+      _count: { select: { placements: true } },
+    } as const;
+
+    const orderBy = { basePrice: 'desc' } as const;
+
+    // If page param is present, return paginated response
+    if (req.query.page !== undefined) {
+      const parsed = parsePagination(req.query as Record<string, string | string[] | undefined>);
+      const limit = parsed.limit === 10 && !req.query.limit ? 12 : parsed.limit; // default 12 per page
+
+      const { adSlots, total, page } = await prisma.$transaction(async (tx) => {
+        const total = await tx.adSlot.count({ where });
+        const totalPages = Math.ceil(total / limit);
+
+        // Clamp invalid page numbers to page 1
+        const page = (parsed.page > totalPages && total > 0) ? 1 : parsed.page;
+        const skip = (page - 1) * limit;
+
+        const adSlots = await tx.adSlot.findMany({ where, include, orderBy, skip, take: limit });
+
+        return { adSlots, total, page };
+      });
+
+      const totalPages = Math.ceil(total / limit);
+
+      res.json({
+        data: adSlots,
+        pagination: { page, limit, total, totalPages },
+      });
+      return;
+    }
+
+    // No page param: return plain array (backward compatibility for publisher dashboard)
+    const adSlots = await prisma.adSlot.findMany({ where, include, orderBy });
     res.json(adSlots);
   } catch (error) {
     console.error('Error fetching ad slots:', error);
