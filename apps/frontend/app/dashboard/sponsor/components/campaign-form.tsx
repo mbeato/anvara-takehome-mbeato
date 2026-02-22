@@ -23,7 +23,8 @@ export function CampaignForm({ campaign, onClose }: CampaignFormProps) {
     }
   }, [state.success, onClose]);
 
-  const inputClass = 'mt-1 w-full rounded border border-[--color-border] px-3 py-2 text-sm';
+  const inputClass =
+    'mt-1 w-full rounded border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900';
 
   return (
     <form ref={formRef} action={formAction} className="space-y-4">
