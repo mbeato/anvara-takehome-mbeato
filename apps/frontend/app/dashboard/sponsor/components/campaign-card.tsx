@@ -23,10 +23,6 @@ export function CampaignCard({ campaign }: CampaignCardProps) {
   const initialState: ActionState = {};
   const [deleteState, deleteAction] = useActionState(deleteCampaign, initialState);
 
-  const budgetNum = Number(campaign.budget);
-  const spentNum = Number(campaign.spent);
-  const progress = budgetNum > 0 ? (spentNum / budgetNum) * 100 : 0;
-
   return (
     <>
       <div className="rounded-lg border border-[--color-border] p-4">
@@ -43,25 +39,14 @@ export function CampaignCard({ campaign }: CampaignCardProps) {
           <p className="mb-3 text-sm text-[--color-muted] line-clamp-2">{campaign.description}</p>
         )}
 
-        <div className="mb-2">
-          <div className="flex justify-between text-sm">
-            <span className="text-[--color-muted]">Budget</span>
-            <span>
-              ${Number(campaign.spent).toLocaleString()} / $
-              {Number(campaign.budget).toLocaleString()}
-            </span>
-          </div>
-          <div className="mt-1 h-1.5 rounded-full bg-gray-200">
-            <div
-              className="h-1.5 rounded-full bg-[--color-primary]"
-              style={{ width: `${Math.min(progress, 100)}%` }}
-            />
-          </div>
-        </div>
-
-        <div className="text-xs text-[--color-muted]">
-          {new Date(campaign.startDate).toLocaleDateString()} -{' '}
-          {new Date(campaign.endDate).toLocaleDateString()}
+        <div className="flex items-center justify-between">
+          <span className="text-sm text-[--color-muted]">
+            {new Date(campaign.startDate).toLocaleDateString()} –{' '}
+            {new Date(campaign.endDate).toLocaleDateString()}
+          </span>
+          <span className="font-semibold text-[--color-primary]">
+            ${Number(campaign.budget).toLocaleString()}
+          </span>
         </div>
 
         {deleteState.error && (
