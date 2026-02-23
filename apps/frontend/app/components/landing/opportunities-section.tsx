@@ -1,9 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { motion } from 'motion/react';
 import { ListingCard } from './listing-card';
-import { FADE_IN_UP, DURATION, EASE } from '@/lib/motion';
 import type { FeaturedListing, FeaturedListingsPagination } from '@/lib/types';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4291';
@@ -71,9 +69,18 @@ export function OpportunitiesSection({
     const track = trackRef.current;
     if (!track) return;
 
+    let pos = track.scrollLeft;
+
     const tick = () => {
-      if (!pausedRef.current && track.scrollLeft < track.scrollWidth - track.clientWidth) {
-        track.scrollLeft += SCROLL_SPEED;
+      if (!pausedRef.current) {
+        const max = track.scrollWidth - track.clientWidth;
+        if (pos < max) {
+          pos += SCROLL_SPEED;
+          track.scrollLeft = pos;
+        }
+      } else {
+        // Sync accumulator if user scrolled manually
+        pos = track.scrollLeft;
       }
       rafRef.current = requestAnimationFrame(tick);
     };
@@ -110,16 +117,9 @@ export function OpportunitiesSection({
           className="flex gap-6 overflow-x-auto pb-4 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         >
           {listings.map((listing) => (
-            <motion.div
+            <div
               key={listing.id}
-              className="w-[calc((100%-3rem)/3)] flex-shrink-0 max-sm:w-[85%] max-lg:w-[calc((100%-1.5rem)/2)]"
-              initial={FADE_IN_UP.initial}
-              whileInView={FADE_IN_UP.animate}
-              viewport={{ once: true }}
-              transition={{
-                duration: DURATION.normal,
-                ease: EASE.out,
-              }}
+              className="min-w-[280px] max-w-[340px] flex-shrink-0 sm:min-w-[300px]"
             >
               <ListingCard
                 name={listing.name}
@@ -127,7 +127,7 @@ export function OpportunitiesSection({
                 basePrice={listing.basePrice}
                 publisherName={listing.publisher.name}
               />
-            </motion.div>
+            </div>
           ))}
 
           {/* Sentinel for loading more */}
