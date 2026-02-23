@@ -74,8 +74,11 @@ export function OpportunitiesSection({
     const tick = () => {
       if (!pausedRef.current) {
         const max = track.scrollWidth - track.clientWidth;
-        if (pos < max) {
+        if (max > 0) {
           pos += SCROLL_SPEED;
+          if (pos >= max) {
+            pos = 0;
+          }
           track.scrollLeft = pos;
         }
       } else {

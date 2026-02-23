@@ -77,7 +77,7 @@ export default async function PublisherDashboard() {
   }
 
   return (
-    <div className="mx-auto max-w-6xl space-y-6 px-4 py-4">
+    <div className="space-y-6 px-16 py-6 lg:px-32">
       {/* Header: title + subtitle + create button */}
       <div className="flex items-center justify-between">
         <div>

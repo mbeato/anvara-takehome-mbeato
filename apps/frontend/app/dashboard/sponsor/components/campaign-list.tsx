@@ -1,3 +1,7 @@
+'use client';
+
+import { motion } from 'motion/react';
+import { FADE_IN_UP, STAGGER, DURATION, EASE } from '@/lib/motion';
 import type { Campaign } from '@/lib/types';
 import { EmptyState } from '@/app/components/empty-state';
 import { CampaignCard } from './campaign-card';
@@ -19,9 +23,20 @@ export function CampaignList({ campaigns }: CampaignListProps) {
   }
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      {campaigns.map((campaign) => (
-        <CampaignCard key={campaign.id} campaign={campaign} />
+    <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      {campaigns.map((campaign, i) => (
+        <motion.div
+          key={campaign.id}
+          initial={FADE_IN_UP.initial}
+          animate={FADE_IN_UP.animate}
+          transition={{
+            duration: DURATION.normal,
+            ease: EASE.out,
+            delay: i * STAGGER.fast,
+          }}
+        >
+          <CampaignCard campaign={campaign} />
+        </motion.div>
       ))}
     </div>
   );
