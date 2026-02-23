@@ -70,7 +70,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[var(--color-background)]">
+    <div className="flex flex-1 items-center justify-center px-4">
       <div className="w-full max-w-md rounded-lg border border-[var(--color-border)] p-6 shadow-sm">
         <h1 className="mb-6 text-2xl font-bold">Login to Anvara</h1>
 

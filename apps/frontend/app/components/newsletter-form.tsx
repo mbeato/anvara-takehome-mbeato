@@ -78,68 +78,62 @@ export function NewsletterForm() {
   }
 
   return (
-    <div>
-      <h3 className="text-lg font-semibold text-[var(--color-foreground)]">
+    <div className="max-w-md">
+      <label htmlFor="newsletter-email" className="text-sm font-semibold text-[var(--color-foreground)]">
         Stay in the Loop
-      </h3>
+      </label>
       <p className="mt-1 text-sm text-[var(--color-muted)]">
-        Get the latest on new ad slots, publisher partnerships, and marketplace
-        updates.
+        New ad slots, publisher partnerships, and marketplace updates — straight to your inbox.
       </p>
-      <form ref={formRef} onSubmit={handleSubmit} className="mt-4">
-        <div className="flex gap-2">
-          <label htmlFor="newsletter-email" className="sr-only">
-            Email address
-          </label>
-          <input
-            ref={inputRef}
-            id="newsletter-email"
-            type="email"
-            name="email"
-            placeholder="Enter your email"
-            required
-            aria-describedby="newsletter-feedback"
-            aria-invalid={status === 'error'}
-            disabled={status === 'submitting'}
-            className="flex-1 rounded border border-[var(--color-border)] bg-[var(--color-background)] px-3 py-2 text-sm text-[var(--color-foreground)] placeholder:text-[var(--color-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] disabled:opacity-50"
-          />
-          <button
-            type="submit"
-            disabled={status === 'submitting'}
-            className="rounded bg-[var(--color-primary)] px-4 py-2 text-sm text-white hover:opacity-90 disabled:opacity-50"
-          >
-            {status === 'submitting' ? (
-              <>
-                <svg
-                  className="mr-1.5 -ml-0.5 inline h-4 w-4 animate-spin"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                </svg>
-                Subscribing...
-              </>
-            ) : (
-              'Subscribe'
-            )}
-          </button>
-        </div>
-        <div id="newsletter-feedback" role="alert" className="mt-2 text-sm">
-          {status === 'error' && (
-            <p className="text-red-600">{errorMessage}</p>
+      <form ref={formRef} onSubmit={handleSubmit} className="mt-3 flex gap-2">
+        <input
+          ref={inputRef}
+          id="newsletter-email"
+          type="email"
+          name="email"
+          placeholder="you@company.com"
+          required
+          aria-describedby="newsletter-feedback"
+          aria-invalid={status === 'error'}
+          disabled={status === 'submitting'}
+          className="flex-1 rounded border border-[var(--color-border)] bg-[var(--color-background)] px-3 py-2 text-sm text-[var(--color-foreground)] placeholder:text-[var(--color-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] disabled:opacity-50"
+        />
+        <button
+          type="submit"
+          disabled={status === 'submitting'}
+          className="flex-shrink-0 rounded bg-[var(--color-primary)] px-4 py-2 text-sm text-white hover:opacity-90 disabled:opacity-50"
+        >
+          {status === 'submitting' ? (
+            <>
+              <svg
+                className="mr-1.5 -ml-0.5 inline h-4 w-4 animate-spin"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+              </svg>
+              Subscribing...
+            </>
+          ) : (
+            'Subscribe'
           )}
-          {status === 'duplicate' && (
-            <p className="text-blue-600">You&apos;re already subscribed!</p>
-          )}
-          {status === 'success' && (
-            <p className="text-green-600">
-              You&apos;re in! We&apos;ll keep you posted.
-            </p>
-          )}
-        </div>
+        </button>
       </form>
+      <div id="newsletter-feedback" role="alert" className="mt-2 text-sm">
+        {status === 'error' && (
+          <p className="text-red-600">{errorMessage}</p>
+        )}
+        {status === 'duplicate' && (
+          <p className="text-blue-600">You&apos;re already subscribed!</p>
+        )}
+        {status === 'success' && (
+          <p className="text-green-600">
+            You&apos;re in! We&apos;ll keep you posted.
+          </p>
+        )}
+      </div>
     </div>
   );
 }
