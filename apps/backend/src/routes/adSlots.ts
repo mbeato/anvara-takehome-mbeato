@@ -1,11 +1,35 @@
-import { Router, type Response, type IRouter } from 'express';
+import { Router, type Request, type Response, type IRouter } from 'express';
 import { requireAuth, type AuthRequest } from '../auth.js';
 import { prisma, AdSlotType } from '../db.js';
 import { getParam, parsePagination } from '../utils/helpers.js';
 
 const router: IRouter = Router();
 
-// All ad-slot routes require authentication
+// GET /api/ad-slots/featured - Public: featured listings for landing page (no auth)
+router.get('/featured', async (_req: Request, res: Response) => {
+  try {
+    const adSlots = await prisma.adSlot.findMany({
+      where: { isAvailable: true },
+      select: {
+        id: true,
+        name: true,
+        type: true,
+        basePrice: true,
+        publisher: { select: { id: true, name: true } },
+      },
+      orderBy: { createdAt: 'desc' },
+      take: 9,
+    });
+    res.json(adSlots);
+  } catch (error) {
+    console.error('Error fetching featured ad slots:', error);
+    res.status(500).json({
+      error: { code: 'INTERNAL_ERROR', status: 500, message: 'Failed to fetch featured ad slots' },
+    });
+  }
+});
+
+// All ad-slot routes below require authentication
 router.use(requireAuth);
 
 // GET /api/ad-slots - List ad slots
