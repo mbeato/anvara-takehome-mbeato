@@ -55,12 +55,14 @@ export function Nav() {
         </Link>
 
         <div className="flex items-center gap-6">
-          <Link
-            href="/marketplace"
-            className="text-[var(--color-muted)] hover:text-[var(--color-foreground)]"
-          >
-            Marketplace
-          </Link>
+          {user && (
+            <Link
+              href="/marketplace"
+              className="text-[var(--color-muted)] hover:text-[var(--color-foreground)]"
+            >
+              Marketplace
+            </Link>
+          )}
 
           {user && effectiveRole === 'sponsor' && (
             <Link

@@ -29,10 +29,10 @@ export function Hero() {
               Transparent pricing, easy management, real results.
             </p>
             <a
-              href="/marketplace"
+              href="/login"
               className="mt-8 inline-block rounded-lg bg-[var(--color-primary)] px-8 py-3 text-lg font-semibold text-white hover:bg-[var(--color-primary-hover)]"
             >
-              Start Growing Today
+              Get Started
             </a>
           </motion.div>
 
