@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { auth } from '@/auth';
@@ -6,6 +7,12 @@ import type { Campaign, CampaignStats } from '@/lib/types';
 import { CampaignList } from './components/campaign-list';
 import { CampaignStatsRow } from './components/campaign-stats';
 import { CreateCampaignButton } from './components/campaign-form';
+
+export const metadata: Metadata = {
+  title: 'My Campaigns',
+  description:
+    'Manage your sponsorship campaigns, track budgets, and monitor performance.',
+};
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4291';
 

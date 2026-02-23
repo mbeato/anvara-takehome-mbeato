@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { auth } from '@/auth';
@@ -6,6 +7,12 @@ import type { AdSlot, AdSlotStats } from '@/lib/types';
 import { AdSlotList } from './components/ad-slot-list';
 import { AdSlotStatsRow } from './components/ad-slot-stats';
 import { CreateAdSlotButton } from './components/ad-slot-form';
+
+export const metadata: Metadata = {
+  title: 'My Ad Slots',
+  description:
+    'Manage your advertising inventory, set rates, and track earnings.',
+};
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4291';
 

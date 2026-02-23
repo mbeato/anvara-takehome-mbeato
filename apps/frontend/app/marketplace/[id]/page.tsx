@@ -1,4 +1,10 @@
+import type { Metadata } from 'next';
 import { AdSlotDetail } from './components/ad-slot-detail';
+
+export const metadata: Metadata = {
+  title: 'Ad Slot Details',
+  description: 'View ad slot details, pricing, and availability.',
+};
 
 interface Props {
   params: Promise<{ id: string }>;

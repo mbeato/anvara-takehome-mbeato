@@ -12,9 +12,16 @@ import { NewsletterForm } from './components/newsletter-form';
 // TODO: Consider adding favicon and app icons
 
 export const metadata: Metadata = {
-  title: 'Anvara Marketplace',
+  title: {
+    default: 'Anvara — Sponsorship Marketplace',
+    template: '%s | Anvara',
+  },
   description: 'Sponsorship marketplace connecting sponsors with publishers',
   icons: { icon: '/favicon.png' },
+  openGraph: {
+    siteName: 'Anvara',
+    type: 'website',
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

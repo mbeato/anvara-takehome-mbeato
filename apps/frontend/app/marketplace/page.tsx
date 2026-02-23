@@ -1,8 +1,19 @@
+import type { Metadata } from 'next';
 import { headers } from 'next/headers';
 import { Suspense } from 'react';
 import { AdSlotGrid } from './components/ad-slot-grid';
 import { PaginationControls } from './components/pagination-controls';
 import type { AdSlot, PaginationMeta } from '@/lib/types';
+
+export const metadata: Metadata = {
+  title: 'Marketplace',
+  description:
+    'Browse available ad slots from premium publishers. Find the perfect sponsorship opportunity for your brand.',
+  openGraph: {
+    title: 'Marketplace | Anvara',
+    description: 'Browse available ad slots from premium publishers.',
+  },
+};
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4291';
 const PAGE_SIZE = 12;
