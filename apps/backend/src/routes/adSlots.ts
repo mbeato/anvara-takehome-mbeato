@@ -6,21 +6,36 @@ import { getParam, parsePagination } from '../utils/helpers.js';
 const router: IRouter = Router();
 
 // GET /api/ad-slots/featured - Public: featured listings for landing page (no auth)
-router.get('/featured', async (_req: Request, res: Response) => {
+// Supports pagination via ?limit=&offset= query params
+router.get('/featured', async (req: Request, res: Response) => {
   try {
-    const adSlots = await prisma.adSlot.findMany({
-      where: { isAvailable: true },
-      select: {
-        id: true,
-        name: true,
-        type: true,
-        basePrice: true,
-        publisher: { select: { id: true, name: true } },
-      },
-      orderBy: { createdAt: 'desc' },
-      take: 9,
+    const limit = Math.min(Math.max(parseInt(String(req.query.limit)) || 9, 1), 30);
+    const offset = Math.max(parseInt(String(req.query.offset)) || 0, 0);
+
+    const where = { isAvailable: true };
+    const select = {
+      id: true,
+      name: true,
+      type: true,
+      basePrice: true,
+      publisher: { select: { id: true, name: true } },
+    } as const;
+
+    const [adSlots, total] = await Promise.all([
+      prisma.adSlot.findMany({
+        where,
+        select,
+        orderBy: { createdAt: 'desc' },
+        skip: offset,
+        take: limit,
+      }),
+      prisma.adSlot.count({ where }),
+    ]);
+
+    res.json({
+      data: adSlots,
+      pagination: { limit, offset, total, hasMore: offset + limit < total },
     });
-    res.json(adSlots);
   } catch (error) {
     console.error('Error fetching featured ad slots:', error);
     res.status(500).json({

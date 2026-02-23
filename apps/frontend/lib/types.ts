@@ -255,6 +255,30 @@ export interface PaginatedResponse<T> {
 export type PaginatedAdSlotResponse = PaginatedResponse<AdSlot>;
 
 // ============================================================================
+// Featured Listings (landing page)
+// ============================================================================
+
+export interface FeaturedListing {
+  id: string;
+  name: string;
+  type: string;
+  basePrice: string;
+  publisher: { id: string; name: string };
+}
+
+export interface FeaturedListingsPagination {
+  limit: number;
+  offset: number;
+  total: number;
+  hasMore: boolean;
+}
+
+export interface FeaturedListingsResponse {
+  data: FeaturedListing[];
+  pagination: FeaturedListingsPagination;
+}
+
+// ============================================================================
 // Dashboard KPI Stats
 // ============================================================================
 
