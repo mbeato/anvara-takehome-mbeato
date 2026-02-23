@@ -2,8 +2,7 @@ import type { Metadata } from 'next';
 import { Hero } from './components/landing/hero';
 import { ValueProps } from './components/landing/value-props';
 import { HowItWorks } from './components/landing/how-it-works';
-import { FeaturedListings } from './components/landing/featured-listings';
-import { MoreListings } from './components/landing/more-listings';
+import { OpportunitiesSection } from './components/landing/opportunities-section';
 import { StatsSection } from './components/landing/stats-section';
 import { BottomCta } from './components/landing/bottom-cta';
 
@@ -22,13 +21,7 @@ export const metadata: Metadata = {
   },
 };
 
-interface FeaturedListing {
-  id: string;
-  name: string;
-  type: string;
-  basePrice: string;
-  publisher: { id: string; name: string };
-}
+import type { FeaturedListingsResponse } from '@/lib/types';
 
 interface PlatformStats {
   sponsors: number;
@@ -38,7 +31,7 @@ interface PlatformStats {
 }
 
 export default async function LandingPage() {
-  let listings: FeaturedListing[] = [];
+  let listingsResponse: FeaturedListingsResponse | null = null;
   let stats: PlatformStats | null = null;
 
   try {
@@ -48,7 +41,7 @@ export default async function LandingPage() {
     ]);
 
     if (listingsRes.ok) {
-      listings = await listingsRes.json();
+      listingsResponse = await listingsRes.json();
     }
     if (statsRes.ok) {
       const statsData = await statsRes.json();
@@ -63,16 +56,17 @@ export default async function LandingPage() {
     // Graceful degradation: page renders without data sections
   }
 
-  const featured = listings.slice(0, 3);
-  const more = listings.slice(3, 9);
-
   return (
     <>
       <Hero />
       <ValueProps />
       <HowItWorks />
-      {featured.length > 0 && <FeaturedListings listings={featured} />}
-      {more.length > 0 && <MoreListings listings={more} />}
+      {listingsResponse && listingsResponse.data.length > 0 && (
+        <OpportunitiesSection
+          initialListings={listingsResponse.data}
+          initialPagination={listingsResponse.pagination}
+        />
+      )}
       {stats && (
         <StatsSection
           sponsors={stats.sponsors}
