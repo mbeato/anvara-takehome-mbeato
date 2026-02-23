@@ -1,3 +1,8 @@
+'use client';
+
+import { motion } from 'motion/react';
+import { FADE_IN_UP, STAGGER, DURATION, EASE } from '@/lib/motion';
+
 const VALUE_PROPS = [
   {
     icon: (
@@ -35,9 +40,17 @@ export function ValueProps() {
       <div className="mx-auto max-w-6xl px-4 py-16">
         <div className="grid gap-8 md:grid-cols-3">
           {VALUE_PROPS.map((prop, i) => (
-            <div
+            <motion.div
               key={prop.title}
-              className={`animate-fade-in-up animation-delay-${(i + 1) * 100} rounded-lg border border-[var(--color-border)] bg-white p-6`}
+              className="rounded-lg border border-[var(--color-border)] bg-white p-6"
+              initial={FADE_IN_UP.initial}
+              whileInView={FADE_IN_UP.animate}
+              viewport={{ once: true, margin: '-60px' }}
+              transition={{
+                duration: DURATION.normal,
+                ease: EASE.out,
+                delay: i * STAGGER.normal,
+              }}
             >
               <div className="mb-4">{prop.icon}</div>
               <h3 className="text-lg font-semibold font-[family-name:var(--font-display)]">
@@ -46,7 +59,7 @@ export function ValueProps() {
               <p className="mt-2 text-sm text-[var(--color-muted)]">
                 {prop.description}
               </p>
-            </div>
+            </motion.div>
           ))}
         </div>
       </div>
