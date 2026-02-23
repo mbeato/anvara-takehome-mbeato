@@ -10,7 +10,7 @@ interface Props {
   limit: number;
 }
 
-export function PaginationControls({ currentPage, totalPages, total, limit }: Props) {
+export function PaginationControls({ currentPage, totalPages, total: _total, limit: _limit }: Props) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
