@@ -12,6 +12,10 @@ export const metadata: Metadata = {
   title: 'My Ad Slots',
   description:
     'Manage your advertising inventory, set rates, and track earnings.',
+  openGraph: {
+    title: 'My Ad Slots | Anvara',
+    description: 'Manage your advertising inventory, set rates, and track earnings.',
+  },
 };
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4291';

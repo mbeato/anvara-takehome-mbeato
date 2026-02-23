@@ -12,6 +12,10 @@ export const metadata: Metadata = {
   title: 'My Campaigns',
   description:
     'Manage your sponsorship campaigns, track budgets, and monitor performance.',
+  openGraph: {
+    title: 'My Campaigns | Anvara',
+    description: 'Manage your sponsorship campaigns, track budgets, and monitor performance.',
+  },
 };
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4291';

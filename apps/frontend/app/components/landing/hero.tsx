@@ -13,7 +13,7 @@ export function Hero() {
               Transparent pricing, easy management, real results.
             </p>
             <a
-              href="/login"
+              href="/marketplace"
               className="mt-8 inline-block rounded-lg bg-[var(--color-primary)] px-8 py-3 text-lg font-semibold text-white hover:bg-[var(--color-primary-hover)]"
             >
               Start Growing Today
