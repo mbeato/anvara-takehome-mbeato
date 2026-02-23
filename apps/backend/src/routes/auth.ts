@@ -26,10 +26,16 @@ router.get('/me', async (req: Request, res: Response) => {
 // GET /api/auth/role/:userId - Get user role based on Sponsor/Publisher records
 router.get('/role/:userId', requireAuth, async (req: AuthRequest, res: Response) => {
   try {
+    const user = req.user;
+    if (!user) {
+      res.status(401).json({ error: { code: 'UNAUTHORIZED', status: 401, message: 'Not authenticated' } });
+      return;
+    }
+
     const userId = getParam(req.params.userId);
 
     // Only allow looking up your own role
-    if (userId !== req.user!.id) {
+    if (userId !== user.id) {
       res.status(403).json({
         error: { code: 'FORBIDDEN', status: 403, message: 'Can only look up your own role' },
       });

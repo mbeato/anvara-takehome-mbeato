@@ -6,6 +6,11 @@ import path from 'path';
 import dotenv from 'dotenv';
 dotenv.config({ path: path.join(process.cwd(), '../../.env') });
 
+const databaseUrl = process.env.DATABASE_URL;
+if (!databaseUrl) {
+  throw new Error('DATABASE_URL environment variable is required');
+}
+
 export default defineConfig({
   schema: 'prisma/schema.prisma',
   migrations: {
@@ -13,6 +18,6 @@ export default defineConfig({
     seed: 'tsx --env-file=../../.env prisma/seed.ts',
   },
   datasource: {
-    url: process.env.DATABASE_URL!,
+    url: databaseUrl,
   },
 });

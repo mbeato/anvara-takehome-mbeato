@@ -15,10 +15,16 @@ router.use(requireAuth);
 // Without page param: returns plain array (backward compatibility for publisher dashboard)
 router.get('/', async (req: AuthRequest, res: Response) => {
   try {
+    const user = req.user;
+    if (!user) {
+      res.status(401).json({ error: { code: 'UNAUTHORIZED', status: 401, message: 'Not authenticated' } });
+      return;
+    }
+
     const { type, available } = req.query;
 
     const where = {
-      ...(req.user!.role === 'PUBLISHER' && { publisherId: req.user!.publisherId }),
+      ...(user.role === 'PUBLISHER' && { publisherId: user.publisherId }),
       ...(type && {
         type: type as string as 'DISPLAY' | 'VIDEO' | 'NATIVE' | 'NEWSLETTER' | 'PODCAST',
       }),
@@ -73,6 +79,12 @@ router.get('/', async (req: AuthRequest, res: Response) => {
 // GET /api/ad-slots/:id - Get single ad slot with details
 router.get('/:id', async (req: AuthRequest, res: Response) => {
   try {
+    const user = req.user;
+    if (!user) {
+      res.status(401).json({ error: { code: 'UNAUTHORIZED', status: 401, message: 'Not authenticated' } });
+      return;
+    }
+
     const id = getParam(req.params.id);
     const adSlot = await prisma.adSlot.findUnique({
       where: { id },
@@ -94,7 +106,7 @@ router.get('/:id', async (req: AuthRequest, res: Response) => {
     }
 
     // Publishers can only view their own ad slots; sponsors can view any (marketplace)
-    if (req.user!.role === 'PUBLISHER' && adSlot.publisherId !== req.user!.publisherId) {
+    if (user.role === 'PUBLISHER' && adSlot.publisherId !== user.publisherId) {
       res.status(403).json({
         error: { code: 'FORBIDDEN', status: 403, message: "You don't own this ad slot" },
       });
@@ -113,8 +125,14 @@ router.get('/:id', async (req: AuthRequest, res: Response) => {
 // POST /api/ad-slots - Create new ad slot
 router.post('/', async (req: AuthRequest, res: Response) => {
   try {
+    const user = req.user;
+    if (!user) {
+      res.status(401).json({ error: { code: 'UNAUTHORIZED', status: 401, message: 'Not authenticated' } });
+      return;
+    }
+
     // Only publishers can create ad slots
-    if (!req.user!.publisherId) {
+    if (!user.publisherId) {
       res.status(403).json({
         error: { code: 'FORBIDDEN', status: 403, message: 'Only publishers can create ad slots' },
       });
@@ -154,7 +172,7 @@ router.post('/', async (req: AuthRequest, res: Response) => {
         width: width != null ? parseInt(String(width), 10) : undefined,
         height: height != null ? parseInt(String(height), 10) : undefined,
         basePrice,
-        publisherId: req.user!.publisherId,
+        publisherId: user.publisherId,
       },
       include: {
         publisher: { select: { id: true, name: true } },
@@ -173,6 +191,12 @@ router.post('/', async (req: AuthRequest, res: Response) => {
 // PUT /api/ad-slots/:id - Update an ad slot
 router.put('/:id', async (req: AuthRequest, res: Response) => {
   try {
+    const user = req.user;
+    if (!user) {
+      res.status(401).json({ error: { code: 'UNAUTHORIZED', status: 401, message: 'Not authenticated' } });
+      return;
+    }
+
     const id = getParam(req.params.id);
 
     const adSlot = await prisma.adSlot.findUnique({ where: { id } });
@@ -184,7 +208,7 @@ router.put('/:id', async (req: AuthRequest, res: Response) => {
       return;
     }
 
-    if (adSlot.publisherId !== req.user!.publisherId) {
+    if (adSlot.publisherId !== user.publisherId) {
       res.status(403).json({
         error: { code: 'FORBIDDEN', status: 403, message: "You don't own this ad slot" },
       });
@@ -247,6 +271,12 @@ router.put('/:id', async (req: AuthRequest, res: Response) => {
 // DELETE /api/ad-slots/:id - Delete an ad slot
 router.delete('/:id', async (req: AuthRequest, res: Response) => {
   try {
+    const user = req.user;
+    if (!user) {
+      res.status(401).json({ error: { code: 'UNAUTHORIZED', status: 401, message: 'Not authenticated' } });
+      return;
+    }
+
     const id = getParam(req.params.id);
 
     const adSlot = await prisma.adSlot.findUnique({ where: { id } });
@@ -258,7 +288,7 @@ router.delete('/:id', async (req: AuthRequest, res: Response) => {
       return;
     }
 
-    if (adSlot.publisherId !== req.user!.publisherId) {
+    if (adSlot.publisherId !== user.publisherId) {
       res.status(403).json({
         error: { code: 'FORBIDDEN', status: 403, message: "You don't own this ad slot" },
       });
@@ -280,11 +310,17 @@ router.delete('/:id', async (req: AuthRequest, res: Response) => {
 // This is a sponsor action -- any authenticated sponsor can book an available slot
 router.post('/:id/book', async (req: AuthRequest, res: Response) => {
   try {
+    const user = req.user;
+    if (!user) {
+      res.status(401).json({ error: { code: 'UNAUTHORIZED', status: 401, message: 'Not authenticated' } });
+      return;
+    }
+
     const id = getParam(req.params.id);
     const { message } = req.body;
 
     // Only sponsors can book ad slots
-    const authenticatedSponsorId = req.user!.sponsorId;
+    const authenticatedSponsorId = user.sponsorId;
     if (!authenticatedSponsorId) {
       res.status(403).json({
         error: { code: 'FORBIDDEN', status: 403, message: 'Only sponsors can book ad slots' },

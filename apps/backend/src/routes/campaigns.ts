@@ -11,11 +11,17 @@ router.use(requireAuth);
 // GET /api/campaigns - List authenticated sponsor's campaigns
 router.get('/', async (req: AuthRequest, res: Response) => {
   try {
+    const user = req.user;
+    if (!user) {
+      res.status(401).json({ error: { code: 'UNAUTHORIZED', status: 401, message: 'Not authenticated' } });
+      return;
+    }
+
     const { status } = req.query;
 
     const campaigns = await prisma.campaign.findMany({
       where: {
-        sponsorId: req.user!.sponsorId,
+        sponsorId: user.sponsorId,
         ...(status && { status: status as string as 'ACTIVE' | 'PAUSED' | 'COMPLETED' }),
       },
       include: {
@@ -37,6 +43,12 @@ router.get('/', async (req: AuthRequest, res: Response) => {
 // GET /api/campaigns/:id - Get single campaign with details
 router.get('/:id', async (req: AuthRequest, res: Response) => {
   try {
+    const user = req.user;
+    if (!user) {
+      res.status(401).json({ error: { code: 'UNAUTHORIZED', status: 401, message: 'Not authenticated' } });
+      return;
+    }
+
     const id = getParam(req.params.id);
     const campaign = await prisma.campaign.findUnique({
       where: { id },
@@ -59,7 +71,7 @@ router.get('/:id', async (req: AuthRequest, res: Response) => {
       return;
     }
 
-    if (campaign.sponsorId !== req.user!.sponsorId) {
+    if (campaign.sponsorId !== user.sponsorId) {
       res.status(403).json({
         error: { code: 'FORBIDDEN', status: 403, message: "You don't own this campaign" },
       });
@@ -78,6 +90,17 @@ router.get('/:id', async (req: AuthRequest, res: Response) => {
 // POST /api/campaigns - Create new campaign
 router.post('/', async (req: AuthRequest, res: Response) => {
   try {
+    const user = req.user;
+    if (!user) {
+      res.status(401).json({ error: { code: 'UNAUTHORIZED', status: 401, message: 'Not authenticated' } });
+      return;
+    }
+
+    if (!user.sponsorId) {
+      res.status(403).json({ error: { code: 'FORBIDDEN', status: 403, message: 'Only sponsors can create campaigns' } });
+      return;
+    }
+
     const {
       name,
       description,
@@ -112,7 +135,7 @@ router.post('/', async (req: AuthRequest, res: Response) => {
         endDate: new Date(endDate),
         targetCategories: targetCategories || [],
         targetRegions: targetRegions || [],
-        sponsorId: req.user!.sponsorId!,
+        sponsorId: user.sponsorId,
       },
       include: {
         sponsor: { select: { id: true, name: true } },
@@ -131,6 +154,12 @@ router.post('/', async (req: AuthRequest, res: Response) => {
 // PUT /api/campaigns/:id - Update campaign details
 router.put('/:id', async (req: AuthRequest, res: Response) => {
   try {
+    const user = req.user;
+    if (!user) {
+      res.status(401).json({ error: { code: 'UNAUTHORIZED', status: 401, message: 'Not authenticated' } });
+      return;
+    }
+
     const id = getParam(req.params.id);
     const campaign = await prisma.campaign.findUnique({ where: { id } });
 
@@ -141,7 +170,7 @@ router.put('/:id', async (req: AuthRequest, res: Response) => {
       return;
     }
 
-    if (campaign.sponsorId !== req.user!.sponsorId) {
+    if (campaign.sponsorId !== user.sponsorId) {
       res.status(403).json({
         error: { code: 'FORBIDDEN', status: 403, message: "You don't own this campaign" },
       });
@@ -220,6 +249,12 @@ router.put('/:id', async (req: AuthRequest, res: Response) => {
 // DELETE /api/campaigns/:id - Remove a campaign
 router.delete('/:id', async (req: AuthRequest, res: Response) => {
   try {
+    const user = req.user;
+    if (!user) {
+      res.status(401).json({ error: { code: 'UNAUTHORIZED', status: 401, message: 'Not authenticated' } });
+      return;
+    }
+
     const id = getParam(req.params.id);
     const campaign = await prisma.campaign.findUnique({ where: { id } });
 
@@ -230,7 +265,7 @@ router.delete('/:id', async (req: AuthRequest, res: Response) => {
       return;
     }
 
-    if (campaign.sponsorId !== req.user!.sponsorId) {
+    if (campaign.sponsorId !== user.sponsorId) {
       res.status(403).json({
         error: { code: 'FORBIDDEN', status: 403, message: "You don't own this campaign" },
       });

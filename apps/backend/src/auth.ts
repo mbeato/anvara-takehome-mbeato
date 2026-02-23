@@ -24,8 +24,13 @@ export interface AuthRequest extends Request {
 // Better Auth instance (shares DB + secret with frontend)
 // ============================================================================
 
+const databaseUrl = process.env.DATABASE_URL;
+if (!databaseUrl) {
+  throw new Error('DATABASE_URL environment variable is required');
+}
+
 export const auth = betterAuth({
-  database: new Pool({ connectionString: process.env.DATABASE_URL! }),
+  database: new Pool({ connectionString: databaseUrl }),
   secret: process.env.BETTER_AUTH_SECRET || 'fallback-secret-for-dev',
   baseURL: process.env.BETTER_AUTH_URL || 'http://localhost:3847',
   emailAndPassword: { enabled: true },
