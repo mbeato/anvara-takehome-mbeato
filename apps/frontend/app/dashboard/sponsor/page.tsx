@@ -2,11 +2,25 @@ import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { auth } from '@/auth';
 import { getUserRole } from '@/lib/auth-helpers';
-import type { Campaign } from '@/lib/types';
+import type { Campaign, CampaignStats } from '@/lib/types';
 import { CampaignList } from './components/campaign-list';
+import { CampaignStatsRow } from './components/campaign-stats';
 import { CreateCampaignButton } from './components/campaign-form';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4291';
+
+async function fetchCampaignStats(cookie: string): Promise<CampaignStats | null> {
+  try {
+    const res = await fetch(`${API_URL}/api/campaigns/stats`, {
+      cache: 'no-store',
+      headers: { cookie },
+    });
+    if (!res.ok) return null;
+    return await res.json();
+  } catch {
+    return null;
+  }
+}
 
 export default async function SponsorDashboard() {
   const session = await auth.api.getSession({
@@ -23,22 +37,31 @@ export default async function SponsorDashboard() {
     redirect('/');
   }
 
-  // Fetch campaigns server-side
+  // Fetch campaigns and stats in parallel
   let campaigns: Campaign[] = [];
   let fetchError: string | null = null;
+  let stats: CampaignStats | null = null;
+
+  const requestHeaders = await headers();
+  const cookie = requestHeaders.get('cookie') ?? '';
 
   if (roleData.sponsorId) {
     try {
-      const requestHeaders = await headers();
-      const res = await fetch(`${API_URL}/api/campaigns`, {
-        cache: 'no-store',
-        headers: { cookie: requestHeaders.get('cookie') ?? '' },
-      });
-      if (!res.ok) {
+      const [campaignsRes, statsResult] = await Promise.all([
+        fetch(`${API_URL}/api/campaigns`, {
+          cache: 'no-store',
+          headers: { cookie },
+        }),
+        fetchCampaignStats(cookie),
+      ]);
+
+      if (!campaignsRes.ok) {
         fetchError = 'Failed to load campaigns';
       } else {
-        campaigns = await res.json();
+        campaigns = await campaignsRes.json();
       }
+
+      stats = statsResult;
     } catch {
       fetchError = 'Unable to connect to the server. Please try again later.';
     }
@@ -46,13 +69,25 @@ export default async function SponsorDashboard() {
 
   return (
     <div className="space-y-6">
+      {/* Header: title + subtitle + create button */}
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">My Campaigns</h1>
+        <div>
+          <h1 className="text-3xl font-bold">My Campaigns</h1>
+          <p className="mt-1 text-sm text-[--color-muted]">
+            Manage your sponsorship campaigns
+          </p>
+        </div>
         <CreateCampaignButton />
       </div>
 
+      {/* KPI Stats Row */}
+      {stats && <CampaignStatsRow stats={stats} />}
+
+      {/* Campaign Grid or Error */}
       {fetchError ? (
-        <div className="rounded border border-red-200 bg-red-50 p-4 text-red-600">{fetchError}</div>
+        <div className="rounded border border-red-200 bg-red-50 p-4 text-red-600">
+          {fetchError}
+        </div>
       ) : (
         <CampaignList campaigns={campaigns} />
       )}
