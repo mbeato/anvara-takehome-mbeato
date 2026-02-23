@@ -76,6 +76,44 @@ router.get('/', async (req: AuthRequest, res: Response) => {
   }
 });
 
+// GET /api/ad-slots/stats - Aggregated KPI stats for authenticated publisher
+router.get('/stats', async (req: AuthRequest, res: Response) => {
+  try {
+    const user = req.user;
+    if (!user) {
+      res.status(401).json({ error: { code: 'UNAUTHORIZED', status: 401, message: 'Not authenticated' } });
+      return;
+    }
+
+    if (!user.publisherId) {
+      res.status(403).json({ error: { code: 'FORBIDDEN', status: 403, message: 'Publisher access required' } });
+      return;
+    }
+
+    const [totalSlots, activeSlots, priceAgg] = await Promise.all([
+      prisma.adSlot.count({ where: { publisherId: user.publisherId } }),
+      prisma.adSlot.count({ where: { publisherId: user.publisherId, isAvailable: true } }),
+      prisma.adSlot.aggregate({
+        where: { publisherId: user.publisherId },
+        _sum: { basePrice: true },
+        _avg: { basePrice: true },
+      }),
+    ]);
+
+    res.json({
+      totalSlots,
+      activeSlots,
+      totalRevenue: priceAgg._sum.basePrice?.toString() ?? '0',
+      avgPrice: priceAgg._avg.basePrice?.toString() ?? '0',
+    });
+  } catch (error) {
+    console.error('Error fetching ad slot stats:', error);
+    res.status(500).json({
+      error: { code: 'INTERNAL_ERROR', status: 500, message: 'Failed to fetch ad slot stats' },
+    });
+  }
+});
+
 // GET /api/ad-slots/:id - Get single ad slot with details
 router.get('/:id', async (req: AuthRequest, res: Response) => {
   try {

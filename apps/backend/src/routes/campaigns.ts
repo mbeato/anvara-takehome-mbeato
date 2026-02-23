@@ -40,6 +40,44 @@ router.get('/', async (req: AuthRequest, res: Response) => {
   }
 });
 
+// GET /api/campaigns/stats - Aggregated KPI stats for authenticated sponsor
+router.get('/stats', async (req: AuthRequest, res: Response) => {
+  try {
+    const user = req.user;
+    if (!user) {
+      res.status(401).json({ error: { code: 'UNAUTHORIZED', status: 401, message: 'Not authenticated' } });
+      return;
+    }
+
+    if (!user.sponsorId) {
+      res.status(403).json({ error: { code: 'FORBIDDEN', status: 403, message: 'Sponsor access required' } });
+      return;
+    }
+
+    const [totalCampaigns, activeCampaigns, budgetAgg] = await Promise.all([
+      prisma.campaign.count({ where: { sponsorId: user.sponsorId } }),
+      prisma.campaign.count({ where: { sponsorId: user.sponsorId, status: 'ACTIVE' } }),
+      prisma.campaign.aggregate({
+        where: { sponsorId: user.sponsorId },
+        _sum: { budget: true },
+        _avg: { budget: true },
+      }),
+    ]);
+
+    res.json({
+      totalCampaigns,
+      activeCampaigns,
+      totalBudget: budgetAgg._sum.budget?.toString() ?? '0',
+      avgBudget: budgetAgg._avg.budget?.toString() ?? '0',
+    });
+  } catch (error) {
+    console.error('Error fetching campaign stats:', error);
+    res.status(500).json({
+      error: { code: 'INTERNAL_ERROR', status: 500, message: 'Failed to fetch campaign stats' },
+    });
+  }
+});
+
 // GET /api/campaigns/:id - Get single campaign with details
 router.get('/:id', async (req: AuthRequest, res: Response) => {
   try {
