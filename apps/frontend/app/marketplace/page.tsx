@@ -1,4 +1,5 @@
 import { headers } from 'next/headers';
+import { Suspense } from 'react';
 import { AdSlotGrid } from './components/ad-slot-grid';
 import { PaginationControls } from './components/pagination-controls';
 import type { AdSlot, PaginationMeta } from '@/lib/types';
@@ -61,7 +62,9 @@ export default async function MarketplacePage({ searchParams }: Props) {
           )}
           <AdSlotGrid adSlots={adSlots} />
           {totalPages > 1 && (
-            <PaginationControls currentPage={currentPage} totalPages={totalPages} total={pagination?.total ?? 0} limit={pagination?.limit ?? PAGE_SIZE} />
+            <Suspense fallback={null}>
+              <PaginationControls currentPage={currentPage} totalPages={totalPages} total={pagination?.total ?? 0} limit={pagination?.limit ?? PAGE_SIZE} />
+            </Suspense>
           )}
         </>
       )}
