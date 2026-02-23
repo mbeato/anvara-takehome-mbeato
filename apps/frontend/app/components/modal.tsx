@@ -33,7 +33,7 @@ export function Modal({ open, onClose, title, size = 'md', children }: ModalProp
   return (
     <dialog
       ref={dialogRef}
-      className={`modal-dialog w-full ${sizeClasses[size]} rounded-lg border-0 bg-transparent p-0 shadow-xl`}
+      className={`modal-dialog mx-auto my-auto w-full ${sizeClasses[size]} rounded-lg border-0 bg-transparent p-0 shadow-xl`}
       onClose={onClose}
       onClick={(e) => {
         if (e.target === dialogRef.current) {
