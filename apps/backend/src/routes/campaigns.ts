@@ -1,7 +1,7 @@
 import { Router, type Response, type IRouter } from 'express';
 import { requireAuth, type AuthRequest } from '../auth.js';
 import { prisma, CampaignStatus } from '../db.js';
-import { getParam } from '../utils/helpers.js';
+import { getParam, parsePagination } from '../utils/helpers.js';
 
 const router: IRouter = Router();
 
@@ -17,20 +17,49 @@ router.get('/', async (req: AuthRequest, res: Response) => {
       return;
     }
 
-    const { status } = req.query;
+    const { status, sort, order, search } = req.query;
 
-    const campaigns = await prisma.campaign.findMany({
-      where: {
-        sponsorId: user.sponsorId,
-        ...(status && { status: status as string as 'ACTIVE' | 'PAUSED' | 'COMPLETED' }),
-      },
-      include: {
-        sponsor: { select: { id: true, name: true, logo: true } },
-        _count: { select: { creatives: true, placements: true } },
-      },
-      orderBy: { createdAt: 'desc' },
-    });
+    const where = {
+      sponsorId: user.sponsorId,
+      ...(status && { status: status as string as 'ACTIVE' | 'PAUSED' | 'COMPLETED' }),
+      ...(search && {
+        name: { contains: String(search), mode: 'insensitive' as const },
+      }),
+    };
 
+    const allowedSorts = ['createdAt', 'budget', 'name', 'status'] as const;
+    const sortField = allowedSorts.includes(sort as (typeof allowedSorts)[number])
+      ? (sort as string)
+      : 'createdAt';
+    const sortOrder = order === 'asc' ? 'asc' : 'desc';
+    const orderBy = { [sortField]: sortOrder };
+
+    const include = {
+      sponsor: { select: { id: true, name: true, logo: true } },
+      _count: { select: { creatives: true, placements: true } },
+    } as const;
+
+    // If page param is present, return paginated response
+    if (req.query.page !== undefined) {
+      const parsed = parsePagination(req.query as Record<string, string | string[] | undefined>);
+
+      const { campaigns: data, total, page } = await prisma.$transaction(async (tx) => {
+        const total = await tx.campaign.count({ where });
+        const totalPages = Math.ceil(total / parsed.limit);
+        const page = (parsed.page > totalPages && total > 0) ? 1 : parsed.page;
+        const skip = (page - 1) * parsed.limit;
+
+        const campaigns = await tx.campaign.findMany({ where, include, orderBy, skip, take: parsed.limit });
+        return { campaigns, total, page };
+      });
+
+      const totalPages = Math.ceil(total / parsed.limit);
+      res.json({ data, pagination: { page, limit: parsed.limit, total, totalPages } });
+      return;
+    }
+
+    // No page param: return plain array (backward compatibility)
+    const campaigns = await prisma.campaign.findMany({ where, include, orderBy });
     res.json(campaigns);
   } catch (error) {
     console.error('Error fetching campaigns:', error);

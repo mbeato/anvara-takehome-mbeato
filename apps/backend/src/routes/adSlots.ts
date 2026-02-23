@@ -60,7 +60,7 @@ router.get('/', async (req: AuthRequest, res: Response) => {
       return;
     }
 
-    const { type, available } = req.query;
+    const { type, available, sort, order, search } = req.query;
 
     const where = {
       ...(user.role === 'PUBLISHER' && { publisherId: user.publisherId }),
@@ -68,6 +68,9 @@ router.get('/', async (req: AuthRequest, res: Response) => {
         type: type as string as 'DISPLAY' | 'VIDEO' | 'NATIVE' | 'NEWSLETTER' | 'PODCAST',
       }),
       ...(available === 'true' && { isAvailable: true }),
+      ...(search && {
+        name: { contains: String(search), mode: 'insensitive' as const },
+      }),
     };
 
     const include = {
@@ -75,7 +78,12 @@ router.get('/', async (req: AuthRequest, res: Response) => {
       _count: { select: { placements: true } },
     } as const;
 
-    const orderBy = { basePrice: 'desc' } as const;
+    const allowedSorts = ['createdAt', 'basePrice', 'name'] as const;
+    const sortField = allowedSorts.includes(sort as (typeof allowedSorts)[number])
+      ? (sort as string)
+      : 'basePrice';
+    const sortOrder = order === 'asc' ? 'asc' : 'desc';
+    const orderBy = { [sortField]: sortOrder };
 
     // If page param is present, return paginated response
     if (req.query.page !== undefined) {
