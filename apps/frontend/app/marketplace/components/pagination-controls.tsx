@@ -58,7 +58,7 @@ export function PaginationControls({ currentPage, totalPages, total: _total, lim
   };
 
   const buttonClass =
-    'text-sm font-medium text-[--color-primary] hover:underline disabled:opacity-50 disabled:pointer-events-none';
+    'text-sm font-medium text-[var(--color-primary)] hover:underline disabled:opacity-50 disabled:pointer-events-none';
 
   return (
     <nav
@@ -85,7 +85,7 @@ export function PaginationControls({ currentPage, totalPages, total: _total, lim
           </>
         )}
       </div>
-      <span className="flex items-center justify-center gap-2 text-sm text-[--color-muted]">
+      <span className="flex items-center justify-center gap-2 text-sm text-[var(--color-muted)]">
         <input
           type="text"
           inputMode="numeric"
@@ -94,7 +94,7 @@ export function PaginationControls({ currentPage, totalPages, total: _total, lim
           onKeyDown={handleKeyDown}
           onBlur={handleBlur}
           disabled={isPending}
-          className="w-12 rounded border border-[--color-border] bg-[--color-background] px-1 py-0.5 text-center text-sm text-[--color-foreground]"
+          className="w-12 rounded border border-[var(--color-border)] bg-[var(--color-background)] px-1 py-0.5 text-center text-sm text-[var(--color-foreground)]"
           aria-label="Page number"
         />
         of {totalPages} pages

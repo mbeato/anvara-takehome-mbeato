@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { authClient } from '@/auth-client';
@@ -47,16 +48,16 @@ export function Nav() {
   // The current page's link should be highlighted differently
 
   return (
-    <header className="border-b border-[--color-border]">
+    <header className="border-b border-[var(--color-border)]">
       <nav className="mx-auto flex max-w-6xl items-center justify-between p-4">
-        <Link href="/" className="text-xl font-bold text-[--color-primary]">
-          Anvara
+        <Link href="/">
+          <Image src="/logo.png" alt="Anvara" width={120} height={21} priority />
         </Link>
 
         <div className="flex items-center gap-6">
           <Link
             href="/marketplace"
-            className="text-[--color-muted] hover:text-[--color-foreground]"
+            className="text-[var(--color-muted)] hover:text-[var(--color-foreground)]"
           >
             Marketplace
           </Link>
@@ -64,7 +65,7 @@ export function Nav() {
           {user && effectiveRole === 'sponsor' && (
             <Link
               href="/dashboard/sponsor"
-              className="text-[--color-muted] hover:text-[--color-foreground]"
+              className="text-[var(--color-muted)] hover:text-[var(--color-foreground)]"
             >
               My Campaigns
             </Link>
@@ -72,17 +73,17 @@ export function Nav() {
           {user && effectiveRole === 'publisher' && (
             <Link
               href="/dashboard/publisher"
-              className="text-[--color-muted] hover:text-[--color-foreground]"
+              className="text-[var(--color-muted)] hover:text-[var(--color-foreground)]"
             >
               My Ad Slots
             </Link>
           )}
 
           {isPending ? (
-            <span className="text-[--color-muted]">...</span>
+            <span className="text-[var(--color-muted)]">...</span>
           ) : user ? (
             <div className="flex items-center gap-4">
-              <span className="text-sm text-[--color-muted]">
+              <span className="text-sm text-[var(--color-muted)]">
                 {user.name} {effectiveRole && `(${effectiveRole})`}
               </span>
               <button
@@ -103,7 +104,7 @@ export function Nav() {
           ) : (
             <Link
               href="/login"
-              className="rounded bg-[--color-primary] px-4 py-2 text-sm text-white hover:bg-[--color-primary-hover]"
+              className="rounded bg-[var(--color-primary)] px-4 py-2 text-sm text-white hover:bg-[var(--color-primary-hover)]"
             >
               Login
             </Link>

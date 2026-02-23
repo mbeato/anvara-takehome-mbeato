@@ -79,10 +79,10 @@ export function NewsletterForm() {
 
   return (
     <div>
-      <h3 className="text-lg font-semibold text-[--color-foreground]">
+      <h3 className="text-lg font-semibold text-[var(--color-foreground)]">
         Stay in the Loop
       </h3>
-      <p className="mt-1 text-sm text-[--color-muted]">
+      <p className="mt-1 text-sm text-[var(--color-muted)]">
         Get the latest on new ad slots, publisher partnerships, and marketplace
         updates.
       </p>
@@ -101,12 +101,12 @@ export function NewsletterForm() {
             aria-describedby="newsletter-feedback"
             aria-invalid={status === 'error'}
             disabled={status === 'submitting'}
-            className="flex-1 rounded border border-[--color-border] bg-[--color-background] px-3 py-2 text-sm text-[--color-foreground] placeholder:text-[--color-muted] focus:outline-none focus:ring-2 focus:ring-[--color-primary] disabled:opacity-50"
+            className="flex-1 rounded border border-[var(--color-border)] bg-[var(--color-background)] px-3 py-2 text-sm text-[var(--color-foreground)] placeholder:text-[var(--color-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] disabled:opacity-50"
           />
           <button
             type="submit"
             disabled={status === 'submitting'}
-            className="rounded bg-[--color-primary] px-4 py-2 text-sm text-white hover:opacity-90 disabled:opacity-50"
+            className="rounded bg-[var(--color-primary)] px-4 py-2 text-sm text-white hover:opacity-90 disabled:opacity-50"
           >
             {status === 'submitting' ? (
               <>

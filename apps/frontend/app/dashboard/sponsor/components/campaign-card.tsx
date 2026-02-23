@@ -43,16 +43,16 @@ export function CampaignCard({ campaign }: CampaignCardProps) {
 
   return (
     <>
-      <div className="rounded-lg border border-[--color-border] bg-[--color-background] p-4 shadow-sm transition-shadow hover:shadow-md">
+      <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-background)] p-4 shadow-sm transition-shadow hover:shadow-md">
         {/* Header: title + icon buttons */}
         <div className="flex items-start justify-between gap-2">
-          <h3 className="font-semibold text-[--color-foreground]">{campaign.name}</h3>
+          <h3 className="font-semibold text-[var(--color-foreground)]">{campaign.name}</h3>
           <div className="flex shrink-0 gap-1">
             <button
               type="button"
               onClick={() => setShowEditForm(true)}
               aria-label="Edit campaign"
-              className="rounded p-1.5 text-[--color-muted] transition-colors hover:bg-[--color-border] hover:text-[--color-foreground]"
+              className="rounded p-1.5 text-[var(--color-muted)] transition-colors hover:bg-[var(--color-border)] hover:text-[var(--color-foreground)]"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -79,7 +79,7 @@ export function CampaignCard({ campaign }: CampaignCardProps) {
               <button
                 type="submit"
                 aria-label="Delete campaign"
-                className="rounded p-1.5 text-[--color-muted] transition-colors hover:bg-red-50 hover:text-red-600"
+                className="rounded p-1.5 text-[var(--color-muted)] transition-colors hover:bg-red-50 hover:text-red-600"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -103,28 +103,28 @@ export function CampaignCard({ campaign }: CampaignCardProps) {
 
         {/* Description -- 2-line clamp */}
         {campaign.description && (
-          <p className="mt-2 text-sm text-[--color-muted] line-clamp-2">{campaign.description}</p>
+          <p className="mt-2 text-sm text-[var(--color-muted)] line-clamp-2">{campaign.description}</p>
         )}
 
         {/* Status indicator: colored dot + text */}
         <div className="mt-3 flex items-center gap-2">
           <span className={`inline-block h-2 w-2 rounded-full ${dotColor}`} />
-          <span className="text-sm text-[--color-foreground]">
+          <span className="text-sm text-[var(--color-foreground)]">
             {formatStatusLabel(campaign.status)}
           </span>
         </div>
 
         {/* Key-value data pairs */}
-        <div className="mt-3 space-y-1.5 border-t border-[--color-border] pt-3 text-sm">
+        <div className="mt-3 space-y-1.5 border-t border-[var(--color-border)] pt-3 text-sm">
           <div className="flex justify-between">
-            <span className="text-[--color-muted]">Dates</span>
-            <span className="text-[--color-foreground]">
+            <span className="text-[var(--color-muted)]">Dates</span>
+            <span className="text-[var(--color-foreground)]">
               {formatDate(campaign.startDate)} &ndash; {formatDate(campaign.endDate)}
             </span>
           </div>
           <div className="flex justify-between">
-            <span className="text-[--color-muted]">Budget</span>
-            <span className="font-medium text-[--color-foreground]">
+            <span className="text-[var(--color-muted)]">Budget</span>
+            <span className="font-medium text-[var(--color-foreground)]">
               ${Number(campaign.budget).toLocaleString()}
             </span>
           </div>

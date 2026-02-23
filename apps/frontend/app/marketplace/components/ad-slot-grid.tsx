@@ -29,7 +29,7 @@ export function AdSlotGrid({ adSlots }: Props) {
         <Link
           key={slot.id}
           href={`/marketplace/${slot.id}`}
-          className="block rounded-lg border border-[--color-border] p-4 transition-shadow hover:shadow-md"
+          className="block rounded-lg border border-[var(--color-border)] p-4 transition-shadow hover:shadow-md"
         >
           <div className="mb-2 flex items-start justify-between">
             <h3 className="font-semibold">{slot.name}</h3>
@@ -41,20 +41,20 @@ export function AdSlotGrid({ adSlots }: Props) {
           </div>
 
           {slot.publisher && (
-            <p className="mb-2 text-sm text-[--color-muted]">by {slot.publisher.name}</p>
+            <p className="mb-2 text-sm text-[var(--color-muted)]">by {slot.publisher.name}</p>
           )}
 
           {slot.description && (
-            <p className="mb-3 text-sm text-[--color-muted] line-clamp-2">{slot.description}</p>
+            <p className="mb-3 text-sm text-[var(--color-muted)] line-clamp-2">{slot.description}</p>
           )}
 
           <div className="flex items-center justify-between">
             <span
-              className={`text-sm ${slot.isAvailable ? 'text-green-600' : 'text-[--color-muted]'}`}
+              className={`text-sm ${slot.isAvailable ? 'text-green-600' : 'text-[var(--color-muted)]'}`}
             >
               {slot.isAvailable ? 'Available' : 'Booked'}
             </span>
-            <span className="font-semibold text-[--color-primary]">
+            <span className="font-semibold text-[var(--color-primary)]">
               ${Number(slot.basePrice).toLocaleString()}/mo
             </span>
           </div>

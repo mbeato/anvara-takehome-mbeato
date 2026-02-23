@@ -41,14 +41,14 @@ export function Modal({ open, onClose, title, size = 'md', children }: ModalProp
         }
       }}
     >
-      <div className="rounded-lg bg-[--color-background] p-6">
+      <div className="rounded-lg bg-[var(--color-background)] p-6">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-[--color-foreground]">{title}</h2>
+          <h2 className="text-lg font-semibold text-[var(--color-foreground)]">{title}</h2>
           <button
             type="button"
             onClick={onClose}
             aria-label="Close"
-            className="rounded p-1 text-[--color-muted] hover:bg-[--color-border] transition-colors"
+            className="rounded p-1 text-[var(--color-muted)] hover:bg-[var(--color-border)] transition-colors"
           >
             <svg
               width="20"

@@ -30,20 +30,20 @@ export function AdSlotCard({ adSlot }: AdSlotCardProps) {
 
   const availabilityDot = adSlot.isAvailable ? 'bg-green-500' : 'bg-gray-400';
   const availabilityLabel = adSlot.isAvailable ? 'Available' : 'Booked';
-  const typeColor = typeTextColors[adSlot.type] || 'text-[--color-foreground]';
+  const typeColor = typeTextColors[adSlot.type] || 'text-[var(--color-foreground)]';
 
   return (
     <>
-      <div className="rounded-lg border border-[--color-border] bg-[--color-background] p-4 shadow-sm transition-shadow hover:shadow-md">
+      <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-background)] p-4 shadow-sm transition-shadow hover:shadow-md">
         {/* Header: title + icon buttons */}
         <div className="flex items-start justify-between gap-2">
-          <h3 className="font-semibold text-[--color-foreground]">{adSlot.name}</h3>
+          <h3 className="font-semibold text-[var(--color-foreground)]">{adSlot.name}</h3>
           <div className="flex shrink-0 gap-1">
             <button
               type="button"
               onClick={() => setShowEditForm(true)}
               aria-label="Edit ad slot"
-              className="rounded p-1.5 text-[--color-muted] transition-colors hover:bg-[--color-border] hover:text-[--color-foreground]"
+              className="rounded p-1.5 text-[var(--color-muted)] transition-colors hover:bg-[var(--color-border)] hover:text-[var(--color-foreground)]"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -70,7 +70,7 @@ export function AdSlotCard({ adSlot }: AdSlotCardProps) {
               <button
                 type="submit"
                 aria-label="Delete ad slot"
-                className="rounded p-1.5 text-[--color-muted] transition-colors hover:bg-red-50 hover:text-red-600"
+                className="rounded p-1.5 text-[var(--color-muted)] transition-colors hover:bg-red-50 hover:text-red-600"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -94,24 +94,24 @@ export function AdSlotCard({ adSlot }: AdSlotCardProps) {
 
         {/* Description -- 2-line clamp */}
         {adSlot.description && (
-          <p className="mt-2 text-sm text-[--color-muted] line-clamp-2">{adSlot.description}</p>
+          <p className="mt-2 text-sm text-[var(--color-muted)] line-clamp-2">{adSlot.description}</p>
         )}
 
         {/* Availability indicator: colored dot + text */}
         <div className="mt-3 flex items-center gap-2">
           <span className={`inline-block h-2 w-2 rounded-full ${availabilityDot}`} />
-          <span className="text-sm text-[--color-foreground]">{availabilityLabel}</span>
+          <span className="text-sm text-[var(--color-foreground)]">{availabilityLabel}</span>
         </div>
 
         {/* Key-value data pairs */}
-        <div className="mt-3 space-y-1.5 border-t border-[--color-border] pt-3 text-sm">
+        <div className="mt-3 space-y-1.5 border-t border-[var(--color-border)] pt-3 text-sm">
           <div className="flex justify-between">
-            <span className="text-[--color-muted]">Type</span>
+            <span className="text-[var(--color-muted)]">Type</span>
             <span className={`font-medium ${typeColor}`}>{formatTypeLabel(adSlot.type)}</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-[--color-muted]">Price</span>
-            <span className="font-medium text-[--color-foreground]">
+            <span className="text-[var(--color-muted)]">Price</span>
+            <span className="font-medium text-[var(--color-foreground)]">
               ${Number(adSlot.basePrice).toLocaleString()}/mo
             </span>
           </div>

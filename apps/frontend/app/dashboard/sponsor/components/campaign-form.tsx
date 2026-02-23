@@ -153,7 +153,7 @@ export function CreateCampaignButton() {
     <>
       <button
         onClick={() => setOpen(true)}
-        className="inline-flex items-center gap-2 rounded-lg bg-[--color-primary] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[--color-primary-hover]"
+        className="inline-flex items-center gap-2 rounded-lg bg-[var(--color-primary)] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[var(--color-primary-hover)]"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
