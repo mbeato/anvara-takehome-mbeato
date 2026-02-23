@@ -45,10 +45,10 @@ export default async function MarketplacePage({ searchParams }: Props) {
   const totalPages = pagination?.totalPages ?? 1;
 
   return (
-    <div className="space-y-6">
+    <div className="mx-auto max-w-6xl space-y-6 px-4 py-4">
       <div>
         <h1 className="text-2xl font-bold">Marketplace</h1>
-        <p className="text-[--color-muted]">Browse available ad slots from our publishers</p>
+        <p className="text-[var(--color-muted)]">Browse available ad slots from our publishers</p>
       </div>
 
       {fetchError ? (
@@ -56,7 +56,7 @@ export default async function MarketplacePage({ searchParams }: Props) {
       ) : (
         <>
           {pagination && pagination.total > 0 && (
-            <p className="text-sm text-[--color-muted]">
+            <p className="text-sm text-[var(--color-muted)]">
               Showing {(currentPage - 1) * pagination.limit + 1}–{Math.min(currentPage * pagination.limit, pagination.total)} of {pagination.total} results
             </p>
           )}

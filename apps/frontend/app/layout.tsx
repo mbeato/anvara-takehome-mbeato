@@ -24,7 +24,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={`${inter.variable} ${plusJakartaSans.variable}`}>
       <body className="flex min-h-screen flex-col antialiased font-[family-name:var(--font-inter)]">
         <Nav />
-        <main className="mx-auto max-w-6xl flex-grow p-4">{children}</main>
+        <main className="flex-grow">{children}</main>
         <footer className="mt-16 border-t border-[var(--color-border)]">
           <div className="mx-auto max-w-6xl px-4 py-12">
             <div className="flex flex-col items-start justify-between gap-8 md:flex-row md:items-center">

@@ -66,12 +66,12 @@ export default async function PublisherDashboard() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="mx-auto max-w-6xl space-y-6 px-4 py-4">
       {/* Header: title + subtitle + create button */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">My Ad Slots</h1>
-          <p className="mt-1 text-sm text-[--color-muted]">
+          <p className="mt-1 text-sm text-[var(--color-muted)]">
             Manage your advertising inventory
           </p>
         </div>
