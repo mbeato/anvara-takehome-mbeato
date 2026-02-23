@@ -4,6 +4,7 @@ import { useActionState, useEffect, useRef, useState } from 'react';
 import { createAdSlot, updateAdSlot } from '../actions';
 import type { ActionState } from '../actions';
 import { SubmitButton } from '@/app/components/submit-button';
+import { Modal } from '@/app/components/modal';
 import type { AdSlot } from '@/lib/types';
 
 interface AdSlotFormProps {
@@ -121,19 +122,28 @@ export function CreateAdSlotButton() {
     <>
       <button
         onClick={() => setOpen(true)}
-        className="rounded-lg bg-[--color-primary] px-4 py-2 font-semibold text-white hover:opacity-90"
+        className="inline-flex items-center gap-2 rounded-lg bg-[--color-primary] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[--color-primary-hover]"
       >
-        Create Ad Slot
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={2}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <line x1="12" y1="5" x2="12" y2="19" />
+          <line x1="5" y1="12" x2="19" y2="12" />
+        </svg>
+        New Ad Slot
       </button>
 
-      {open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="w-full max-w-lg rounded-lg bg-white p-6 text-gray-900 shadow-xl">
-            <h2 className="mb-4 text-lg font-semibold">Create Ad Slot</h2>
-            <AdSlotForm onClose={() => setOpen(false)} />
-          </div>
-        </div>
-      )}
+      <Modal open={open} onClose={() => setOpen(false)} title="New Ad Slot" size="md">
+        <AdSlotForm onClose={() => setOpen(false)} />
+      </Modal>
     </>
   );
 }
