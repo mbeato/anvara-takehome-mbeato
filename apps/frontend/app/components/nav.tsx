@@ -3,11 +3,14 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation';
 import { authClient } from '@/auth-client';
 
 type UserRole = 'sponsor' | 'publisher' | null;
 
 export function Nav() {
+  const pathname = usePathname();
+  const isLoginPage = pathname === '/login';
   const { data: session, isPending } = authClient.useSession();
   const user = session?.user;
   const [role, setRole] = useState<UserRole>(null);
@@ -92,7 +95,7 @@ export function Nav() {
         Logout
       </button>
     </div>
-  ) : (
+  ) : isLoginPage ? null : (
     <Link
       href="/login"
       className="rounded bg-[var(--color-primary)] px-4 py-2 text-sm text-white hover:bg-[var(--color-primary-hover)]"
@@ -103,7 +106,7 @@ export function Nav() {
   );
 
   return (
-    <header className="border-b border-[var(--color-border)]">
+    <header className={`relative z-10 border-b ${isLoginPage ? 'border-transparent bg-transparent' : 'border-[var(--color-border)]'}`}>
       <nav className="mx-auto flex max-w-6xl items-center justify-between p-4">
         <Link href="/">
           <Image src="/logo.png" alt="Anvara" width={120} height={21} priority />
@@ -117,7 +120,7 @@ export function Nav() {
 
         {/* Mobile: Login always visible; hamburger only when logged in */}
         <div className="flex items-center gap-3 md:hidden">
-          {!user && !isPending && (
+          {!user && !isPending && !isLoginPage && (
             <Link
               href="/login"
               className="rounded bg-[var(--color-primary)] px-4 py-2 text-sm text-white hover:bg-[var(--color-primary-hover)]"

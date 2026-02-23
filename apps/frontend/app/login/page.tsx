@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { useState } from 'react';
 import { authClient } from '@/auth-client';
 
@@ -70,8 +71,32 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex flex-1 items-center justify-center px-4">
-      <div className="w-full max-w-md rounded-lg border border-[var(--color-border)] p-6 shadow-sm">
+    <div
+      className="relative -mt-[65px] flex flex-1 min-h-dvh items-center justify-center overflow-hidden px-4 pt-[65px]"
+      style={{
+        background: 'linear-gradient(135deg, #eef2ff 0%, #f0e8ff 40%, #e8f0fe 70%, #f5f3ff 100%)',
+      }}
+    >
+      {/* Subtle dot pattern overlay */}
+      <div
+        className="pointer-events-none absolute inset-0 opacity-[0.04]"
+        style={{
+          backgroundImage: 'radial-gradient(circle, #2346f9 1px, transparent 1px)',
+          backgroundSize: '24px 24px',
+        }}
+      />
+
+      <div className="w-full max-w-md rounded-xl border border-white/60 bg-white/80 p-6 shadow-lg backdrop-blur-sm">
+        <Link
+          href="/"
+          className="mb-4 inline-flex items-center gap-1 text-sm text-[var(--color-muted)] hover:text-[var(--color-foreground)]"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M19 12H5" />
+            <path d="m12 19-7-7 7-7" />
+          </svg>
+          Back to home
+        </Link>
         <h1 className="mb-6 text-2xl font-bold">Login to Anvara</h1>
 
         {error && (
