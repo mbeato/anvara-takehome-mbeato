@@ -6,7 +6,6 @@ import type {
   Placement,
   CreatePlacementRequest,
   DashboardStats,
-  PaginatedAdSlotResponse,
 } from './types';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4291';
@@ -40,8 +39,6 @@ export const deleteCampaign = (id: string) =>
 // Ad Slots
 export const getAdSlots = (publisherId?: string) =>
   api<AdSlot[]>(publisherId ? `/api/ad-slots?publisherId=${publisherId}` : '/api/ad-slots');
-export const getAdSlotsPaginated = (page: number, limit = 12) =>
-  api<PaginatedAdSlotResponse>(`/api/ad-slots?page=${page}&limit=${limit}`);
 export const getAdSlot = (id: string) => api<AdSlot>(`/api/ad-slots/${id}`);
 export const createAdSlot = (data: CreateAdSlotRequest) =>
   api<AdSlot>('/api/ad-slots', { method: 'POST', body: JSON.stringify(data) });
