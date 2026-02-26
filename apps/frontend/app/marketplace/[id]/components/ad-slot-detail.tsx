@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { getAdSlot } from '@/lib/api';
 import { authClient } from '@/auth-client';
 import type { AdSlot } from '@/lib/types';
+import { QuoteRequestButton } from './quote-request-button';
 
 interface User {
   id: string;
@@ -210,60 +211,77 @@ export function AdSlotDetail({ id }: Props) {
         </div>
 
         {adSlot.isAvailable && !bookingSuccess && (
-          <div className="mt-6 border-t border-[var(--color-border)] pt-6">
-            <h2 className="mb-4 text-lg font-semibold">Request This Placement</h2>
+          <>
+            <div className="mt-6 border-t border-[var(--color-border)] pt-6">
+              <h2 className="mb-4 text-lg font-semibold">Request This Placement</h2>
 
-            {roleLoading ? (
-              <div className="py-4 text-center text-[var(--color-muted)]">Loading...</div>
-            ) : roleInfo?.role === 'sponsor' && roleInfo?.sponsorId ? (
-              <div className="space-y-4">
-                <div>
-                  <label className="mb-1 block text-sm font-medium text-[var(--color-muted)]">
-                    Your Company
-                  </label>
-                  <p className="text-[var(--color-foreground)]">{roleInfo.name || user?.name}</p>
-                </div>
-                <div>
-                  <label
-                    htmlFor="message"
-                    className="mb-1 block text-sm font-medium text-[var(--color-muted)]"
+              {roleLoading ? (
+                <div className="py-4 text-center text-[var(--color-muted)]">Loading...</div>
+              ) : roleInfo?.role === 'sponsor' && roleInfo?.sponsorId ? (
+                <div className="space-y-4">
+                  <div>
+                    <label className="mb-1 block text-sm font-medium text-[var(--color-muted)]">
+                      Your Company
+                    </label>
+                    <p className="text-[var(--color-foreground)]">{roleInfo.name || user?.name}</p>
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="message"
+                      className="mb-1 block text-sm font-medium text-[var(--color-muted)]"
+                    >
+                      Message to Publisher (optional)
+                    </label>
+                    <textarea
+                      id="message"
+                      value={message}
+                      onChange={(e) => setMessage(e.target.value)}
+                      placeholder="Tell the publisher about your campaign goals..."
+                      className="w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-background)] px-3 py-2 text-[var(--color-foreground)] placeholder:text-[var(--color-muted)] focus:border-[var(--color-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)]"
+                      rows={3}
+                    />
+                  </div>
+                  {bookingError && <p className="text-sm text-red-600">{bookingError}</p>}
+                  <button
+                    onClick={handleBooking}
+                    disabled={booking}
+                    className="w-full rounded-lg bg-[var(--color-primary)] px-4 py-3 font-semibold text-white transition-colors hover:opacity-90 disabled:opacity-50"
                   >
-                    Message to Publisher (optional)
-                  </label>
-                  <textarea
-                    id="message"
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    placeholder="Tell the publisher about your campaign goals..."
-                    className="w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-background)] px-3 py-2 text-[var(--color-foreground)] placeholder:text-[var(--color-muted)] focus:border-[var(--color-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)]"
-                    rows={3}
-                  />
+                    {booking ? 'Booking...' : 'Book This Placement'}
+                  </button>
                 </div>
-                {bookingError && <p className="text-sm text-red-600">{bookingError}</p>}
-                <button
-                  onClick={handleBooking}
-                  disabled={booking}
-                  className="w-full rounded-lg bg-[var(--color-primary)] px-4 py-3 font-semibold text-white transition-colors hover:opacity-90 disabled:opacity-50"
-                >
-                  {booking ? 'Booking...' : 'Book This Placement'}
-                </button>
-              </div>
-            ) : (
-              <div>
-                <button
-                  disabled
-                  className="w-full cursor-not-allowed rounded-lg bg-gray-300 px-4 py-3 font-semibold text-gray-500"
-                >
-                  Request This Placement
-                </button>
-                <p className="mt-2 text-center text-sm text-[var(--color-muted)]">
-                  {user
-                    ? 'Only sponsors can request placements'
-                    : 'Log in as a sponsor to request this placement'}
-                </p>
-              </div>
-            )}
-          </div>
+              ) : (
+                <div>
+                  <button
+                    disabled
+                    className="w-full cursor-not-allowed rounded-lg bg-gray-300 px-4 py-3 font-semibold text-gray-500"
+                  >
+                    Request This Placement
+                  </button>
+                  <p className="mt-2 text-center text-sm text-[var(--color-muted)]">
+                    {user
+                      ? 'Only sponsors can request placements'
+                      : 'Log in as a sponsor to request this placement'}
+                  </p>
+                </div>
+              )}
+            </div>
+
+            <div className="mt-4">
+              <QuoteRequestButton
+                adSlot={{
+                  id: adSlot.id,
+                  name: adSlot.name,
+                  basePrice: String(adSlot.basePrice),
+                  publisher: adSlot.publisher ? { name: adSlot.publisher.name } : undefined,
+                }}
+                user={user}
+              />
+              <p className="mt-2 text-center text-xs text-[var(--color-muted)]">
+                Get custom pricing for this placement
+              </p>
+            </div>
+          </>
         )}
 
         {bookingSuccess && (
