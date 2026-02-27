@@ -4,6 +4,7 @@ import './globals.css';
 import { inter, plusJakartaSans } from './fonts';
 import { Nav } from './components/nav';
 import { Footer } from './components/footer';
+import { MotionProvider } from './components/motion-provider';
 
 // TODO: Add ErrorBoundary wrapper for graceful error handling
 // TODO: Consider adding a loading.tsx for Suspense boundaries
@@ -30,11 +31,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${inter.variable} ${plusJakartaSans.variable}`}>
       <body className="flex min-h-screen flex-col antialiased font-[family-name:var(--font-inter)]">
-        <Nav />
-        <div className="flex flex-1 flex-col transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] [[data-menu-open='true']_&]:-translate-x-[280px]">
-          <main className="flex flex-1 flex-col">{children}</main>
-          <Footer />
-        </div>
+        <MotionProvider>
+          <Nav />
+          <div className="flex flex-1 flex-col transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] [[data-menu-open='true']_&]:-translate-x-[280px]">
+            <main className="flex flex-1 flex-col">{children}</main>
+            <Footer />
+          </div>
+        </MotionProvider>
       </body>
       {process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID && (
         <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID} />
