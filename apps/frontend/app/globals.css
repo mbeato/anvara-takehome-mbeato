@@ -156,10 +156,25 @@ html[data-menu-open='true'] body {
   overflow-x: hidden;
 }
 
-/* On desktop, never restrict overflow regardless of data attribute */
+/* On desktop, never push content regardless of data attribute */
 @media (width >= 48rem) {
   html[data-menu-open='true'] body {
     overflow-x: visible;
+  }
+}
+
+/* ============================================================================
+ * Reduced Motion: disable ALL animations and transitions for a11y
+ * ============================================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
 
