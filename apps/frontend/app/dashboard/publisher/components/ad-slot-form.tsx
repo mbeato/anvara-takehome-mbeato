@@ -4,6 +4,7 @@ import { useActionState, useEffect, useRef, useState } from 'react';
 import { createAdSlot, updateAdSlot } from '../actions';
 import type { ActionState } from '../actions';
 import { SubmitButton } from '@/app/components/submit-button';
+import { trackAdSlotCreateAttempt, trackAdSlotCreate } from '@/lib/analytics';
 import { Modal } from '@/app/components/modal';
 import type { AdSlot } from '@/lib/types';
 
@@ -18,17 +19,27 @@ export function AdSlotForm({ adSlot, onClose }: AdSlotFormProps) {
   const [state, formAction] = useActionState(action, initialState);
   const formRef = useRef<HTMLFormElement>(null);
 
+  const handleSubmit = (formData: FormData) => {
+    if (!adSlot) {
+      trackAdSlotCreateAttempt();
+    }
+    formAction(formData);
+  };
+
   useEffect(() => {
     if (state.success) {
+      if (!adSlot) {
+        trackAdSlotCreate('new');
+      }
       onClose?.();
     }
-  }, [state.success, onClose]);
+  }, [state.success, onClose, adSlot]);
 
   const inputClass =
     'mt-1 w-full rounded border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 min-h-[44px]';
 
   return (
-    <form ref={formRef} action={formAction} className="space-y-4">
+    <form ref={formRef} action={handleSubmit} className="space-y-4">
       {adSlot && <input type="hidden" name="id" value={adSlot.id} />}
 
       <div>

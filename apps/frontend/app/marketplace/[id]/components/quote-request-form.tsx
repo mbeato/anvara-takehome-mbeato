@@ -1,9 +1,10 @@
 'use client';
 
-import { useActionState, useState } from 'react';
+import { useActionState, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { requestQuote, type QuoteActionState } from '../actions';
 import { SubmitButton } from '@/app/components/submit-button';
+import { trackQuoteRequestAttempt, trackQuoteRequest } from '@/lib/analytics';
 
 interface QuoteRequestFormProps {
   adSlot: {
@@ -59,6 +60,17 @@ export function QuoteRequestForm({ adSlot, user, onClose }: QuoteRequestFormProp
     const { name } = e.target;
     setBlurErrors((prev) => ({ ...prev, [name]: '' }));
   };
+
+  const handleSubmit = (formData: FormData) => {
+    trackQuoteRequestAttempt(adSlot.id);
+    formAction(formData);
+  };
+
+  useEffect(() => {
+    if (state.success) {
+      trackQuoteRequest(adSlot.id);
+    }
+  }, [state.success, adSlot.id]);
 
   const getError = (name: string): string | undefined => {
     return blurErrors[name] || state.fieldErrors?.[name] || undefined;
@@ -137,7 +149,7 @@ export function QuoteRequestForm({ adSlot, user, onClose }: QuoteRequestFormProp
         </p>
       </div>
 
-      <form action={formAction} className="space-y-4">
+      <form action={handleSubmit} className="space-y-4">
         <input type="hidden" name="adSlotId" value={adSlot.id} />
 
         {/* Contact Information */}

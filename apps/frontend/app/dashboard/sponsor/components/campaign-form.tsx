@@ -4,6 +4,7 @@ import { useActionState, useEffect, useRef, useState } from 'react';
 import { createCampaign, updateCampaign } from '../actions';
 import type { ActionState } from '../actions';
 import { SubmitButton } from '@/app/components/submit-button';
+import { trackCampaignCreateAttempt, trackCampaignCreate } from '@/lib/analytics';
 import { Modal } from '@/app/components/modal';
 import type { Campaign } from '@/lib/types';
 
@@ -18,17 +19,27 @@ export function CampaignForm({ campaign, onClose }: CampaignFormProps) {
   const [state, formAction] = useActionState(action, initialState);
   const formRef = useRef<HTMLFormElement>(null);
 
+  const handleSubmit = (formData: FormData) => {
+    if (!campaign) {
+      trackCampaignCreateAttempt();
+    }
+    formAction(formData);
+  };
+
   useEffect(() => {
     if (state.success) {
+      if (!campaign) {
+        trackCampaignCreate('new');
+      }
       onClose?.();
     }
-  }, [state.success, onClose]);
+  }, [state.success, onClose, campaign]);
 
   const inputClass =
     'mt-1 w-full rounded border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 min-h-[44px]';
 
   return (
-    <form ref={formRef} action={formAction} className="space-y-4">
+    <form ref={formRef} action={handleSubmit} className="space-y-4">
       {campaign && <input type="hidden" name="id" value={campaign.id} />}
 
       <div>

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { trackNewsletterSignupAttempt, trackNewsletterSignup } from '@/lib/analytics';
 
 type Status = 'idle' | 'submitting' | 'success' | 'error' | 'duplicate';
 
@@ -50,6 +51,7 @@ export function NewsletterForm() {
     }
 
     setStatus('submitting');
+    trackNewsletterSignupAttempt();
 
     try {
       const response = await fetch(`${API_URL}/api/newsletter/subscribe`, {
@@ -71,6 +73,7 @@ export function NewsletterForm() {
       // Artificial delay so the user sees the loading spinner
       await new Promise((resolve) => setTimeout(resolve, 1500));
       setStatus('success');
+      trackNewsletterSignup();
     } catch {
       setStatus('error');
       setErrorMessage('Unable to connect. Please try again later.');

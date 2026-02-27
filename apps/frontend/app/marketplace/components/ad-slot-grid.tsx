@@ -1,6 +1,9 @@
+'use client';
+
 import Link from 'next/link';
 import type { AdSlot } from '@/lib/types';
 import { EmptyState } from '@/app/components/empty-state';
+import { trackMarketplaceClick } from '@/lib/analytics';
 
 const typeColors: Record<string, string> = {
   DISPLAY: 'bg-blue-100 text-blue-700',
@@ -29,6 +32,7 @@ export function AdSlotGrid({ adSlots }: Props) {
         <Link
           key={slot.id}
           href={`/marketplace/${slot.id}`}
+          onClick={() => trackMarketplaceClick(slot.id)}
           className="block rounded-lg border border-[var(--color-border)] p-4 transition-shadow hover:shadow-md"
         >
           <div className="mb-2 flex items-start justify-between">
