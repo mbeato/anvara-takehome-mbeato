@@ -5,7 +5,7 @@ import { track } from '@/lib/analytics';
 
 export function useTrackView(
   eventName: string,
-  params?: Record<string, string | number | boolean>
+  params?: Record<string, unknown>
 ): void {
   const hasFired = useRef(false);
 

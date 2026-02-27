@@ -9,10 +9,10 @@ function getUserType(): string {
 
 export function track(
   eventName: string,
-  params?: Record<string, string | number | boolean>
+  params?: Record<string, unknown>
 ): void {
   const activeVariants = getActiveVariants();
-  const enrichedParams: Record<string, string | number | boolean> = {
+  const enrichedParams: Record<string, unknown> = {
     ...activeVariants,
     user_type: getUserType(),
     ...params,
