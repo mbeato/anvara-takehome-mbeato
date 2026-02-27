@@ -24,7 +24,7 @@ export const EASE = {
 
 /** Stagger delay between sequential child animations (seconds) */
 export const STAGGER = {
-  fast: 0.05,
+  fast: 0.08,
   normal: 0.1,
   slow: 0.15,
 } as const;
