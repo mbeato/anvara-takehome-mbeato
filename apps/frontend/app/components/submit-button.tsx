@@ -12,7 +12,7 @@ export function SubmitButton({
     <button
       type="submit"
       disabled={pending}
-      className="rounded-lg bg-[var(--color-primary)] px-4 py-2 font-semibold text-white hover:bg-[var(--color-primary-hover)] disabled:opacity-50"
+      className="min-h-[44px] rounded-lg bg-[var(--color-primary)] px-4 py-2.5 font-semibold text-white hover:bg-[var(--color-primary-hover)] disabled:opacity-50"
       {...props}
     >
       {pending ? 'Saving...' : children}

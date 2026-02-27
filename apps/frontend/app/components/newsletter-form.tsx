@@ -85,7 +85,7 @@ export function NewsletterForm() {
       <p className="mt-1 text-sm text-[var(--color-muted)]">
         New ad slots, publisher partnerships, and marketplace updates — straight to your inbox.
       </p>
-      <form ref={formRef} onSubmit={handleSubmit} className="mt-3 flex gap-2">
+      <form ref={formRef} onSubmit={handleSubmit} className="mt-3 flex flex-col gap-2 sm:flex-row">
         <input
           ref={inputRef}
           id="newsletter-email"
@@ -96,12 +96,12 @@ export function NewsletterForm() {
           aria-describedby="newsletter-feedback"
           aria-invalid={status === 'error'}
           disabled={status === 'submitting'}
-          className="flex-1 rounded border border-[var(--color-border)] bg-[var(--color-background)] px-3 py-2 text-sm text-[var(--color-foreground)] placeholder:text-[var(--color-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] disabled:opacity-50"
+          className="flex-1 min-h-[44px] rounded border border-[var(--color-border)] bg-[var(--color-background)] px-3 py-2.5 text-sm text-[var(--color-foreground)] placeholder:text-[var(--color-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] disabled:opacity-50"
         />
         <button
           type="submit"
           disabled={status === 'submitting'}
-          className="flex-shrink-0 rounded bg-[var(--color-primary)] px-4 py-2 text-sm text-white hover:opacity-90 disabled:opacity-50"
+          className="flex-shrink-0 min-h-[44px] rounded bg-[var(--color-primary)] px-4 py-2.5 text-sm text-white hover:opacity-90 disabled:opacity-50"
         >
           {status === 'submitting' ? (
             <>

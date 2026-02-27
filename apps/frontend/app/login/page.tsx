@@ -89,7 +89,7 @@ export default function LoginPage() {
       <div className="w-full max-w-md rounded-xl border border-white/60 bg-white/80 p-6 shadow-lg backdrop-blur-sm">
         <Link
           href="/"
-          className="mb-4 inline-flex items-center gap-1 text-sm text-[var(--color-muted)] hover:text-[var(--color-foreground)]"
+          className="mb-4 inline-flex items-center gap-1 min-h-[44px] text-sm text-[var(--color-muted)] hover:text-[var(--color-foreground)]"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M19 12H5" />
@@ -113,7 +113,7 @@ export default function LoginPage() {
             <select
               value={role}
               onChange={(e) => setRole(e.target.value as 'sponsor' | 'publisher')}
-              className="mt-1 w-full rounded border border-[var(--color-border)] bg-white px-3 py-2 text-gray-900"
+              className="mt-1 w-full min-h-[44px] rounded border border-[var(--color-border)] bg-white px-3 py-2.5 text-gray-900"
             >
               <option value="sponsor">Sponsor (sponsor@example.com)</option>
               <option value="publisher">Publisher (publisher@example.com)</option>
@@ -123,7 +123,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-lg bg-[var(--color-primary)] px-4 py-2 font-semibold text-white hover:opacity-90 disabled:opacity-50"
+            className="w-full min-h-[44px] rounded-lg bg-[var(--color-primary)] px-4 py-2.5 font-semibold text-white hover:opacity-90 disabled:opacity-50"
           >
             {loading ? 'Logging in...' : `Login as ${role === 'sponsor' ? 'Sponsor' : 'Publisher'}`}
           </button>
