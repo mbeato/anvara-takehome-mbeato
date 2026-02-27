@@ -1,17 +1,54 @@
 import { sendGAEvent } from '@next/third-parties/google';
+import { getActiveVariants } from '@/lib/ab-tests';
 
-function track(eventName: string, params?: Record<string, string | number>): void {
+function getUserType(): string {
+  if (typeof document === 'undefined') return 'anonymous';
+  const hasSession = document.cookie.includes('better-auth.session_token');
+  return hasSession ? 'authenticated' : 'anonymous';
+}
+
+export function track(
+  eventName: string,
+  params?: Record<string, string | number | boolean>
+): void {
+  const activeVariants = getActiveVariants();
+  const enrichedParams: Record<string, string | number | boolean> = {
+    ...activeVariants,
+    user_type: getUserType(),
+    ...params,
+  };
+
   if (process.env.NODE_ENV === 'development') {
     // eslint-disable-next-line no-console
-    console.log('[Analytics]', eventName, params);
+    console.group(`%c[Analytics] ${eventName}`, 'color: #6366f1; font-weight: bold');
+    // eslint-disable-next-line no-console
+    console.log('Params:', enrichedParams);
+    if (enrichedParams.funnel_step) {
+      // eslint-disable-next-line no-console
+      console.log(`Funnel: ${enrichedParams.funnel_step}`);
+    }
+    if (Object.keys(activeVariants).length > 0) {
+      // eslint-disable-next-line no-console
+      console.log('Active A/B variants:', activeVariants);
+    }
+    // eslint-disable-next-line no-console
+    console.groupEnd();
     return;
   }
 
   try {
-    sendGAEvent('event', eventName, params ?? {});
+    sendGAEvent('event', eventName, enrichedParams);
   } catch {
     // Silently swallow errors (adblockers, GA not loaded, etc.)
   }
+}
+
+export function trackABExposure(experimentName: string, variant: string): void {
+  track('ab_test_exposure', {
+    experiment_name: experimentName,
+    variant,
+    funnel_step: 'browse',
+  });
 }
 
 export function trackQuoteRequest(adSlotId: string): void {
