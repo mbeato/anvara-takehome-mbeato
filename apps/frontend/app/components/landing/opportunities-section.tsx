@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ListingCard } from './listing-card';
+import { trackCtaClick } from '@/lib/analytics';
 import type { FeaturedListing, FeaturedListingsPagination } from '@/lib/types';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4291';
@@ -147,6 +148,7 @@ export function OpportunitiesSection({
           <p className="mt-4 text-center text-[var(--color-muted)]">
             <a
               href="/login"
+              onClick={() => trackCtaClick('browse_opportunities', 'opportunities_section')}
               className="font-medium text-[var(--color-primary)] hover:underline"
             >
               Sign in to browse all opportunities

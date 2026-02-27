@@ -2,6 +2,7 @@
 
 import { motion } from 'motion/react';
 import { FADE_IN_UP, DURATION, EASE } from '@/lib/motion';
+import { trackCtaClick } from '@/lib/analytics';
 
 export function BottomCta() {
   return (
@@ -22,6 +23,7 @@ export function BottomCta() {
         </p>
         <a
           href="/login"
+          onClick={() => trackCtaClick('get_started_free', 'bottom_cta')}
           className="mt-8 inline-block rounded-lg bg-white px-8 py-3 text-lg font-semibold text-[var(--color-primary)] hover:bg-gray-100"
         >
           Get Started Free
