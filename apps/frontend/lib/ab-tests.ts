@@ -12,12 +12,12 @@ export interface ExperimentConfig {
 
 /** Registry of all active experiments. Phase 21 will add the live CTA test here. */
 export const EXPERIMENTS: ExperimentConfig[] = [
-  // {
-  //   name: 'cta-copy',
-  //   variants: ['A', 'B'],
-  //   weights: [50, 50],
-  //   description: 'Detail page CTA text variation',
-  // },
+  {
+    name: 'cta-copy',
+    variants: ['A', 'B'],
+    weights: [50, 50],
+    description: 'Detail page CTA text variation',
+  },
 ];
 
 /** Named funnel steps for structured analytics */
