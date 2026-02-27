@@ -20,6 +20,7 @@ export function QuoteRequestButton({ adSlot, user, onBeginCheckout }: QuoteReque
   const [openCount, setOpenCount] = useState(0);
 
   const handleOpen = () => {
+    onBeginCheckout?.();
     setOpenCount((c) => c + 1);
     setOpen(true);
   };

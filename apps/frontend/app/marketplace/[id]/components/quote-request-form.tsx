@@ -4,7 +4,8 @@ import { useActionState, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { requestQuote, type QuoteActionState } from '../actions';
 import { SubmitButton } from '@/app/components/submit-button';
-import { trackQuoteRequestAttempt, trackQuoteRequest } from '@/lib/analytics';
+import { track, trackQuoteRequestAttempt } from '@/lib/analytics';
+import { toGA4Item } from '@/lib/ab-tests';
 
 interface QuoteRequestFormProps {
   adSlot: {
@@ -68,9 +69,14 @@ export function QuoteRequestForm({ adSlot, user, onClose }: QuoteRequestFormProp
 
   useEffect(() => {
     if (state.success) {
-      trackQuoteRequest(adSlot.id);
+      track('generate_lead', {
+        funnel_step: 'convert',
+        currency: 'USD',
+        value: Number(adSlot.basePrice),
+        items: [toGA4Item(adSlot)],
+      });
     }
-  }, [state.success, adSlot.id]);
+  }, [state.success, adSlot]);
 
   const getError = (name: string): string | undefined => {
     return blurErrors[name] || state.fieldErrors?.[name] || undefined;
