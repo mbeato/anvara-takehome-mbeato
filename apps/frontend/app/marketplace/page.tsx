@@ -34,6 +34,7 @@ export default async function MarketplacePage({ searchParams }: Props) {
   const type = typeof params.type === 'string' ? params.type : '';
   const sort = typeof params.sort === 'string' ? params.sort : '';
   const order = typeof params.order === 'string' ? params.order : '';
+  const available = typeof params.available === 'string' ? params.available : '';
 
   let adSlots: AdSlot[] = [];
   let pagination: PaginationMeta | null = null;
@@ -49,6 +50,7 @@ export default async function MarketplacePage({ searchParams }: Props) {
     if (type) fetchParams.set('type', type);
     if (sort) fetchParams.set('sort', sort);
     if (order) fetchParams.set('order', order);
+    if (available) fetchParams.set('available', available);
 
     const res = await fetch(
       `${API_URL}/api/ad-slots?${fetchParams.toString()}`,

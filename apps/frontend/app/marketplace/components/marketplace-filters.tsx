@@ -24,6 +24,7 @@ const SORT_OPTIONS: SortOption[] = [
 const filterConfig: FilterBarConfig = {
   searchPlaceholder: 'Search ad slots...',
   dropdowns: [{ key: 'type', label: 'Types', options: TYPE_OPTIONS }],
+  toggles: [{ key: 'available', label: 'Available Only' }],
   sortOptions: SORT_OPTIONS,
 };
 
@@ -37,7 +38,7 @@ function valuesFromParams(searchParams: URLSearchParams): FilterBarValues {
   return {
     search: searchParams.get('search') ?? '',
     dropdowns: { type: searchParams.get('type') ?? '' },
-    toggles: {},
+    toggles: { available: searchParams.get('available') === 'true' },
     sortIndex: sortIndex >= 0 ? sortIndex : 0,
   };
 }
@@ -65,6 +66,8 @@ export function MarketplaceFilters() {
         params.set('order', sortOpt.direction);
       }
 
+      if (next.toggles.available) params.set('available', 'true');
+
       // Track filter interaction (TRCK-05)
       if (next.search) {
         track('filter_used', {
@@ -85,6 +88,13 @@ export function MarketplaceFilters() {
           funnel_step: 'browse',
           filter_type: 'sort',
           filter_value: sortOpt.label,
+        });
+      }
+      if (next.toggles.available) {
+        track('filter_used', {
+          funnel_step: 'browse',
+          filter_type: 'toggle',
+          filter_value: 'available_only',
         });
       }
 
