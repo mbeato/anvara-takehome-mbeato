@@ -2,6 +2,7 @@
 
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { useState, useEffect, useCallback, useTransition } from 'react';
+import { track } from '@/lib/analytics';
 
 interface Props {
   currentPage: number;
@@ -25,13 +26,20 @@ export function PaginationControls({ currentPage, totalPages, total: _total, lim
   const navigateToPage = useCallback(
     (page: number) => {
       const clamped = Math.max(1, Math.min(totalPages, page));
+
+      track('pagination_used', {
+        funnel_step: 'browse',
+        from_page: currentPage,
+        to_page: clamped,
+      });
+
       const params = new URLSearchParams(searchParams.toString());
       params.set('page', String(clamped));
       startTransition(() => {
         router.push(`${pathname}?${params.toString()}`);
       });
     },
-    [totalPages, searchParams, pathname, router, startTransition]
+    [totalPages, searchParams, pathname, router, startTransition, currentPage]
   );
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

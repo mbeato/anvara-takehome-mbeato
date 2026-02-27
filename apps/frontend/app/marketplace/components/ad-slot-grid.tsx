@@ -4,6 +4,7 @@ import Link from 'next/link';
 import type { AdSlot } from '@/lib/types';
 import { EmptyState } from '@/app/components/empty-state';
 import { trackMarketplaceClick } from '@/lib/analytics';
+import { useTrackView } from '@/app/hooks/use-track-view';
 
 const typeColors: Record<string, string> = {
   DISPLAY: 'bg-blue-100 text-blue-700',
@@ -17,6 +18,11 @@ interface Props {
 }
 
 export function AdSlotGrid({ adSlots }: Props) {
+  useTrackView('marketplace_view', {
+    funnel_step: 'browse',
+    total_results: adSlots.length,
+  });
+
   if (adSlots.length === 0) {
     return (
       <EmptyState

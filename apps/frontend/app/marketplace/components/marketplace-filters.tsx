@@ -4,6 +4,7 @@ import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { useCallback } from 'react';
 import { FilterBar, type FilterBarConfig, type FilterBarValues, type SortOption } from '@/app/components/filter-bar';
 import type { AdSlotType } from '@/lib/types';
+import { track } from '@/lib/analytics';
 
 const TYPE_OPTIONS: { label: string; value: AdSlotType }[] = [
   { label: 'Display', value: 'DISPLAY' },
@@ -62,6 +63,29 @@ export function MarketplaceFilters() {
       if (sortOpt) {
         params.set('sort', sortOpt.value);
         params.set('order', sortOpt.direction);
+      }
+
+      // Track filter interaction (TRCK-05)
+      if (next.search) {
+        track('filter_used', {
+          funnel_step: 'browse',
+          filter_type: 'search',
+          filter_value: next.search,
+        });
+      }
+      if (next.dropdowns.type) {
+        track('filter_used', {
+          funnel_step: 'browse',
+          filter_type: 'type',
+          filter_value: next.dropdowns.type,
+        });
+      }
+      if (sortOpt) {
+        track('filter_used', {
+          funnel_step: 'browse',
+          filter_type: 'sort',
+          filter_value: sortOpt.label,
+        });
       }
 
       router.push(`${pathname}?${params.toString()}`);
