@@ -38,11 +38,11 @@ export function AdSlotCard({ adSlot }: AdSlotCardProps) {
         {/* Header: title + icon buttons */}
         <div className="flex items-start justify-between gap-2">
           <h3 className="font-semibold text-[var(--color-foreground)]">{adSlot.name}</h3>
-          <div className="flex shrink-0 items-center gap-1">
+          <div className="flex shrink-0 items-center gap-2">
             <button
               type="button"
               onClick={() => setShowEditForm(true)}
-              className="rounded bg-gray-100 px-2 py-1 text-xs text-[var(--color-muted)] transition-colors hover:bg-gray-200 hover:text-[var(--color-foreground)]"
+              className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded bg-gray-100 px-3 py-2 text-xs text-[var(--color-muted)] transition-colors hover:bg-gray-200 hover:text-[var(--color-foreground)]"
             >
               Edit
             </button>
@@ -55,7 +55,7 @@ export function AdSlotCard({ adSlot }: AdSlotCardProps) {
               <input type="hidden" name="id" value={adSlot.id} />
               <button
                 type="submit"
-                className="rounded bg-red-50 px-2 py-1 text-xs text-red-600 transition-colors hover:bg-red-100"
+                className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded bg-red-50 px-3 py-2 text-xs text-red-600 transition-colors hover:bg-red-100"
               >
                 Delete
               </button>

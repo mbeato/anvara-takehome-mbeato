@@ -104,7 +104,7 @@ export function FilterBar({ config, values, onChange }: FilterBarProps) {
   const { searchPlaceholder, dropdowns, toggles, sortOptions } = config;
 
   const controlClass =
-    'h-9 rounded-md border border-[var(--color-border)] bg-[var(--color-background)] px-3 text-sm text-[var(--color-foreground)]';
+    'h-11 rounded-md border border-[var(--color-border)] bg-[var(--color-background)] px-3 text-sm text-[var(--color-foreground)]';
 
   return (
     <div className="flex flex-wrap items-center gap-3">
@@ -114,7 +114,7 @@ export function FilterBar({ config, values, onChange }: FilterBarProps) {
           placeholder={searchPlaceholder}
           value={values.search}
           onDebouncedChange={(text) => onChange({ ...values, search: text })}
-          className={`${controlClass} w-56`}
+          className={`${controlClass} w-full sm:w-56`}
         />
       )}
 
@@ -142,7 +142,7 @@ export function FilterBar({ config, values, onChange }: FilterBarProps) {
 
       {/* Toggles */}
       {toggles?.map((tg) => (
-        <label key={tg.key} className="flex items-center gap-2 text-sm text-[var(--color-foreground)]">
+        <label key={tg.key} className="flex min-h-[44px] items-center gap-2 text-sm text-[var(--color-foreground)]">
           <input
             type="checkbox"
             checked={values.toggles[tg.key] ?? false}

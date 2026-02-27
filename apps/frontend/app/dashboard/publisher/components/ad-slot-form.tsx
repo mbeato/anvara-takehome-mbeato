@@ -25,7 +25,7 @@ export function AdSlotForm({ adSlot, onClose }: AdSlotFormProps) {
   }, [state.success, onClose]);
 
   const inputClass =
-    'mt-1 w-full rounded border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900';
+    'mt-1 w-full rounded border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 min-h-[44px]';
 
   return (
     <form ref={formRef} action={formAction} className="space-y-4">
@@ -104,7 +104,7 @@ export function AdSlotForm({ adSlot, onClose }: AdSlotFormProps) {
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg border border-gray-300 px-4 py-2 text-sm hover:bg-gray-50"
+            className="rounded-lg border border-gray-300 px-4 py-2.5 text-sm min-h-[44px] hover:bg-gray-50"
           >
             Cancel
           </button>
