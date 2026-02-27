@@ -8,6 +8,8 @@ import type { AdSlot } from '@/lib/types';
 import { QuoteRequestButton } from './quote-request-button';
 import { track } from '@/lib/analytics';
 import { toGA4Item } from '@/lib/ab-tests';
+import { useABTest } from '@/app/hooks/use-ab-test';
+import { formatCompactNumber } from '@/lib/utils';
 
 interface User {
   id: string;
@@ -44,6 +46,9 @@ export function AdSlotDetail({ id }: Props) {
   const [booking, setBooking] = useState(false);
   const [bookingSuccess, setBookingSuccess] = useState(false);
   const [bookingError, setBookingError] = useState<string | null>(null);
+  const [relatedSlots, setRelatedSlots] = useState<AdSlot[]>([]);
+
+  const { variant: ctaVariant } = useABTest('cta-copy');
 
   // --- Conversion tracking refs ---
   const viewTracked = useRef(false);
@@ -93,6 +98,25 @@ export function AdSlotDetail({ id }: Props) {
       });
     }
   }, [loading, roleLoading, adSlot, roleInfo, user]);
+
+  // Fetch related listings from same publisher (CONV-10)
+  useEffect(() => {
+    if (!adSlot?.publisherId) return;
+
+    fetch(
+      `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4291'}/api/ad-slots`,
+      { credentials: 'include' }
+    )
+      .then((res) => res.json())
+      .then((slots: AdSlot[]) => {
+        const related = slots
+          .filter((s) => s.publisherId === adSlot.publisherId && s.id !== adSlot.id)
+          .sort((a, b) => (a.isAvailable === b.isAvailable ? 0 : a.isAvailable ? -1 : 1))
+          .slice(0, 3);
+        setRelatedSlots(related);
+      })
+      .catch(() => {});
+  }, [adSlot]);
 
   // Fire begin_checkout on first booking interaction (TRCK-03)
   const handleBeginCheckout = useCallback((checkoutType: 'booking' | 'quote') => {
@@ -231,6 +255,36 @@ export function AdSlotDetail({ id }: Props) {
 
         {adSlot.description && <p className="mb-6 text-[var(--color-muted)]">{adSlot.description}</p>}
 
+        {/* Publisher Info Section (CONV-05) */}
+        {adSlot.publisher && (
+          <div className="mb-6 rounded-lg bg-gray-50 p-4">
+            <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-[var(--color-muted)]">
+              About the Publisher
+            </h3>
+            <div className="flex flex-wrap items-center gap-3">
+              <span className="font-medium">{adSlot.publisher.name}</span>
+              {adSlot.publisher.isVerified && (
+                <span className="rounded bg-green-100 px-2 py-0.5 text-xs text-green-700">
+                  Verified Publisher
+                </span>
+              )}
+              {adSlot.publisher.category && (
+                <span className="rounded bg-gray-200 px-2 py-0.5 text-xs text-gray-700">
+                  {adSlot.publisher.category}
+                </span>
+              )}
+            </div>
+            <div className="mt-2 flex flex-wrap gap-4 text-sm text-[var(--color-muted)]">
+              {adSlot.publisher.monthlyViews != null && adSlot.publisher.monthlyViews > 0 && (
+                <span>{formatCompactNumber(adSlot.publisher.monthlyViews)} monthly views</span>
+              )}
+              {adSlot.publisher.subscriberCount != null && adSlot.publisher.subscriberCount > 0 && (
+                <span>{formatCompactNumber(adSlot.publisher.subscriberCount)} subscribers</span>
+              )}
+            </div>
+          </div>
+        )}
+
         <div className="flex items-center justify-between border-t border-[var(--color-border)] pt-4">
           <div>
             <span
@@ -293,8 +347,18 @@ export function AdSlotDetail({ id }: Props) {
                     disabled={booking}
                     className="w-full rounded-lg bg-[var(--color-primary)] px-4 py-3 font-semibold text-white transition-colors hover:opacity-90 disabled:opacity-50"
                   >
-                    {booking ? 'Booking...' : 'Book This Placement'}
+                    {booking
+                      ? 'Booking...'
+                      : ctaVariant === 'B' && adSlot.publisher?.monthlyViews
+                        ? `Reach ${formatCompactNumber(adSlot.publisher.monthlyViews)} Monthly Readers`
+                        : 'Book This Placement'}
                   </button>
+                  {adSlot.publisher && (
+                    <p className="text-center text-sm text-[var(--color-muted)]">
+                      Secure your spot on {adSlot.publisher.name}&apos;s{' '}
+                      {adSlot.publisher.category ? `${adSlot.publisher.category} ` : ''}audience
+                    </p>
+                  )}
                 </div>
               ) : (
                 <div>
@@ -346,6 +410,34 @@ export function AdSlotDetail({ id }: Props) {
           </div>
         )}
       </div>
+
+      {/* Related Listings (CONV-10) */}
+      {relatedSlots.length > 0 && (
+        <div className="rounded-lg border border-[var(--color-border)] p-6">
+          <h2 className="mb-4 text-lg font-semibold">More from {adSlot.publisher?.name ?? 'this Publisher'}</h2>
+          <div className="grid gap-4 sm:grid-cols-3">
+            {relatedSlots.map((related) => (
+              <Link
+                key={related.id}
+                href={`/marketplace/${related.id}`}
+                className="rounded-lg border border-[var(--color-border)] p-3 transition-shadow hover:shadow-md"
+              >
+                <h3 className="font-medium">{related.name}</h3>
+                <p className="text-lg font-bold text-[var(--color-primary)]">
+                  ${Number(related.basePrice).toLocaleString()}/mo
+                </p>
+                <p className="mt-1 text-sm text-[var(--color-muted)]">
+                  {related.isAvailable ? (
+                    <span className="text-green-600">Available</span>
+                  ) : (
+                    <span>Currently Booked</span>
+                  )}
+                </p>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
