@@ -8,6 +8,13 @@ export function formatPrice(price: number, locale = 'en-US') {
   }).format(price);
 }
 
+// Format a number as compact string (e.g., 100000 -> "100K", 1500000 -> "1.5M")
+export function formatCompactNumber(num: number): string {
+  if (num >= 1_000_000) return `${(num / 1_000_000).toFixed(num % 1_000_000 === 0 ? 0 : 1)}M`;
+  if (num >= 1_000) return `${(num / 1_000).toFixed(num % 1_000 === 0 ? 0 : 1)}K`;
+  return String(num);
+}
+
 // Debounce function for search inputs
 export function debounce(fn: (...args: unknown[]) => void, delay: number) {
   let timeoutId: ReturnType<typeof setTimeout> | undefined;

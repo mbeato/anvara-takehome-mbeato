@@ -74,7 +74,7 @@ router.get('/', async (req: AuthRequest, res: Response) => {
     };
 
     const include = {
-      publisher: { select: { id: true, name: true, category: true, monthlyViews: true } },
+      publisher: { select: { id: true, name: true, category: true, monthlyViews: true, subscriberCount: true, isVerified: true } },
       _count: { select: { placements: true } },
     } as const;
 
