@@ -79,9 +79,9 @@ export default async function SponsorDashboard() {
   }
 
   return (
-    <div className="space-y-6 px-16 py-6 lg:px-32">
+    <div className="space-y-6 px-6 py-6 md:px-16 lg:px-32">
       {/* Header: title + subtitle + create button */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-3xl font-bold">My Campaigns</h1>
           <p className="mt-1 text-sm text-[var(--color-muted)]">
