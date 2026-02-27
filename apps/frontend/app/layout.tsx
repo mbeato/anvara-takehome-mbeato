@@ -31,8 +31,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={`${inter.variable} ${plusJakartaSans.variable}`}>
       <body className="flex min-h-screen flex-col antialiased font-[family-name:var(--font-inter)]">
         <Nav />
-        <main className="flex flex-1 flex-col">{children}</main>
-        <Footer />
+        <div className="flex flex-1 flex-col transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] [[data-menu-open='true']_&]:-translate-x-[280px]">
+          <main className="flex flex-1 flex-col">{children}</main>
+          <Footer />
+        </div>
       </body>
       {process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID && (
         <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID} />

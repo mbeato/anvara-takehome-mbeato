@@ -99,3 +99,19 @@ body {
   }
 }
 
+/* ============================================================================
+ * Mobile Navigation Panel
+ * ============================================================================ */
+
+/* Prevent horizontal overflow when nav panel pushes content */
+html[data-menu-open='true'] body {
+  overflow-x: hidden;
+}
+
+/* On desktop, never restrict overflow regardless of data attribute */
+@media (width >= 48rem) {
+  html[data-menu-open='true'] body {
+    overflow-x: visible;
+  }
+}
+
