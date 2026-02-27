@@ -237,7 +237,7 @@ export function AdSlotDetail({ id }: Props) {
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
                       placeholder="Tell the publisher about your campaign goals..."
-                      className="w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-background)] px-3 py-2 text-[var(--color-foreground)] placeholder:text-[var(--color-muted)] focus:border-[var(--color-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)]"
+                      className="w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-background)] px-3 py-2.5 min-h-[44px] text-[var(--color-foreground)] placeholder:text-[var(--color-muted)] focus:border-[var(--color-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)]"
                       rows={3}
                     />
                   </div>

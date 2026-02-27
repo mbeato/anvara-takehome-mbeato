@@ -17,5 +17,9 @@ interface Props {
 export default async function AdSlotPage({ params }: Props) {
   const { id } = await params;
 
-  return <AdSlotDetail id={id} />;
+  return (
+    <div className="mx-auto max-w-6xl px-6 py-4">
+      <AdSlotDetail id={id} />
+    </div>
+  );
 }
