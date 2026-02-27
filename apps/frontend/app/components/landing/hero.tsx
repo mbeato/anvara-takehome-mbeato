@@ -2,6 +2,7 @@
 
 import { motion } from 'motion/react';
 import { DURATION, EASE } from '@/lib/motion';
+import { trackCtaClick } from '@/lib/analytics';
 
 /*
   Illustration concept: an asymmetric arrangement of mini "UI cards"
@@ -15,29 +16,44 @@ export function Hero() {
     <section className="w-full py-20 md:py-28">
       <div className="mx-auto max-w-6xl px-4">
         <div className="items-center md:grid md:grid-cols-2 md:gap-12">
-          {/* Text content */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: DURATION.slow, ease: EASE.out }}
-          >
-            <h1 className="text-4xl font-bold leading-tight tracking-tight font-[family-name:var(--font-display)] md:text-5xl">
+          {/* Text content — choreographed 4-step entrance */}
+          <div>
+            <motion.h1
+              className="text-4xl font-bold leading-tight tracking-tight font-[family-name:var(--font-display)] md:text-5xl"
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: DURATION.normal, ease: EASE.out, delay: 0 }}
+            >
               Grow Your Reach Through Sponsorships
-            </h1>
-            <p className="mt-4 max-w-lg text-lg text-[var(--color-muted)]">
+            </motion.h1>
+            <motion.p
+              className="mt-4 max-w-lg text-lg text-[var(--color-muted)]"
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: DURATION.normal, ease: EASE.out, delay: 0.25 }}
+            >
               Connect with premium publishers and sponsors in one marketplace.
               Transparent pricing, easy management, real results.
-            </p>
-            <a
+            </motion.p>
+            <motion.a
               href="/login"
+              onClick={() => trackCtaClick('get_started', 'hero')}
               className="mt-8 inline-block rounded-lg bg-[var(--color-primary)] px-8 py-3 text-lg font-semibold text-white hover:bg-[var(--color-primary-hover)]"
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: DURATION.normal, ease: EASE.out, delay: 0.75 }}
             >
               Get Started
-            </a>
-          </motion.div>
+            </motion.a>
+          </div>
 
-          {/* Illustration */}
-          <div className="mt-12 flex items-center justify-center md:mt-0">
+          {/* Illustration — step 3 of entrance choreography */}
+          <motion.div
+            className="mt-12 flex items-center justify-center md:mt-0"
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: DURATION.normal, ease: EASE.out, delay: 0.5 }}
+          >
             <svg
               viewBox="0 0 420 320"
               className="h-auto w-full max-w-md"
@@ -274,7 +290,7 @@ export function Hero() {
               <line x1="200" y1="30" x2="200" y2="290" stroke="var(--color-primary)" strokeWidth="0.5" opacity="0.05" strokeDasharray="4 6" />
               <line x1="40" y1="160" x2="390" y2="160" stroke="var(--color-primary)" strokeWidth="0.5" opacity="0.05" strokeDasharray="4 6" />
             </svg>
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>
