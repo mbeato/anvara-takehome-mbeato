@@ -446,12 +446,14 @@ async function main() {
     },
   ];
 
+  const createdSlots: Record<string, { id: string; publisherId: string }> = {};
   for (const slot of adSlots) {
-    await prisma.adSlot.create({ data: slot });
+    const created = await prisma.adSlot.create({ data: slot });
+    createdSlots[slot.name] = { id: created.id, publisherId: slot.publisherId };
   }
 
   // Create campaigns
-  await prisma.campaign.create({
+  const q1Campaign = await prisma.campaign.create({
     data: {
       name: 'Q1 Product Launch',
       description: 'Launch campaign for our new product',
@@ -481,8 +483,63 @@ async function main() {
     },
   });
 
+  // Create creatives for placement records
+  const bannerCreative = await prisma.creative.create({
+    data: {
+      name: 'Acme Product Banner',
+      type: 'BANNER',
+      assetUrl: 'https://cdn.example.com/acme-banner.png',
+      clickUrl: 'https://acme.com/product',
+      altText: 'Acme Corp product launch',
+      width: 728,
+      height: 90,
+      isApproved: true,
+      isActive: true,
+      campaignId: q1Campaign.id,
+    },
+  });
+
+  const nativeCreative = await prisma.creative.create({
+    data: {
+      name: 'Acme Native Ad',
+      type: 'NATIVE',
+      assetUrl: 'https://cdn.example.com/acme-native.png',
+      clickUrl: 'https://acme.com/product',
+      altText: 'Acme Corp native placement',
+      isApproved: true,
+      isActive: true,
+      campaignId: q1Campaign.id,
+    },
+  });
+
+  // Create placements for 6 ad slots to trigger "Popular" badge
+  const placementSlots = [
+    { slotName: 'Header Banner', creativeId: bannerCreative.id, price: 500 },
+    { slotName: 'In-Article Native Ad', creativeId: nativeCreative.id, price: 450 },
+    { slotName: 'Pre-roll Spot (60s)', creativeId: bannerCreative.id, price: 1000 },
+    { slotName: 'Featured Sponsor Slot', creativeId: nativeCreative.id, price: 800 },
+    { slotName: 'Pre-roll Video Ad (30s)', creativeId: bannerCreative.id, price: 3500 },
+    { slotName: 'Sponsored Article', creativeId: nativeCreative.id, price: 1500 },
+  ];
+
+  for (const p of placementSlots) {
+    await prisma.placement.create({
+      data: {
+        campaignId: q1Campaign.id,
+        creativeId: p.creativeId,
+        adSlotId: createdSlots[p.slotName].id,
+        publisherId: createdSlots[p.slotName].publisherId,
+        agreedPrice: p.price,
+        pricingModel: 'FLAT_RATE',
+        startDate: new Date('2026-01-15'),
+        endDate: new Date('2026-03-15'),
+        status: 'ACTIVE',
+      },
+    });
+  }
+
   console.log('\nPrisma seed completed!');
-  console.log('  Created: 2 sponsors, 5 publishers, 20 ad slots, 2 campaigns');
+  console.log('  Created: 2 sponsors, 5 publishers, 20 ad slots, 2 campaigns, 2 creatives, 6 placements');
 
   console.log('\n✅ All seeding complete!');
 }
