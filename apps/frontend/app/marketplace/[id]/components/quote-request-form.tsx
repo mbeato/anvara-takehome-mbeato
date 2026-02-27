@@ -65,7 +65,7 @@ export function QuoteRequestForm({ adSlot, user, onClose }: QuoteRequestFormProp
   };
 
   const inputClass =
-    'mt-1 w-full rounded border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900';
+    'mt-1 w-full min-h-[44px] rounded border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900';
 
   if (state.success) {
     return (
@@ -111,14 +111,14 @@ export function QuoteRequestForm({ adSlot, user, onClose }: QuoteRequestFormProp
         <div className="flex justify-center gap-3">
           <Link
             href="/marketplace"
-            className="rounded-lg border border-[var(--color-border)] px-4 py-2 text-sm font-medium hover:bg-gray-50"
+            className="min-h-[44px] rounded-lg border border-[var(--color-border)] px-4 py-2.5 text-sm font-medium hover:bg-gray-50"
           >
             Browse More Listings
           </Link>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg bg-[var(--color-primary)] px-4 py-2 text-sm font-semibold text-white hover:opacity-90"
+            className="min-h-[44px] rounded-lg bg-[var(--color-primary)] px-4 py-2.5 text-sm font-semibold text-white hover:opacity-90"
           >
             Done
           </button>
@@ -313,7 +313,7 @@ export function QuoteRequestForm({ adSlot, user, onClose }: QuoteRequestFormProp
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg border border-gray-300 px-4 py-2 text-sm hover:bg-gray-50"
+            className="min-h-[44px] rounded-lg border border-gray-300 px-4 py-2.5 text-sm hover:bg-gray-50"
           >
             Cancel
           </button>

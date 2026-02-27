@@ -58,7 +58,7 @@ export function PaginationControls({ currentPage, totalPages, total: _total, lim
   };
 
   const buttonClass =
-    'text-sm font-medium text-[var(--color-primary)] hover:underline disabled:opacity-50 disabled:pointer-events-none';
+    'min-h-[44px] flex items-center px-2 text-sm font-medium text-[var(--color-primary)] hover:underline disabled:opacity-50 disabled:pointer-events-none';
 
   return (
     <nav
@@ -71,7 +71,7 @@ export function PaginationControls({ currentPage, totalPages, total: _total, lim
             <button
               disabled={isPending}
               onClick={() => navigateToPage(1)}
-              className={buttonClass}
+              className={`${buttonClass} hidden sm:inline-flex`}
             >
               First
             </button>
@@ -94,7 +94,7 @@ export function PaginationControls({ currentPage, totalPages, total: _total, lim
           onKeyDown={handleKeyDown}
           onBlur={handleBlur}
           disabled={isPending}
-          className="w-12 rounded border border-[var(--color-border)] bg-[var(--color-background)] px-1 py-0.5 text-center text-sm text-[var(--color-foreground)]"
+          className="w-12 min-h-[44px] rounded border border-[var(--color-border)] bg-[var(--color-background)] px-1 py-0.5 text-center text-sm text-[var(--color-foreground)]"
           aria-label="Page number"
         />
         of {totalPages} pages
@@ -112,7 +112,7 @@ export function PaginationControls({ currentPage, totalPages, total: _total, lim
             <button
               disabled={isPending}
               onClick={() => navigateToPage(totalPages)}
-              className={buttonClass}
+              className={`${buttonClass} hidden sm:inline-flex`}
             >
               Last
             </button>

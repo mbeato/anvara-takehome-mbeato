@@ -27,7 +27,7 @@ export function QuoteRequestButton({ adSlot, user }: QuoteRequestButtonProps) {
     <>
       <button
         onClick={handleOpen}
-        className="w-full rounded-lg border-2 border-[var(--color-primary)] px-4 py-3 font-semibold text-[var(--color-primary)] transition-colors hover:bg-[var(--color-primary)] hover:text-white"
+        className="w-full min-h-[44px] rounded-lg border-2 border-[var(--color-primary)] px-4 py-3 font-semibold text-[var(--color-primary)] transition-colors hover:bg-[var(--color-primary)] hover:text-white"
       >
         Request a Quote
       </button>

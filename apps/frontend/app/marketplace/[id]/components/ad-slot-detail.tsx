@@ -139,7 +139,7 @@ export function AdSlotDetail({ id }: Props) {
   if (error || !adSlot) {
     return (
       <div className="space-y-4">
-        <Link href="/marketplace" className="text-[var(--color-primary)] hover:underline">
+        <Link href="/marketplace" className="inline-flex items-center min-h-[44px] text-[var(--color-primary)] hover:underline">
           ← Back to Marketplace
         </Link>
         <div className="rounded border border-red-200 bg-red-50 p-4 text-red-600">
@@ -151,12 +151,12 @@ export function AdSlotDetail({ id }: Props) {
 
   return (
     <div className="space-y-6">
-      <Link href="/marketplace" className="text-[var(--color-primary)] hover:underline">
+      <Link href="/marketplace" className="inline-flex items-center min-h-[44px] text-[var(--color-primary)] hover:underline">
         ← Back to Marketplace
       </Link>
 
       <div className="rounded-lg border border-[var(--color-border)] p-6">
-        <div className="mb-4 flex items-start justify-between">
+        <div className="mb-4 flex flex-wrap items-start justify-between gap-2">
           <div>
             <h1 className="text-2xl font-bold">{adSlot.name}</h1>
             {adSlot.publisher && (
@@ -170,7 +170,7 @@ export function AdSlotDetail({ id }: Props) {
                       href={adSlot.publisher.website}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-[var(--color-primary)] hover:underline"
+                      className="break-all text-[var(--color-primary)] hover:underline"
                     >
                       {adSlot.publisher.website}
                     </a>
