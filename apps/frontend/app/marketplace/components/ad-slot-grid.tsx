@@ -5,6 +5,7 @@ import type { AdSlot } from '@/lib/types';
 import { EmptyState } from '@/app/components/empty-state';
 import { trackMarketplaceClick } from '@/lib/analytics';
 import { useTrackView } from '@/app/hooks/use-track-view';
+import { formatCompactNumber } from '@/lib/utils';
 
 const typeColors: Record<string, string> = {
   DISPLAY: 'bg-blue-100 text-blue-700',
@@ -41,32 +42,53 @@ export function AdSlotGrid({ adSlots }: Props) {
           onClick={() => trackMarketplaceClick(slot.id)}
           className="block rounded-lg border border-[var(--color-border)] p-4 transition-shadow hover:shadow-md"
         >
-          <div className="mb-2 flex items-start justify-between">
-            <h3 className="font-semibold">{slot.name}</h3>
+          {/* Badges */}
+          <div className="mb-2 flex flex-wrap items-center gap-2">
             <span
               className={`rounded px-2 py-0.5 text-xs ${typeColors[slot.type] || 'bg-gray-100'}`}
             >
               {slot.type}
             </span>
+            {slot._count && slot._count.placements > 0 && (
+              <span className="rounded bg-amber-100 px-2 py-0.5 text-xs text-amber-700">
+                Popular
+              </span>
+            )}
+            {slot.publisher?.isVerified && (
+              <span className="rounded bg-green-100 px-2 py-0.5 text-xs text-green-700">
+                Verified
+              </span>
+            )}
           </div>
 
+          {/* Title + Price */}
+          <h3 className="font-semibold">{slot.name}</h3>
+          <p className="text-lg font-bold text-[var(--color-primary)]">
+            ${Number(slot.basePrice).toLocaleString()}/mo
+          </p>
+
+          {/* Publisher + Audience Metrics */}
           {slot.publisher && (
-            <p className="mb-2 text-sm text-[var(--color-muted)]">by {slot.publisher.name}</p>
+            <div className="mt-1 text-sm text-[var(--color-muted)]">
+              <span>{slot.publisher.name}</span>
+              {slot.publisher.monthlyViews != null && slot.publisher.monthlyViews > 0 && (
+                <span> · {formatCompactNumber(slot.publisher.monthlyViews)} views/mo</span>
+              )}
+              {slot.publisher.subscriberCount != null && slot.publisher.subscriberCount > 0 && (
+                <span> · {formatCompactNumber(slot.publisher.subscriberCount)} subscribers</span>
+              )}
+            </div>
           )}
 
-          {slot.description && (
-            <p className="mb-3 text-sm text-[var(--color-muted)] line-clamp-2">{slot.description}</p>
-          )}
-
-          <div className="flex items-center justify-between">
-            <span
-              className={`text-sm ${slot.isAvailable ? 'text-green-600' : 'text-[var(--color-muted)]'}`}
-            >
-              {slot.isAvailable ? 'Available' : 'Booked'}
-            </span>
-            <span className="font-semibold text-[var(--color-primary)]">
-              ${Number(slot.basePrice).toLocaleString()}/mo
-            </span>
+          {/* Availability */}
+          <div className="mt-3 text-sm">
+            {slot.isAvailable ? (
+              <span className="text-green-600">
+                {slot._count && slot._count.placements > 0 ? 'Available \u00b7 In Demand' : 'Available'}
+              </span>
+            ) : (
+              <span className="text-[var(--color-muted)]">Currently Booked</span>
+            )}
           </div>
         </Link>
       ))}
