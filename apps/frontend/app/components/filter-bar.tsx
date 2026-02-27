@@ -118,27 +118,44 @@ export function FilterBar({ config, values, onChange }: FilterBarProps) {
         />
       )}
 
-      {/* Dropdown filters */}
-      {dropdowns?.map((dd) => (
-        <select
-          key={dd.key}
-          value={values.dropdowns[dd.key] ?? ''}
-          onChange={(e) =>
-            onChange({
-              ...values,
-              dropdowns: { ...values.dropdowns, [dd.key]: e.target.value },
-            })
-          }
-          className={controlClass}
-        >
-          <option value="">All {dd.label}</option>
-          {dd.options.map((opt) => (
-            <option key={opt.value} value={opt.value}>
-              {opt.label}
-            </option>
-          ))}
-        </select>
-      ))}
+      {/* Dropdown filters + Sort (side by side) */}
+      <div className="flex items-center gap-3">
+        {dropdowns?.map((dd) => (
+          <select
+            key={dd.key}
+            value={values.dropdowns[dd.key] ?? ''}
+            onChange={(e) =>
+              onChange({
+                ...values,
+                dropdowns: { ...values.dropdowns, [dd.key]: e.target.value },
+              })
+            }
+            className={controlClass}
+          >
+            <option value="">All {dd.label}</option>
+            {dd.options.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
+        ))}
+
+        {/* Sort */}
+        {sortOptions && sortOptions.length > 0 && (
+          <select
+            value={values.sortIndex}
+            onChange={(e) => onChange({ ...values, sortIndex: Number(e.target.value) })}
+            className={controlClass}
+          >
+            {sortOptions.map((opt, i) => (
+              <option key={i} value={i}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
+        )}
+      </div>
 
       {/* Toggles */}
       {toggles?.map((tg) => (
@@ -157,21 +174,6 @@ export function FilterBar({ config, values, onChange }: FilterBarProps) {
           {tg.label}
         </label>
       ))}
-
-      {/* Sort */}
-      {sortOptions && sortOptions.length > 0 && (
-        <select
-          value={values.sortIndex}
-          onChange={(e) => onChange({ ...values, sortIndex: Number(e.target.value) })}
-          className={controlClass}
-        >
-          {sortOptions.map((opt, i) => (
-            <option key={i} value={i}>
-              {opt.label}
-            </option>
-          ))}
-        </select>
-      )}
     </div>
   );
 }

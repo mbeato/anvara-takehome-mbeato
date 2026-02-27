@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { motion } from 'motion/react';
 import { authClient } from '@/auth-client';
@@ -17,6 +17,18 @@ export function Nav() {
   const user = session?.user;
   const [role, setRole] = useState<UserRole>(null);
   const [menuOpen, setMenuOpen] = useState(false);
+  const headerRef = useRef<HTMLElement>(null);
+  const [headerH, setHeaderH] = useState(0);
+
+  useEffect(() => {
+    const el = headerRef.current;
+    if (!el) return;
+    const update = () => setHeaderH(el.offsetHeight);
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
 
   const userId = user?.id;
 
@@ -132,7 +144,7 @@ export function Nav() {
   const barClass = 'block h-[2px] w-5 rounded-full bg-current';
 
   return (
-    <header className={`sticky top-0 z-40 border-b ${isLoginPage ? 'border-transparent bg-transparent' : 'border-[var(--color-border)] bg-[var(--color-background)]'}`}>
+    <header ref={headerRef} className={`sticky top-0 z-40 border-b ${isLoginPage ? 'border-transparent bg-transparent' : 'border-[var(--color-border)] bg-[var(--color-background)]'}`}>
       <nav className="mx-auto flex max-w-6xl items-center justify-between p-4">
         <Link href="/">
           <Image src="/logo.png" alt="Anvara" width={120} height={21} priority />
@@ -196,27 +208,14 @@ export function Nav() {
         </div>
       </nav>
 
-      {/* Mobile slide-out panel */}
+      {/* Mobile slide-out panel — starts below header */}
       <div
-        className={`fixed right-0 top-0 z-50 flex h-full w-[280px] flex-col border-l border-[var(--color-border)] bg-[var(--color-background)] transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] md:hidden ${
+        className={`fixed right-0 z-30 flex w-[280px] flex-col border-l border-[var(--color-border)] bg-[var(--color-background)] transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] md:hidden ${
           menuOpen && user ? 'translate-x-0' : 'translate-x-full'
         }`}
+        style={{ top: headerH, height: `calc(100% - ${headerH}px)` }}
         aria-hidden={!menuOpen}
       >
-        {/* Panel header with close button */}
-        <div className="flex items-center justify-end p-4">
-          <button
-            type="button"
-            onClick={() => setMenuOpen(false)}
-            className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded text-[var(--color-muted)] hover:text-[var(--color-foreground)]"
-            aria-label="Close menu"
-          >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-              <path d="M18 6L6 18M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
-
         {/* Panel links */}
         <div className="flex flex-1 flex-col gap-1 px-2">
           {user && (
@@ -272,10 +271,11 @@ export function Nav() {
         )}
       </div>
 
-      {/* Backdrop overlay */}
+      {/* Click-to-close overlay on pushed content area only */}
       {menuOpen && user && (
         <div
-          className="fixed inset-0 z-40 bg-black/30 md:hidden"
+          className="pointer-events-auto fixed inset-0 right-[280px] z-30 md:hidden"
+          style={{ top: headerH }}
           onClick={() => setMenuOpen(false)}
           aria-hidden="true"
         />
