@@ -12,9 +12,10 @@ interface QuoteRequestButtonProps {
     publisher?: { name: string };
   };
   user: { name: string; email: string } | null;
+  onBeginCheckout?: () => void;
 }
 
-export function QuoteRequestButton({ adSlot, user }: QuoteRequestButtonProps) {
+export function QuoteRequestButton({ adSlot, user, onBeginCheckout }: QuoteRequestButtonProps) {
   const [open, setOpen] = useState(false);
   const [openCount, setOpenCount] = useState(0);
 

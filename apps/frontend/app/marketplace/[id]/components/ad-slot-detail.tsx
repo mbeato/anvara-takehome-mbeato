@@ -1,11 +1,13 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { getAdSlot } from '@/lib/api';
 import { authClient } from '@/auth-client';
 import type { AdSlot } from '@/lib/types';
 import { QuoteRequestButton } from './quote-request-button';
+import { track } from '@/lib/analytics';
+import { toGA4Item } from '@/lib/ab-tests';
 
 interface User {
   id: string;
@@ -43,6 +45,10 @@ export function AdSlotDetail({ id }: Props) {
   const [bookingSuccess, setBookingSuccess] = useState(false);
   const [bookingError, setBookingError] = useState<string | null>(null);
 
+  // --- Conversion tracking refs ---
+  const viewTracked = useRef(false);
+  const checkoutTracked = useRef(false);
+
   useEffect(() => {
     // Fetch ad slot
     getAdSlot(id)
@@ -74,6 +80,34 @@ export function AdSlotDetail({ id }: Props) {
       .catch(() => setRoleLoading(false));
   }, [id]);
 
+  // Track view_item once both data and auth loading resolve (TRCK-02)
+  useEffect(() => {
+    if (!loading && !roleLoading && adSlot && !viewTracked.current) {
+      viewTracked.current = true;
+      track('view_item', {
+        funnel_step: 'view',
+        currency: 'USD',
+        value: Number(adSlot.basePrice),
+        items: [toGA4Item(adSlot)],
+        user_type: roleInfo?.role || (user ? 'authenticated' : 'anonymous'),
+      });
+    }
+  }, [loading, roleLoading, adSlot, roleInfo, user]);
+
+  // Fire begin_checkout on first booking interaction (TRCK-03)
+  const handleBeginCheckout = useCallback((checkoutType: 'booking' | 'quote') => {
+    if (checkoutTracked.current || !adSlot) return;
+    checkoutTracked.current = true;
+    track('begin_checkout', {
+      funnel_step: 'engage',
+      currency: 'USD',
+      value: Number(adSlot.basePrice),
+      items: [toGA4Item(adSlot)],
+      checkout_type: checkoutType,
+      user_type: roleInfo?.role || (user ? 'authenticated' : 'anonymous'),
+    });
+  }, [adSlot, roleInfo, user]);
+
   const handleBooking = async () => {
     if (!roleInfo?.sponsorId || !adSlot) return;
 
@@ -99,6 +133,17 @@ export function AdSlotDetail({ id }: Props) {
       }
 
       setBookingSuccess(true);
+
+      // Track successful booking (TRCK-04)
+      track('purchase', {
+        funnel_step: 'convert',
+        transaction_id: adSlot.id,
+        currency: 'USD',
+        value: Number(adSlot.basePrice),
+        items: [toGA4Item(adSlot)],
+        user_type: roleInfo?.role || (user ? 'authenticated' : 'anonymous'),
+      });
+
       setAdSlot({ ...adSlot, isAvailable: false });
     } catch (err) {
       setBookingError(err instanceof Error ? err.message : 'Failed to book placement');
@@ -236,6 +281,7 @@ export function AdSlotDetail({ id }: Props) {
                       id="message"
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
+                      onFocus={() => handleBeginCheckout('booking')}
                       placeholder="Tell the publisher about your campaign goals..."
                       className="w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-background)] px-3 py-2.5 min-h-[44px] text-[var(--color-foreground)] placeholder:text-[var(--color-muted)] focus:border-[var(--color-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)]"
                       rows={3}
@@ -243,7 +289,7 @@ export function AdSlotDetail({ id }: Props) {
                   </div>
                   {bookingError && <p className="text-sm text-red-600">{bookingError}</p>}
                   <button
-                    onClick={handleBooking}
+                    onClick={() => { handleBeginCheckout('booking'); handleBooking(); }}
                     disabled={booking}
                     className="w-full rounded-lg bg-[var(--color-primary)] px-4 py-3 font-semibold text-white transition-colors hover:opacity-90 disabled:opacity-50"
                   >
@@ -276,6 +322,7 @@ export function AdSlotDetail({ id }: Props) {
                   publisher: adSlot.publisher ? { name: adSlot.publisher.name } : undefined,
                 }}
                 user={user}
+                onBeginCheckout={() => handleBeginCheckout('quote')}
               />
               <p className="mt-2 text-center text-xs text-[var(--color-muted)]">
                 Get custom pricing for this placement
