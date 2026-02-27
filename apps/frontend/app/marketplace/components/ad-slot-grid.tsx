@@ -40,7 +40,7 @@ export function AdSlotGrid({ adSlots }: Props) {
           key={slot.id}
           href={`/marketplace/${slot.id}`}
           onClick={() => trackMarketplaceClick(slot.id)}
-          className="block rounded-lg border border-[var(--color-border)] p-4 transition-shadow hover:shadow-md"
+          className="flex flex-col rounded-lg border border-[var(--color-border)] p-4 transition-shadow hover:shadow-md"
         >
           {/* Badges */}
           <div className="mb-2 flex flex-wrap items-center gap-2">
@@ -81,7 +81,7 @@ export function AdSlotGrid({ adSlots }: Props) {
           )}
 
           {/* Availability */}
-          <div className="mt-3 text-sm">
+          <div className="mt-auto pt-3 text-sm">
             {slot.isAvailable ? (
               <span className="text-green-600">
                 {slot._count && slot._count.placements > 0 ? 'Available \u00b7 In Demand' : 'Available'}
