@@ -100,6 +100,54 @@ body {
 }
 
 /* ============================================================================
+ * Mobile Modal Full-Screen Treatment
+ * ============================================================================ */
+
+@media (width < 48rem) {
+  .modal-dialog {
+    width: 100dvw;
+    height: 100dvh;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    border-radius: 0;
+    transform: translateY(0);
+    transition:
+      transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+      overlay 0.3s allow-discrete,
+      display 0.3s allow-discrete;
+
+    @starting-style {
+      transform: translateY(100%);
+      opacity: 0;
+    }
+  }
+
+  .modal-dialog:not([open]) {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+
+  /* Transparent backdrop on mobile — full-screen modal covers everything */
+  .modal-dialog::backdrop {
+    background-color: transparent;
+  }
+
+  /* Override the desktop scale animation for mobile */
+  .modal-dialog[open] {
+    transform: translateY(0);
+  }
+}
+
+@media (width < 48rem) and (prefers-reduced-motion: reduce) {
+  .modal-dialog,
+  .modal-dialog::backdrop {
+    transition-duration: 0.01ms;
+  }
+}
+
+/* ============================================================================
  * Mobile Navigation Panel
  * ============================================================================ */
 
