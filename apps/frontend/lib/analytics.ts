@@ -37,3 +37,19 @@ export function trackMarketplaceClick(adSlotId: string): void {
 export function trackCtaClick(ctaName: string, location: string): void {
   track('cta_click', { cta_name: ctaName, location });
 }
+
+export function trackQuoteRequestAttempt(adSlotId: string): void {
+  track('quote_request_attempt', { ad_slot_id: adSlotId });
+}
+
+export function trackCampaignCreateAttempt(): void {
+  track('campaign_create_attempt');
+}
+
+export function trackAdSlotCreateAttempt(): void {
+  track('ad_slot_create_attempt');
+}
+
+export function trackNewsletterSignupAttempt(): void {
+  track('newsletter_signup_attempt');
+}
