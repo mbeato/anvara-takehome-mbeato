@@ -104,7 +104,7 @@ export function AdSlotList({ adSlots }: AdSlotListProps) {
               transition={{
                 duration: DURATION.normal,
                 ease: EASE.out,
-                delay: i * STAGGER.fast,
+                delay: Math.floor(i / 3) * STAGGER.fast,
               }}
             >
               <AdSlotCard adSlot={slot} />

@@ -101,7 +101,7 @@ export function CampaignList({ campaigns }: CampaignListProps) {
               transition={{
                 duration: DURATION.normal,
                 ease: EASE.out,
-                delay: i * STAGGER.fast,
+                delay: Math.floor(i / 3) * STAGGER.fast,
               }}
             >
               <CampaignCard campaign={campaign} />
