@@ -1,4 +1,4 @@
-import { test, expect, type ConsoleMessage } from '@playwright/test';
+import { test, expect, loginAsSponsor, type ConsoleMessage } from './fixtures';
 
 /**
  * Funnel Events Verification (SC 4)
@@ -21,19 +21,6 @@ import { test, expect, type ConsoleMessage } from '@playwright/test';
  * the slot to be available and a real POST /book call, which overlaps with
  * the booking flow and is separately verifiable.
  */
-
-/** Helper to login as sponsor via the login page */
-async function loginAsSponsor(page: import('@playwright/test').Page) {
-  await page.goto('/login');
-  await page.waitForLoadState('networkidle');
-
-  // The login page defaults to sponsor role -- just click submit
-  const submitButton = page.getByRole('button', { name: /login as sponsor/i });
-  await submitButton.click();
-
-  // Wait for redirect to dashboard (login success indicator)
-  await page.waitForURL('**/dashboard/**', { timeout: 15000 });
-}
 
 test.describe('Funnel Events Verification', () => {
   /**

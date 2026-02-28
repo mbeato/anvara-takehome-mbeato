@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, loginAsSponsor } from './fixtures';
 
 /**
  * Mobile Responsive Verification (SC 5)
@@ -10,19 +10,6 @@ import { test, expect } from '@playwright/test';
  * Horizontal overflow check: scrollWidth <= clientWidth on <html> element.
  * If scrollWidth > clientWidth, horizontal scrollbar appears -- a mobile UX bug.
  */
-
-/** Helper to login as sponsor via the login page */
-async function loginAsSponsor(page: import('@playwright/test').Page) {
-  await page.goto('/login');
-  await page.waitForLoadState('networkidle');
-
-  // The login page defaults to sponsor role -- just click submit
-  const submitButton = page.getByRole('button', { name: /login as sponsor/i });
-  await submitButton.click();
-
-  // Wait for redirect to dashboard (login success indicator)
-  await page.waitForURL('**/dashboard/**', { timeout: 15000 });
-}
 
 test.describe('Mobile Responsive Verification (375px)', () => {
   test.beforeEach(async ({ page }) => {
