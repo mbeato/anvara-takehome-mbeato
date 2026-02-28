@@ -4,15 +4,33 @@ import { motion } from 'motion/react';
 import { FADE_IN_UP, STAGGER, DURATION, EASE } from '@/lib/motion';
 
 const SPONSOR_STEPS = [
-  { title: 'Search the Marketplace', description: 'Browse ad slots from publishers across categories, formats, and price points.' },
-  { title: 'Choose Your Slots', description: 'Select the ad slots that align with your audience and budget.' },
-  { title: 'Launch Your Campaign', description: 'Set your budget, upload creatives, and start reaching new audiences.' },
+  {
+    title: 'Search the Marketplace',
+    description: 'Browse ad slots from publishers across categories, formats, and price points.',
+  },
+  {
+    title: 'Choose Your Slots',
+    description: 'Select the ad slots that align with your audience and budget.',
+  },
+  {
+    title: 'Launch Your Campaign',
+    description: 'Set your budget, upload creatives, and start reaching new audiences.',
+  },
 ];
 
 const PUBLISHER_STEPS = [
-  { title: 'List Your Inventory', description: 'Add your available ad slots with descriptions, formats, and placement details.' },
-  { title: 'Set Your Rates', description: 'Price your inventory based on your audience size and engagement.' },
-  { title: 'Start Earning', description: 'Receive campaign placements and grow your revenue from sponsorships.' },
+  {
+    title: 'List Your Inventory',
+    description: 'Add your available ad slots with descriptions, formats, and placement details.',
+  },
+  {
+    title: 'Set Your Rates',
+    description: 'Price your inventory based on your audience size and engagement.',
+  },
+  {
+    title: 'Start Earning',
+    description: 'Receive campaign placements and grow your revenue from sponsorships.',
+  },
 ];
 
 export function HowItWorks() {

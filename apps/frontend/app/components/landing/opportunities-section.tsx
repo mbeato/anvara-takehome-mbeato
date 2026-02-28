@@ -33,7 +33,7 @@ export function OpportunitiesSection({
     try {
       const nextOffset = pagination.offset + pagination.limit;
       const res = await fetch(
-        `${API_URL}/api/ad-slots/featured?limit=${pagination.limit}&offset=${nextOffset}`,
+        `${API_URL}/api/ad-slots/featured?limit=${pagination.limit}&offset=${nextOffset}`
       );
       if (res.ok) {
         const json = await res.json();
@@ -59,7 +59,7 @@ export function OpportunitiesSection({
           loadMore();
         }
       },
-      { root: track, rootMargin: '200px' },
+      { root: track, rootMargin: '200px' }
     );
 
     observer.observe(sentinel);
@@ -92,8 +92,12 @@ export function OpportunitiesSection({
 
     rafRef.current = requestAnimationFrame(tick);
 
-    const pause = () => { pausedRef.current = true; };
-    const resume = () => { pausedRef.current = false; };
+    const pause = () => {
+      pausedRef.current = true;
+    };
+    const resume = () => {
+      pausedRef.current = false;
+    };
 
     track.addEventListener('mouseenter', pause);
     track.addEventListener('mouseleave', resume);

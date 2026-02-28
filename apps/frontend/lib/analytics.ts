@@ -7,10 +7,7 @@ function getUserType(): string {
   return hasSession ? 'authenticated' : 'anonymous';
 }
 
-export function track(
-  eventName: string,
-  params?: Record<string, unknown>
-): void {
+export function track(eventName: string, params?: Record<string, unknown>): void {
   const activeVariants = getActiveVariants();
   const enrichedParams: Record<string, unknown> = {
     ...activeVariants,

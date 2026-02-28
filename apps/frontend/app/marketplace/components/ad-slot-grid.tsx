@@ -84,7 +84,9 @@ export function AdSlotGrid({ adSlots }: Props) {
           <div className="mt-auto pt-3 text-sm">
             {slot.isAvailable ? (
               <span className="text-green-600">
-                {slot._count && slot._count.placements > 0 ? 'Available \u00b7 In Demand' : 'Available'}
+                {slot._count && slot._count.placements > 0
+                  ? 'Available \u00b7 In Demand'
+                  : 'Available'}
               </span>
             ) : (
               <span className="text-[var(--color-muted)]">Currently Booked</span>

@@ -12,7 +12,15 @@ const router: IRouter = Router();
 
 // POST /api/auth/login - Placeholder (Better Auth handles login via frontend)
 router.post('/login', async (_req: Request, res: Response) => {
-  res.status(400).json(apiError(400, 'BAD_REQUEST', 'Use the frontend login at /login instead. Better Auth handles authentication via the Next.js frontend'));
+  res
+    .status(400)
+    .json(
+      apiError(
+        400,
+        'BAD_REQUEST',
+        'Use the frontend login at /login instead. Better Auth handles authentication via the Next.js frontend'
+      )
+    );
 });
 
 // GET /api/auth/me - Get current user profile

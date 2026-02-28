@@ -146,7 +146,10 @@ export function Nav() {
   const barClass = 'block h-[2px] w-5 rounded-full bg-current';
 
   return (
-    <header ref={headerRef} className={`sticky top-0 z-40 border-b ${isLoginPage ? 'border-transparent bg-transparent' : 'border-[var(--color-border)] bg-[var(--color-background)]'}`}>
+    <header
+      ref={headerRef}
+      className={`sticky top-0 z-40 border-b ${isLoginPage ? 'border-transparent bg-transparent' : 'border-[var(--color-border)] bg-[var(--color-background)]'}`}
+    >
       <nav className="mx-auto flex max-w-6xl items-center justify-between p-4">
         <Link href="/">
           <Image src="/logo.png" alt="Anvara" width={120} height={21} priority />
@@ -179,29 +182,17 @@ export function Nav() {
               <span className="flex w-5 flex-col items-center gap-[5px]">
                 <motion.span
                   className={barClass}
-                  animate={
-                    menuOpen
-                      ? { rotate: 45, y: 7 }
-                      : { rotate: 0, y: 0 }
-                  }
+                  animate={menuOpen ? { rotate: 45, y: 7 } : { rotate: 0, y: 0 }}
                   transition={{ duration: DURATION.normal, ease: EASE.out }}
                 />
                 <motion.span
                   className={barClass}
-                  animate={
-                    menuOpen
-                      ? { opacity: 0 }
-                      : { opacity: 1 }
-                  }
+                  animate={menuOpen ? { opacity: 0 } : { opacity: 1 }}
                   transition={{ duration: DURATION.normal, ease: EASE.out }}
                 />
                 <motion.span
                   className={barClass}
-                  animate={
-                    menuOpen
-                      ? { rotate: -45, y: -7 }
-                      : { rotate: 0, y: 0 }
-                  }
+                  animate={menuOpen ? { rotate: -45, y: -7 } : { rotate: 0, y: 0 }}
                   transition={{ duration: DURATION.normal, ease: EASE.out }}
                 />
               </span>
@@ -212,64 +203,64 @@ export function Nav() {
 
       {/* Mobile slide-out panel — starts below header; only mounted when open */}
       {menuOpen && user && (
-      <div
-        className="fixed right-0 z-30 flex w-[280px] translate-x-0 flex-col border-l border-[var(--color-border)] bg-[var(--color-background)] md:hidden"
-        style={{ top: headerH, height: `calc(100% - ${headerH}px)` }}
-      >
-        {/* Panel links */}
-        <div className="flex flex-1 flex-col gap-1 px-2">
+        <div
+          className="fixed right-0 z-30 flex w-[280px] translate-x-0 flex-col border-l border-[var(--color-border)] bg-[var(--color-background)] md:hidden"
+          style={{ top: headerH, height: `calc(100% - ${headerH}px)` }}
+        >
+          {/* Panel links */}
+          <div className="flex flex-1 flex-col gap-1 px-2">
+            {user && (
+              <Link
+                href="/marketplace"
+                className="rounded-lg py-3 px-6 text-[var(--color-muted)] hover:bg-[var(--color-border)] hover:text-[var(--color-foreground)]"
+                onClick={() => setMenuOpen(false)}
+              >
+                Marketplace
+              </Link>
+            )}
+            {user && effectiveRole === 'sponsor' && (
+              <Link
+                href="/dashboard/sponsor"
+                className="rounded-lg py-3 px-6 text-[var(--color-muted)] hover:bg-[var(--color-border)] hover:text-[var(--color-foreground)]"
+                onClick={() => setMenuOpen(false)}
+              >
+                My Campaigns
+              </Link>
+            )}
+            {user && effectiveRole === 'publisher' && (
+              <Link
+                href="/dashboard/publisher"
+                className="rounded-lg py-3 px-6 text-[var(--color-muted)] hover:bg-[var(--color-border)] hover:text-[var(--color-foreground)]"
+                onClick={() => setMenuOpen(false)}
+              >
+                My Ad Slots
+              </Link>
+            )}
+          </div>
+
+          {/* Panel auth block at bottom */}
           {user && (
-            <Link
-              href="/marketplace"
-              className="rounded-lg py-3 px-6 text-[var(--color-muted)] hover:bg-[var(--color-border)] hover:text-[var(--color-foreground)]"
-              onClick={() => setMenuOpen(false)}
-            >
-              Marketplace
-            </Link>
-          )}
-          {user && effectiveRole === 'sponsor' && (
-            <Link
-              href="/dashboard/sponsor"
-              className="rounded-lg py-3 px-6 text-[var(--color-muted)] hover:bg-[var(--color-border)] hover:text-[var(--color-foreground)]"
-              onClick={() => setMenuOpen(false)}
-            >
-              My Campaigns
-            </Link>
-          )}
-          {user && effectiveRole === 'publisher' && (
-            <Link
-              href="/dashboard/publisher"
-              className="rounded-lg py-3 px-6 text-[var(--color-muted)] hover:bg-[var(--color-border)] hover:text-[var(--color-foreground)]"
-              onClick={() => setMenuOpen(false)}
-            >
-              My Ad Slots
-            </Link>
+            <div className="border-t border-[var(--color-border)] p-4">
+              <span className="block text-sm text-[var(--color-muted)]">
+                {user.name} {effectiveRole && `(${effectiveRole})`}
+              </span>
+              <button
+                onClick={async () => {
+                  await authClient.signOut({
+                    fetchOptions: {
+                      onSuccess: () => {
+                        window.location.href = '/';
+                      },
+                    },
+                  });
+                }}
+                className="mt-3 min-h-[44px] w-full rounded bg-gray-600 px-3 py-2 text-sm text-white hover:bg-gray-500"
+              >
+                Logout
+              </button>
+            </div>
           )}
         </div>
-
-        {/* Panel auth block at bottom */}
-        {user && (
-          <div className="border-t border-[var(--color-border)] p-4">
-            <span className="block text-sm text-[var(--color-muted)]">
-              {user.name} {effectiveRole && `(${effectiveRole})`}
-            </span>
-            <button
-              onClick={async () => {
-                await authClient.signOut({
-                  fetchOptions: {
-                    onSuccess: () => {
-                      window.location.href = '/';
-                    },
-                  },
-                });
-              }}
-              className="mt-3 min-h-[44px] w-full rounded bg-gray-600 px-3 py-2 text-sm text-white hover:bg-gray-500"
-            >
-              Logout
-            </button>
-          </div>
-        )}
-      </div>
       )}
 
       {/* Click-to-close overlay on pushed content area only */}

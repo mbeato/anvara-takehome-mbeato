@@ -53,13 +53,10 @@ export default async function MarketplacePage({ searchParams }: Props) {
     if (order) fetchParams.set('order', order);
     if (available) fetchParams.set('available', available);
 
-    const res = await fetch(
-      `${API_URL}/api/ad-slots?${fetchParams.toString()}`,
-      {
-        cache: 'no-store',
-        headers: { cookie: requestHeaders.get('cookie') ?? '' },
-      }
-    );
+    const res = await fetch(`${API_URL}/api/ad-slots?${fetchParams.toString()}`, {
+      cache: 'no-store',
+      headers: { cookie: requestHeaders.get('cookie') ?? '' },
+    });
     if (!res.ok) {
       fetchError = 'Failed to load ad slots';
     } else {
@@ -91,13 +88,20 @@ export default async function MarketplacePage({ searchParams }: Props) {
         <>
           {pagination && pagination.total > 0 && (
             <p className="text-sm text-[var(--color-muted)]">
-              Showing {(currentPage - 1) * pagination.limit + 1}–{Math.min(currentPage * pagination.limit, pagination.total)} of {pagination.total} results
+              Showing {(currentPage - 1) * pagination.limit + 1}–
+              {Math.min(currentPage * pagination.limit, pagination.total)} of {pagination.total}{' '}
+              results
             </p>
           )}
           <AdSlotGrid adSlots={adSlots} />
           {totalPages > 1 && (
             <Suspense fallback={null}>
-              <PaginationControls currentPage={currentPage} totalPages={totalPages} total={pagination?.total ?? 0} limit={pagination?.limit ?? PAGE_SIZE} />
+              <PaginationControls
+                currentPage={currentPage}
+                totalPages={totalPages}
+                total={pagination?.total ?? 0}
+                limit={pagination?.limit ?? PAGE_SIZE}
+              />
             </Suspense>
           )}
         </>

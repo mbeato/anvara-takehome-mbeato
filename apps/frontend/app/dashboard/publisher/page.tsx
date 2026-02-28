@@ -10,8 +10,7 @@ import { CreateAdSlotButton } from './components/ad-slot-form';
 
 export const metadata: Metadata = {
   title: 'My Ad Slots',
-  description:
-    'Manage your advertising inventory, set rates, and track earnings.',
+  description: 'Manage your advertising inventory, set rates, and track earnings.',
   openGraph: {
     title: 'My Ad Slots | Anvara',
     description: 'Manage your advertising inventory, set rates, and track earnings.',
@@ -94,9 +93,7 @@ export default async function PublisherDashboard() {
 
       {/* Ad Slot Grid or Error */}
       {fetchError ? (
-        <div className="rounded border border-red-200 bg-red-50 p-4 text-red-600">
-          {fetchError}
-        </div>
+        <div className="rounded border border-red-200 bg-red-50 p-4 text-red-600">{fetchError}</div>
       ) : (
         <AdSlotList adSlots={adSlots} />
       )}

@@ -10,13 +10,7 @@ const VALID_TIMELINES = ['ASAP', '1-2 weeks', '1 month', 'Flexible'];
 
 // POST /api/quotes/request - Quote request (public, no auth, no DB)
 router.post('/request', (req: Request, res: Response) => {
-  const {
-    email,
-    companyName,
-    budgetRange,
-    adSlotId,
-    timeline,
-  } = req.body;
+  const { email, companyName, budgetRange, adSlotId, timeline } = req.body;
 
   // Validate required fields
   if (!email || typeof email !== 'string' || !EMAIL_REGEX.test(email)) {
@@ -76,9 +70,7 @@ router.post('/request', (req: Request, res: Response) => {
 
   const quoteId = `QR-${crypto.randomUUID().slice(0, 8).toUpperCase()}`;
 
-  logger.info(
-    `Quote request ${quoteId} for ad slot ${adSlotId} from ${companyName} (${email})`
-  );
+  logger.info(`Quote request ${quoteId} for ad slot ${adSlotId} from ${companyName} (${email})`);
 
   res.json({ success: true, quoteId });
 });

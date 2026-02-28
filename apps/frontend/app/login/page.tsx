@@ -90,7 +90,16 @@ export default function LoginPage() {
           href="/"
           className="mb-4 inline-flex items-center gap-1 min-h-[44px] text-sm text-[var(--color-muted)] hover:text-[var(--color-foreground)]"
         >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
             <path d="M19 12H5" />
             <path d="m12 19-7-7 7-7" />
           </svg>

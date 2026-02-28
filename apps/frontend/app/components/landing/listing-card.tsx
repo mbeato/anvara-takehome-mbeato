@@ -24,7 +24,9 @@ export function ListingCard({ name, type, basePrice, publisherName }: ListingCar
     <div className="rounded-lg border border-[var(--color-border)] bg-white p-4">
       <div className="mb-2 flex items-start justify-between gap-2">
         <h3 className="font-semibold text-[var(--color-foreground)]">{name}</h3>
-        <span className={`inline-block flex-shrink-0 rounded-full px-2.5 py-0.5 text-xs font-medium ${badgeClass}`}>
+        <span
+          className={`inline-block flex-shrink-0 rounded-full px-2.5 py-0.5 text-xs font-medium ${badgeClass}`}
+        >
           {type}
         </span>
       </div>

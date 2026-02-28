@@ -3,10 +3,7 @@
 import { useEffect, useRef } from 'react';
 import { track } from '@/lib/analytics';
 
-export function useTrackView(
-  eventName: string,
-  params?: Record<string, unknown>
-): void {
+export function useTrackView(eventName: string, params?: Record<string, unknown>): void {
   const hasFired = useRef(false);
 
   useEffect(() => {

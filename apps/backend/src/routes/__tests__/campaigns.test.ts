@@ -33,10 +33,36 @@ vi.mock('../../db.js', () => ({
       count: vi.fn(),
       aggregate: vi.fn(),
     },
-    sponsor: { findUnique: vi.fn(), findMany: vi.fn(), create: vi.fn(), update: vi.fn(), delete: vi.fn() },
-    publisher: { findUnique: vi.fn(), findMany: vi.fn(), create: vi.fn(), update: vi.fn(), delete: vi.fn() },
-    adSlot: { findMany: vi.fn(), findUnique: vi.fn(), create: vi.fn(), update: vi.fn(), delete: vi.fn(), count: vi.fn() },
-    placement: { findMany: vi.fn(), findUnique: vi.fn(), create: vi.fn(), update: vi.fn(), delete: vi.fn(), count: vi.fn() },
+    sponsor: {
+      findUnique: vi.fn(),
+      findMany: vi.fn(),
+      create: vi.fn(),
+      update: vi.fn(),
+      delete: vi.fn(),
+    },
+    publisher: {
+      findUnique: vi.fn(),
+      findMany: vi.fn(),
+      create: vi.fn(),
+      update: vi.fn(),
+      delete: vi.fn(),
+    },
+    adSlot: {
+      findMany: vi.fn(),
+      findUnique: vi.fn(),
+      create: vi.fn(),
+      update: vi.fn(),
+      delete: vi.fn(),
+      count: vi.fn(),
+    },
+    placement: {
+      findMany: vi.fn(),
+      findUnique: vi.fn(),
+      create: vi.fn(),
+      update: vi.fn(),
+      delete: vi.fn(),
+      count: vi.fn(),
+    },
     creative: { findMany: vi.fn(), findUnique: vi.fn() },
     payment: { findMany: vi.fn() },
     $transaction: vi.fn(),
@@ -71,17 +97,15 @@ vi.mock('../../db.js', () => ({
 
 // Mock auth.js -- default: sponsor user authenticated
 vi.mock('../../auth.js', () => ({
-  requireAuth: vi.fn(
-    async (req: Record<string, unknown>, _res: unknown, next: () => void) => {
-      req.user = {
-        id: 'user-1',
-        email: 'sponsor@test.com',
-        role: 'SPONSOR',
-        sponsorId: 'sponsor-1',
-      };
-      next();
-    },
-  ),
+  requireAuth: vi.fn(async (req: Record<string, unknown>, _res: unknown, next: () => void) => {
+    req.user = {
+      id: 'user-1',
+      email: 'sponsor@test.com',
+      role: 'SPONSOR',
+      sponsorId: 'sponsor-1',
+    };
+    next();
+  }),
   auth: { api: { getSession: vi.fn() } },
 }));
 
@@ -148,7 +172,11 @@ describe('Campaign endpoints', () => {
     vi.clearAllMocks();
 
     // Restore default requireAuth behavior (sponsor user)
-    vi.mocked(requireAuth).mockImplementation(((req: Record<string, unknown>, _res: unknown, next: () => void) => {
+    vi.mocked(requireAuth).mockImplementation(((
+      req: Record<string, unknown>,
+      _res: unknown,
+      next: () => void
+    ) => {
       req.user = {
         id: 'user-1',
         email: 'sponsor@test.com',
@@ -177,7 +205,11 @@ describe('Campaign endpoints', () => {
     });
 
     it('returns 401 when not authenticated', async () => {
-      vi.mocked(requireAuth).mockImplementationOnce((async (_req: unknown, res: { status: (n: number) => { json: (b: unknown) => void } }, _next: () => void) => {
+      vi.mocked(requireAuth).mockImplementationOnce((async (
+        _req: unknown,
+        res: { status: (n: number) => { json: (b: unknown) => void } },
+        _next: () => void
+      ) => {
         res.status(401).json({
           error: { code: 'UNAUTHORIZED', status: 401, message: 'Not authenticated' },
         });
@@ -249,9 +281,7 @@ describe('Campaign endpoints', () => {
       });
       vi.mocked(prisma.campaign.create).mockResolvedValue(created as never);
 
-      const res = await request(app)
-        .post('/api/campaigns')
-        .send(validCampaignBody());
+      const res = await request(app).post('/api/campaigns').send(validCampaignBody());
 
       expect(res.status).toBe(201);
       expect(res.body.id).toBe('camp-new');
@@ -259,20 +289,22 @@ describe('Campaign endpoints', () => {
     });
 
     it('returns 400 for invalid data (missing name)', async () => {
-      const res = await request(app)
-        .post('/api/campaigns')
-        .send({
-          budget: 10000,
-          startDate: '2026-06-01',
-          endDate: '2026-07-01',
-        });
+      const res = await request(app).post('/api/campaigns').send({
+        budget: 10000,
+        startDate: '2026-06-01',
+        endDate: '2026-07-01',
+      });
 
       expect(res.status).toBe(400);
       expect(res.body.error.code).toBe('VALIDATION_ERROR');
     });
 
     it('returns 403 when publisher tries to create campaign', async () => {
-      vi.mocked(requireAuth).mockImplementationOnce(((req: Record<string, unknown>, _res: unknown, next: () => void) => {
+      vi.mocked(requireAuth).mockImplementationOnce(((
+        req: Record<string, unknown>,
+        _res: unknown,
+        next: () => void
+      ) => {
         req.user = {
           id: 'user-2',
           email: 'publisher@test.com',
@@ -283,9 +315,7 @@ describe('Campaign endpoints', () => {
         next();
       }) as unknown as AuthMiddleware);
 
-      const res = await request(app)
-        .post('/api/campaigns')
-        .send(validCampaignBody());
+      const res = await request(app).post('/api/campaigns').send(validCampaignBody());
 
       expect(res.status).toBe(403);
       expect(res.body.error.code).toBe('FORBIDDEN');
@@ -304,9 +334,7 @@ describe('Campaign endpoints', () => {
       const updated = makeCampaign({ name: 'Updated Name' });
       vi.mocked(prisma.campaign.update).mockResolvedValue(updated as never);
 
-      const res = await request(app)
-        .put('/api/campaigns/camp-1')
-        .send({ name: 'Updated Name' });
+      const res = await request(app).put('/api/campaigns/camp-1').send({ name: 'Updated Name' });
 
       expect(res.status).toBe(200);
       expect(res.body.name).toBe('Updated Name');
@@ -316,9 +344,7 @@ describe('Campaign endpoints', () => {
       const campaign = makeCampaign({ sponsorId: 'sponsor-other' });
       vi.mocked(prisma.campaign.findUnique).mockResolvedValue(campaign as never);
 
-      const res = await request(app)
-        .put('/api/campaigns/camp-1')
-        .send({ name: 'Hijack Attempt' });
+      const res = await request(app).put('/api/campaigns/camp-1').send({ name: 'Hijack Attempt' });
 
       expect(res.status).toBe(403);
       expect(res.body.error.code).toBe('FORBIDDEN');

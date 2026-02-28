@@ -294,13 +294,13 @@ export interface FeaturedListingsResponse {
 export interface CampaignStats {
   totalCampaigns: number;
   activeCampaigns: number;
-  totalBudget: string;   // Decimal serialized as string
-  avgBudget: string;     // Decimal serialized as string
+  totalBudget: string; // Decimal serialized as string
+  avgBudget: string; // Decimal serialized as string
 }
 
 export interface AdSlotStats {
   totalSlots: number;
   activeSlots: number;
-  totalRevenue: string;  // Decimal serialized as string
-  avgPrice: string;      // Decimal serialized as string
+  totalRevenue: string; // Decimal serialized as string
+  avgPrice: string; // Decimal serialized as string
 }

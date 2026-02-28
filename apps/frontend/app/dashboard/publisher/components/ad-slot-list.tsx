@@ -5,7 +5,12 @@ import { motion } from 'motion/react';
 import { FADE_IN_UP, STAGGER, DURATION, EASE } from '@/lib/motion';
 import type { AdSlot, AdSlotType } from '@/lib/types';
 import { EmptyState } from '@/app/components/empty-state';
-import { FilterBar, initialFilterValues, type FilterBarConfig, type FilterBarValues } from '@/app/components/filter-bar';
+import {
+  FilterBar,
+  initialFilterValues,
+  type FilterBarConfig,
+  type FilterBarValues,
+} from '@/app/components/filter-bar';
 import { AdSlotCard } from './ad-slot-card';
 import { CreateAdSlotButton } from './ad-slot-form';
 

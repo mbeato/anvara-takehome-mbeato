@@ -106,9 +106,7 @@ export function QuoteRequestForm({ adSlot, user, onClose }: QuoteRequestFormProp
 
         <h3 className="text-lg font-semibold">Quote Request Submitted</h3>
 
-        <p className="font-mono text-sm text-[var(--color-muted)]">
-          Reference: {state.quoteId}
-        </p>
+        <p className="font-mono text-sm text-[var(--color-muted)]">Reference: {state.quoteId}</p>
 
         <p className="text-sm text-[var(--color-muted)]">
           We&apos;ll respond within 1-2 business days
@@ -150,8 +148,8 @@ export function QuoteRequestForm({ adSlot, user, onClose }: QuoteRequestFormProp
       <div className="mb-4 rounded bg-gray-50 p-3">
         <p className="font-medium">{adSlot.name}</p>
         <p className="text-sm text-[var(--color-muted)]">
-          {adSlot.publisher?.name && `by ${adSlot.publisher.name} · `}
-          ${Number(adSlot.basePrice).toLocaleString()}/mo
+          {adSlot.publisher?.name && `by ${adSlot.publisher.name} · `}$
+          {Number(adSlot.basePrice).toLocaleString()}/mo
         </p>
       </div>
 

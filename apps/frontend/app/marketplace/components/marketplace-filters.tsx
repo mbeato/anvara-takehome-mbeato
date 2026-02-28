@@ -2,7 +2,12 @@
 
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { useCallback } from 'react';
-import { FilterBar, type FilterBarConfig, type FilterBarValues, type SortOption } from '@/app/components/filter-bar';
+import {
+  FilterBar,
+  type FilterBarConfig,
+  type FilterBarValues,
+  type SortOption,
+} from '@/app/components/filter-bar';
 import type { AdSlotType } from '@/lib/types';
 import { track } from '@/lib/analytics';
 

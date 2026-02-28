@@ -539,7 +539,9 @@ async function main() {
   }
 
   console.log('\nPrisma seed completed!');
-  console.log('  Created: 2 sponsors, 5 publishers, 20 ad slots, 2 campaigns, 2 creatives, 6 placements');
+  console.log(
+    '  Created: 2 sponsors, 5 publishers, 20 ad slots, 2 campaigns, 2 creatives, 6 placements'
+  );
 
   console.log('\n✅ All seeding complete!');
 }

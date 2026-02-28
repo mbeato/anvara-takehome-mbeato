@@ -63,8 +63,7 @@ export function NewsletterForm() {
 
       if (!response.ok) {
         const data = await response.json().catch(() => null);
-        const message =
-          data?.error?.message || 'Something went wrong. Please try again.';
+        const message = data?.error?.message || 'Something went wrong. Please try again.';
         setStatus('error');
         setErrorMessage(message);
         return;
@@ -83,7 +82,10 @@ export function NewsletterForm() {
 
   return (
     <div className="max-w-md">
-      <label htmlFor="newsletter-email" className="text-sm font-semibold text-[var(--color-foreground)]">
+      <label
+        htmlFor="newsletter-email"
+        className="text-sm font-semibold text-[var(--color-foreground)]"
+      >
         Stay in the Loop
       </label>
       <p className="mt-1 text-sm text-[var(--color-muted)]">
@@ -115,8 +117,19 @@ export function NewsletterForm() {
                 fill="none"
                 viewBox="0 0 24 24"
               >
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                />
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                />
               </svg>
               Subscribing...
             </>
@@ -126,16 +139,10 @@ export function NewsletterForm() {
         </button>
       </form>
       <div id="newsletter-feedback" role="alert" className="mt-2 text-sm">
-        {status === 'error' && (
-          <p className="text-red-600">{errorMessage}</p>
-        )}
-        {status === 'duplicate' && (
-          <p className="text-blue-600">You&apos;re already subscribed!</p>
-        )}
+        {status === 'error' && <p className="text-red-600">{errorMessage}</p>}
+        {status === 'duplicate' && <p className="text-blue-600">You&apos;re already subscribed!</p>}
         {status === 'success' && (
-          <p className="text-green-600">
-            You&apos;re in! We&apos;ll keep you posted.
-          </p>
+          <p className="text-green-600">You&apos;re in! We&apos;ll keep you posted.</p>
         )}
       </div>
     </div>

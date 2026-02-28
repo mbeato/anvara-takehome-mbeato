@@ -19,7 +19,7 @@ export interface ToggleConfig {
 
 export interface SortOption {
   label: string;
-  value: string;       // field name
+  value: string; // field name
   direction: 'asc' | 'desc';
 }
 
@@ -159,7 +159,10 @@ export function FilterBar({ config, values, onChange }: FilterBarProps) {
 
       {/* Toggles */}
       {toggles?.map((tg) => (
-        <label key={tg.key} className="flex min-h-[44px] items-center gap-2 text-sm text-[var(--color-foreground)]">
+        <label
+          key={tg.key}
+          className="flex min-h-[44px] items-center gap-2 text-sm text-[var(--color-foreground)]"
+        >
           <input
             type="checkbox"
             checked={values.toggles[tg.key] ?? false}

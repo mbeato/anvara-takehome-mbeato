@@ -71,10 +71,7 @@ export function AdSlotDetail({ id }: Props) {
           setUser(sessionUser);
 
           // Fetch role info from backend
-          fetch(
-            `${API_URL}/api/auth/role/${sessionUser.id}`,
-            { credentials: 'include' }
-          )
+          fetch(`${API_URL}/api/auth/role/${sessionUser.id}`, { credentials: 'include' })
             .then((res) => res.json())
             .then((data) => setRoleInfo(data))
             .catch(() => setRoleInfo(null))
@@ -104,10 +101,7 @@ export function AdSlotDetail({ id }: Props) {
   useEffect(() => {
     if (!adSlot?.publisherId) return;
 
-    fetch(
-      `${API_URL}/api/ad-slots`,
-      { credentials: 'include' }
-    )
+    fetch(`${API_URL}/api/ad-slots`, { credentials: 'include' })
       .then((res) => res.json())
       .then((slots: AdSlot[]) => {
         const related = slots
@@ -120,18 +114,21 @@ export function AdSlotDetail({ id }: Props) {
   }, [adSlot]);
 
   // Fire begin_checkout on first booking interaction (TRCK-03)
-  const handleBeginCheckout = useCallback((checkoutType: 'booking' | 'quote') => {
-    if (checkoutTracked.current || !adSlot) return;
-    checkoutTracked.current = true;
-    track('begin_checkout', {
-      funnel_step: 'engage',
-      currency: 'USD',
-      value: Number(adSlot.basePrice),
-      items: [toGA4Item(adSlot)],
-      checkout_type: checkoutType,
-      user_type: roleInfo?.role || (user ? 'authenticated' : 'anonymous'),
-    });
-  }, [adSlot, roleInfo, user]);
+  const handleBeginCheckout = useCallback(
+    (checkoutType: 'booking' | 'quote') => {
+      if (checkoutTracked.current || !adSlot) return;
+      checkoutTracked.current = true;
+      track('begin_checkout', {
+        funnel_step: 'engage',
+        currency: 'USD',
+        value: Number(adSlot.basePrice),
+        items: [toGA4Item(adSlot)],
+        checkout_type: checkoutType,
+        user_type: roleInfo?.role || (user ? 'authenticated' : 'anonymous'),
+      });
+    },
+    [adSlot, roleInfo, user]
+  );
 
   const handleBooking = async () => {
     if (!roleInfo?.sponsorId || !adSlot) return;
@@ -140,17 +137,14 @@ export function AdSlotDetail({ id }: Props) {
     setBookingError(null);
 
     try {
-      const response = await fetch(
-        `${API_URL}/api/ad-slots/${adSlot.id}/book`,
-        {
-          method: 'POST',
-          credentials: 'include',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            message: message || undefined,
-          }),
-        }
-      );
+      const response = await fetch(`${API_URL}/api/ad-slots/${adSlot.id}/book`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: message || undefined,
+        }),
+      });
 
       if (!response.ok) {
         const data = await response.json();
@@ -181,14 +175,11 @@ export function AdSlotDetail({ id }: Props) {
     if (!adSlot) return;
 
     try {
-      const response = await fetch(
-        `${API_URL}/api/ad-slots/${adSlot.id}/unbook`,
-        {
-          method: 'POST',
-          credentials: 'include',
-          headers: { 'Content-Type': 'application/json' },
-        }
-      );
+      const response = await fetch(`${API_URL}/api/ad-slots/${adSlot.id}/unbook`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+      });
 
       if (!response.ok) {
         throw new Error('Failed to reset booking');
@@ -209,7 +200,10 @@ export function AdSlotDetail({ id }: Props) {
   if (error || !adSlot) {
     return (
       <div className="space-y-4">
-        <Link href="/marketplace" className="inline-flex items-center min-h-[44px] text-[var(--color-primary)] hover:underline">
+        <Link
+          href="/marketplace"
+          className="inline-flex items-center min-h-[44px] text-[var(--color-primary)] hover:underline"
+        >
           ← Back to Marketplace
         </Link>
         <div className="rounded border border-red-200 bg-red-50 p-4 text-red-600">
@@ -221,7 +215,10 @@ export function AdSlotDetail({ id }: Props) {
 
   return (
     <div className="space-y-6">
-      <Link href="/marketplace" className="inline-flex items-center min-h-[44px] text-[var(--color-primary)] hover:underline">
+      <Link
+        href="/marketplace"
+        className="inline-flex items-center min-h-[44px] text-[var(--color-primary)] hover:underline"
+      >
         ← Back to Marketplace
       </Link>
 
@@ -254,7 +251,9 @@ export function AdSlotDetail({ id }: Props) {
           </span>
         </div>
 
-        {adSlot.description && <p className="mb-6 text-[var(--color-muted)]">{adSlot.description}</p>}
+        {adSlot.description && (
+          <p className="mb-6 text-[var(--color-muted)]">{adSlot.description}</p>
+        )}
 
         {/* Publisher Info Section (CONV-05) */}
         {adSlot.publisher && (
@@ -344,7 +343,10 @@ export function AdSlotDetail({ id }: Props) {
                   </div>
                   {bookingError && <p className="text-sm text-red-600">{bookingError}</p>}
                   <button
-                    onClick={() => { handleBeginCheckout('booking'); handleBooking(); }}
+                    onClick={() => {
+                      handleBeginCheckout('booking');
+                      handleBooking();
+                    }}
                     disabled={booking}
                     className="w-full rounded-lg bg-[var(--color-primary)] px-4 py-3 font-semibold text-white transition-colors hover:opacity-90 disabled:opacity-50"
                   >
@@ -415,7 +417,9 @@ export function AdSlotDetail({ id }: Props) {
       {/* Related Listings (CONV-10) */}
       {relatedSlots.length > 0 && (
         <div className="rounded-lg border border-[var(--color-border)] p-6">
-          <h2 className="mb-4 text-lg font-semibold">More from {adSlot.publisher?.name ?? 'this Publisher'}</h2>
+          <h2 className="mb-4 text-lg font-semibold">
+            More from {adSlot.publisher?.name ?? 'this Publisher'}
+          </h2>
           <div className="grid gap-4 sm:grid-cols-3">
             {relatedSlots.map((related) => (
               <Link

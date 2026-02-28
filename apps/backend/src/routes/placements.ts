@@ -26,12 +26,14 @@ router.get('/', async (req: AuthRequest, res: Response) => {
 
     // Build role-scoped WHERE clause
     const where = {
-      ...(user.role === 'SPONSOR' && user.sponsorId && {
-        campaign: { sponsorId: user.sponsorId },
-      }),
-      ...(user.role === 'PUBLISHER' && user.publisherId && {
-        publisherId: user.publisherId,
-      }),
+      ...(user.role === 'SPONSOR' &&
+        user.sponsorId && {
+          campaign: { sponsorId: user.sponsorId },
+        }),
+      ...(user.role === 'PUBLISHER' &&
+        user.publisherId && {
+          publisherId: user.publisherId,
+        }),
       ...(status && {
         status: status as string as
           | 'PENDING'

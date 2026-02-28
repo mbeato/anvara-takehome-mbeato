@@ -19,26 +19,96 @@ export function Footer() {
             <div>
               <h4 className="text-sm font-semibold text-[var(--color-foreground)]">Company</h4>
               <ul className="mt-3 space-y-0 text-sm">
-                <li><a href="#" className="block py-2 text-[var(--color-muted)] hover:text-[var(--color-foreground)]">About</a></li>
-                <li><a href="#" className="block py-2 text-[var(--color-muted)] hover:text-[var(--color-foreground)]">Careers</a></li>
-                <li><a href="#" className="block py-2 text-[var(--color-muted)] hover:text-[var(--color-foreground)]">Blog</a></li>
-                <li><a href="#" className="block py-2 text-[var(--color-muted)] hover:text-[var(--color-foreground)]">Contact Us</a></li>
+                <li>
+                  <a
+                    href="#"
+                    className="block py-2 text-[var(--color-muted)] hover:text-[var(--color-foreground)]"
+                  >
+                    About
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    className="block py-2 text-[var(--color-muted)] hover:text-[var(--color-foreground)]"
+                  >
+                    Careers
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    className="block py-2 text-[var(--color-muted)] hover:text-[var(--color-foreground)]"
+                  >
+                    Blog
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    className="block py-2 text-[var(--color-muted)] hover:text-[var(--color-foreground)]"
+                  >
+                    Contact Us
+                  </a>
+                </li>
               </ul>
             </div>
             <div>
               <h4 className="text-sm font-semibold text-[var(--color-foreground)]">Legal</h4>
               <ul className="mt-3 space-y-0 text-sm">
-                <li><a href="#" className="block py-2 text-[var(--color-muted)] hover:text-[var(--color-foreground)]">Terms of Service</a></li>
-                <li><a href="#" className="block py-2 text-[var(--color-muted)] hover:text-[var(--color-foreground)]">Privacy Policy</a></li>
-                <li><a href="#" className="block py-2 text-[var(--color-muted)] hover:text-[var(--color-foreground)]">Cookie Policy</a></li>
+                <li>
+                  <a
+                    href="#"
+                    className="block py-2 text-[var(--color-muted)] hover:text-[var(--color-foreground)]"
+                  >
+                    Terms of Service
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    className="block py-2 text-[var(--color-muted)] hover:text-[var(--color-foreground)]"
+                  >
+                    Privacy Policy
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    className="block py-2 text-[var(--color-muted)] hover:text-[var(--color-foreground)]"
+                  >
+                    Cookie Policy
+                  </a>
+                </li>
               </ul>
             </div>
             <div>
               <h4 className="text-sm font-semibold text-[var(--color-foreground)]">Support</h4>
               <ul className="mt-3 space-y-0 text-sm">
-                <li><a href="#" className="block py-2 text-[var(--color-muted)] hover:text-[var(--color-foreground)]">Help Center</a></li>
-                <li><a href="#" className="block py-2 text-[var(--color-muted)] hover:text-[var(--color-foreground)]">Documentation</a></li>
-                <li><a href="#" className="block py-2 text-[var(--color-muted)] hover:text-[var(--color-foreground)]">Status</a></li>
+                <li>
+                  <a
+                    href="#"
+                    className="block py-2 text-[var(--color-muted)] hover:text-[var(--color-foreground)]"
+                  >
+                    Help Center
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    className="block py-2 text-[var(--color-muted)] hover:text-[var(--color-foreground)]"
+                  >
+                    Documentation
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    className="block py-2 text-[var(--color-muted)] hover:text-[var(--color-foreground)]"
+                  >
+                    Status
+                  </a>
+                </li>
               </ul>
             </div>
           </div>

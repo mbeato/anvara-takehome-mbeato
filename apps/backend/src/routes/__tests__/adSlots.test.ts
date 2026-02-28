@@ -33,10 +33,37 @@ vi.mock('../../db.js', () => ({
       count: vi.fn(),
       aggregate: vi.fn(),
     },
-    sponsor: { findUnique: vi.fn(), findMany: vi.fn(), create: vi.fn(), update: vi.fn(), delete: vi.fn() },
-    publisher: { findUnique: vi.fn(), findMany: vi.fn(), create: vi.fn(), update: vi.fn(), delete: vi.fn() },
-    adSlot: { findMany: vi.fn(), findUnique: vi.fn(), create: vi.fn(), update: vi.fn(), delete: vi.fn(), count: vi.fn(), aggregate: vi.fn() },
-    placement: { findMany: vi.fn(), findUnique: vi.fn(), create: vi.fn(), update: vi.fn(), delete: vi.fn(), count: vi.fn() },
+    sponsor: {
+      findUnique: vi.fn(),
+      findMany: vi.fn(),
+      create: vi.fn(),
+      update: vi.fn(),
+      delete: vi.fn(),
+    },
+    publisher: {
+      findUnique: vi.fn(),
+      findMany: vi.fn(),
+      create: vi.fn(),
+      update: vi.fn(),
+      delete: vi.fn(),
+    },
+    adSlot: {
+      findMany: vi.fn(),
+      findUnique: vi.fn(),
+      create: vi.fn(),
+      update: vi.fn(),
+      delete: vi.fn(),
+      count: vi.fn(),
+      aggregate: vi.fn(),
+    },
+    placement: {
+      findMany: vi.fn(),
+      findUnique: vi.fn(),
+      create: vi.fn(),
+      update: vi.fn(),
+      delete: vi.fn(),
+      count: vi.fn(),
+    },
     creative: { findMany: vi.fn(), findUnique: vi.fn() },
     payment: { findMany: vi.fn() },
     $transaction: vi.fn(),
@@ -71,17 +98,15 @@ vi.mock('../../db.js', () => ({
 
 // Mock auth.js -- default: PUBLISHER user (ad slots are primarily a publisher resource)
 vi.mock('../../auth.js', () => ({
-  requireAuth: vi.fn(
-    async (req: Record<string, unknown>, _res: unknown, next: () => void) => {
-      req.user = {
-        id: 'user-1',
-        email: 'publisher@test.com',
-        role: 'PUBLISHER',
-        publisherId: 'publisher-1',
-      };
-      next();
-    },
-  ),
+  requireAuth: vi.fn(async (req: Record<string, unknown>, _res: unknown, next: () => void) => {
+    req.user = {
+      id: 'user-1',
+      email: 'publisher@test.com',
+      role: 'PUBLISHER',
+      publisherId: 'publisher-1',
+    };
+    next();
+  }),
   auth: { api: { getSession: vi.fn() } },
 }));
 
@@ -140,7 +165,11 @@ function validAdSlotBody() {
 
 /** Switch requireAuth to a SPONSOR user for the next request */
 function mockAsSponsor() {
-  vi.mocked(requireAuth).mockImplementationOnce(((req: Record<string, unknown>, _res: unknown, next: () => void) => {
+  vi.mocked(requireAuth).mockImplementationOnce(((
+    req: Record<string, unknown>,
+    _res: unknown,
+    next: () => void
+  ) => {
     req.user = {
       id: 'user-2',
       email: 'sponsor@test.com',
@@ -160,7 +189,11 @@ describe('Ad-slot endpoints', () => {
     vi.clearAllMocks();
 
     // Restore default requireAuth behavior (publisher user)
-    vi.mocked(requireAuth).mockImplementation(((req: Record<string, unknown>, _res: unknown, next: () => void) => {
+    vi.mocked(requireAuth).mockImplementation(((
+      req: Record<string, unknown>,
+      _res: unknown,
+      next: () => void
+    ) => {
       req.user = {
         id: 'user-1',
         email: 'publisher@test.com',
@@ -190,7 +223,7 @@ describe('Ad-slot endpoints', () => {
       expect(prisma.adSlot.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({ publisherId: 'publisher-1' }),
-        }),
+        })
       );
     });
 
@@ -208,7 +241,7 @@ describe('Ad-slot endpoints', () => {
       expect(prisma.adSlot.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.not.objectContaining({ publisherId: expect.anything() }),
-        }),
+        })
       );
     });
   });
@@ -284,9 +317,7 @@ describe('Ad-slot endpoints', () => {
       });
       vi.mocked(prisma.adSlot.create).mockResolvedValue(created as never);
 
-      const res = await request(app)
-        .post('/api/ad-slots')
-        .send(validAdSlotBody());
+      const res = await request(app).post('/api/ad-slots').send(validAdSlotBody());
 
       expect(res.status).toBe(201);
       expect(res.body.id).toBe('slot-new');
@@ -296,9 +327,7 @@ describe('Ad-slot endpoints', () => {
     it('returns 403 when sponsor tries to create ad slot', async () => {
       mockAsSponsor();
 
-      const res = await request(app)
-        .post('/api/ad-slots')
-        .send(validAdSlotBody());
+      const res = await request(app).post('/api/ad-slots').send(validAdSlotBody());
 
       expect(res.status).toBe(403);
       expect(res.body.error.code).toBe('FORBIDDEN');
@@ -326,9 +355,7 @@ describe('Ad-slot endpoints', () => {
       const updated = makeAdSlot({ name: 'Updated Slot' });
       vi.mocked(prisma.adSlot.update).mockResolvedValue(updated as never);
 
-      const res = await request(app)
-        .put('/api/ad-slots/slot-1')
-        .send({ name: 'Updated Slot' });
+      const res = await request(app).put('/api/ad-slots/slot-1').send({ name: 'Updated Slot' });
 
       expect(res.status).toBe(200);
       expect(res.body.name).toBe('Updated Slot');
@@ -338,9 +365,7 @@ describe('Ad-slot endpoints', () => {
       const adSlot = makeAdSlot({ publisherId: 'publisher-other' });
       vi.mocked(prisma.adSlot.findUnique).mockResolvedValue(adSlot as never);
 
-      const res = await request(app)
-        .put('/api/ad-slots/slot-1')
-        .send({ name: 'Hijack Attempt' });
+      const res = await request(app).put('/api/ad-slots/slot-1').send({ name: 'Hijack Attempt' });
 
       expect(res.status).toBe(403);
       expect(res.body.error.code).toBe('FORBIDDEN');
@@ -349,9 +374,7 @@ describe('Ad-slot endpoints', () => {
     it('returns 404 when ad slot does not exist', async () => {
       vi.mocked(prisma.adSlot.findUnique).mockResolvedValue(null as never);
 
-      const res = await request(app)
-        .put('/api/ad-slots/nonexistent')
-        .send({ name: 'Ghost Slot' });
+      const res = await request(app).put('/api/ad-slots/nonexistent').send({ name: 'Ghost Slot' });
 
       expect(res.status).toBe(404);
       expect(res.body.error.code).toBe('NOT_FOUND');

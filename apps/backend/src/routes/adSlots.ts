@@ -75,7 +75,16 @@ router.get('/', async (req: AuthRequest, res: Response) => {
     };
 
     const include = {
-      publisher: { select: { id: true, name: true, category: true, monthlyViews: true, subscriberCount: true, isVerified: true } },
+      publisher: {
+        select: {
+          id: true,
+          name: true,
+          category: true,
+          monthlyViews: true,
+          subscriberCount: true,
+          isVerified: true,
+        },
+      },
       _count: { select: { placements: true } },
     } as const;
 
@@ -96,7 +105,7 @@ router.get('/', async (req: AuthRequest, res: Response) => {
         const totalPages = Math.ceil(total / limit);
 
         // Clamp invalid page numbers to page 1
-        const page = (parsed.page > totalPages && total > 0) ? 1 : parsed.page;
+        const page = parsed.page > totalPages && total > 0 ? 1 : parsed.page;
         const skip = (page - 1) * limit;
 
         const adSlots = await tx.adSlot.findMany({ where, include, orderBy, skip, take: limit });
@@ -216,7 +225,15 @@ router.post('/', validate(createAdSlotSchema), async (req: AuthRequest, res: Res
     const { name, description, type, position, width, height, basePrice } = req.body;
 
     if (!Object.values(AdSlotType).includes(type as AdSlotType)) {
-      res.status(400).json(apiError(400, 'VALIDATION_ERROR', `Invalid type. Must be one of: ${Object.values(AdSlotType).join(', ')}`));
+      res
+        .status(400)
+        .json(
+          apiError(
+            400,
+            'VALIDATION_ERROR',
+            `Invalid type. Must be one of: ${Object.values(AdSlotType).join(', ')}`
+          )
+        );
       return;
     }
 
@@ -281,12 +298,22 @@ router.put('/:id', validate(updateAdSlotSchema), async (req: AuthRequest, res: R
     if (isAvailable !== undefined) data.isAvailable = isAvailable;
 
     if (Object.keys(data).length === 0) {
-      res.status(400).json(apiError(400, 'VALIDATION_ERROR', 'At least one field must be provided for update'));
+      res
+        .status(400)
+        .json(apiError(400, 'VALIDATION_ERROR', 'At least one field must be provided for update'));
       return;
     }
 
     if (type !== undefined && !Object.values(AdSlotType).includes(type as AdSlotType)) {
-      res.status(400).json(apiError(400, 'VALIDATION_ERROR', `Invalid type. Must be one of: ${Object.values(AdSlotType).join(', ')}`));
+      res
+        .status(400)
+        .json(
+          apiError(
+            400,
+            'VALIDATION_ERROR',
+            `Invalid type. Must be one of: ${Object.values(AdSlotType).join(', ')}`
+          )
+        );
       return;
     }
 
@@ -426,7 +453,9 @@ router.post('/:id/unbook', async (req: AuthRequest, res: Response) => {
 
     // Verify the caller is the sponsor who booked the slot
     if (adSlot.bookedBySponsorId !== user.sponsorId) {
-      res.status(403).json(apiError(403, 'FORBIDDEN', 'Only the booking sponsor can unbook this slot'));
+      res
+        .status(403)
+        .json(apiError(403, 'FORBIDDEN', 'Only the booking sponsor can unbook this slot'));
       return;
     }
 

@@ -10,20 +10,17 @@ import { apiError } from './errors.js';
  * Accepts positive numbers or numeric strings, coerces to number.
  * Rejects zero, negative values, and non-numeric strings.
  */
-export const positiveDecimal = z
-  .union([z.number(), z.string()])
-  .transform((val) => {
-    const num = typeof val === 'string' ? Number(val) : val;
-    if (isNaN(num)) throw new Error('Must be a valid number');
-    if (num <= 0) throw new Error('Must be a positive number');
-    return num;
-  });
+export const positiveDecimal = z.union([z.number(), z.string()]).transform((val) => {
+  const num = typeof val === 'string' ? Number(val) : val;
+  if (isNaN(num)) throw new Error('Must be a valid number');
+  if (num <= 0) throw new Error('Must be a positive number');
+  return num;
+});
 
 /** ISO date string field - validates it can be parsed as a valid date */
-const dateString = z.string().refine(
-  (val) => !isNaN(Date.parse(val)),
-  { message: 'Must be a valid date string' },
-);
+const dateString = z
+  .string()
+  .refine((val) => !isNaN(Date.parse(val)), { message: 'Must be a valid date string' });
 
 // ============================================================================
 // Campaign schemas
@@ -68,7 +65,7 @@ export const updateCampaignSchema = z
       }
       return true;
     },
-    { message: 'startDate must be before endDate', path: ['endDate'] },
+    { message: 'startDate must be before endDate', path: ['endDate'] }
   );
 
 // ============================================================================

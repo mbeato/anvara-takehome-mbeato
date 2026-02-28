@@ -10,8 +10,7 @@ import { CreateCampaignButton } from './components/campaign-form';
 
 export const metadata: Metadata = {
   title: 'My Campaigns',
-  description:
-    'Manage your sponsorship campaigns, track budgets, and monitor performance.',
+  description: 'Manage your sponsorship campaigns, track budgets, and monitor performance.',
   openGraph: {
     title: 'My Campaigns | Anvara',
     description: 'Manage your sponsorship campaigns, track budgets, and monitor performance.',
@@ -96,9 +95,7 @@ export default async function SponsorDashboard() {
 
       {/* Campaign Grid or Error */}
       {fetchError ? (
-        <div className="rounded border border-red-200 bg-red-50 p-4 text-red-600">
-          {fetchError}
-        </div>
+        <div className="rounded border border-red-200 bg-red-50 p-4 text-red-600">{fetchError}</div>
       ) : (
         <CampaignList campaigns={campaigns} />
       )}

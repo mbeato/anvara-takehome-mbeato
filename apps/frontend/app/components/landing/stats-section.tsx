@@ -17,7 +17,12 @@ const STAT_LABELS: { key: keyof StatsSectionProps; label: string }[] = [
   { key: 'totalPlacements', label: 'Total Placements' },
 ];
 
-export function StatsSection({ sponsors, publishers, activeCampaigns, totalPlacements }: StatsSectionProps) {
+export function StatsSection({
+  sponsors,
+  publishers,
+  activeCampaigns,
+  totalPlacements,
+}: StatsSectionProps) {
   const values: StatsSectionProps = { sponsors, publishers, activeCampaigns, totalPlacements };
 
   return (

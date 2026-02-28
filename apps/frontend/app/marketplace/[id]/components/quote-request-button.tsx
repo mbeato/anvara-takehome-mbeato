@@ -34,12 +34,7 @@ export function QuoteRequestButton({ adSlot, user, onBeginCheckout }: QuoteReque
         Request a Quote
       </button>
 
-      <Modal
-        open={open}
-        onClose={() => setOpen(false)}
-        title="Request a Quote"
-        size="lg"
-      >
+      <Modal open={open} onClose={() => setOpen(false)} title="Request a Quote" size="lg">
         <QuoteRequestForm
           key={openCount}
           adSlot={adSlot}

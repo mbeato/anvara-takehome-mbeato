@@ -46,13 +46,23 @@ router.get('/', async (req: AuthRequest, res: Response) => {
     if (req.query.page !== undefined) {
       const parsed = parsePagination(req.query as Record<string, string | string[] | undefined>);
 
-      const { campaigns: data, total, page } = await prisma.$transaction(async (tx) => {
+      const {
+        campaigns: data,
+        total,
+        page,
+      } = await prisma.$transaction(async (tx) => {
         const total = await tx.campaign.count({ where });
         const totalPages = Math.ceil(total / parsed.limit);
-        const page = (parsed.page > totalPages && total > 0) ? 1 : parsed.page;
+        const page = parsed.page > totalPages && total > 0 ? 1 : parsed.page;
         const skip = (page - 1) * parsed.limit;
 
-        const campaigns = await tx.campaign.findMany({ where, include, orderBy, skip, take: parsed.limit });
+        const campaigns = await tx.campaign.findMany({
+          where,
+          include,
+          orderBy,
+          skip,
+          take: parsed.limit,
+        });
         return { campaigns, total, page };
       });
 
@@ -237,7 +247,15 @@ router.put('/:id', validate(updateCampaignSchema), async (req: AuthRequest, res:
     if (status !== undefined) {
       const validStatuses = Object.values(CampaignStatus);
       if (!validStatuses.includes(status)) {
-        res.status(400).json(apiError(400, 'VALIDATION_ERROR', `Invalid status. Valid values: ${validStatuses.join(', ')}`));
+        res
+          .status(400)
+          .json(
+            apiError(
+              400,
+              'VALIDATION_ERROR',
+              `Invalid status. Valid values: ${validStatuses.join(', ')}`
+            )
+          );
         return;
       }
     }
@@ -256,7 +274,9 @@ router.put('/:id', validate(updateCampaignSchema), async (req: AuthRequest, res:
     if (status !== undefined) data.status = status;
 
     if (Object.keys(data).length === 0) {
-      res.status(400).json(apiError(400, 'VALIDATION_ERROR', 'At least one field must be provided for update'));
+      res
+        .status(400)
+        .json(apiError(400, 'VALIDATION_ERROR', 'At least one field must be provided for update'));
       return;
     }
 

@@ -18,8 +18,8 @@ export function BottomCta() {
           Ready to Grow Your Reach?
         </h2>
         <p className="mx-auto mt-4 max-w-lg text-lg opacity-90">
-          Join sponsors and publishers who are already growing through Anvara.
-          Get started in minutes.
+          Join sponsors and publishers who are already growing through Anvara. Get started in
+          minutes.
         </p>
         <a
           href="/login"

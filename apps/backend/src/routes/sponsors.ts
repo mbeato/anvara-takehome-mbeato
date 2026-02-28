@@ -150,7 +150,9 @@ router.put('/:id', validate(updateSponsorSchema), async (req: AuthRequest, res: 
     if (industry !== undefined) data.industry = industry;
 
     if (Object.keys(data).length === 0) {
-      res.status(400).json(apiError(400, 'VALIDATION_ERROR', 'At least one field must be provided for update'));
+      res
+        .status(400)
+        .json(apiError(400, 'VALIDATION_ERROR', 'At least one field must be provided for update'));
       return;
     }
 
