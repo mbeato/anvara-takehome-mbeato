@@ -6,22 +6,35 @@ import { Nav } from './components/nav';
 import { Footer } from './components/footer';
 import { MotionProvider } from './components/motion-provider';
 
-// TODO: Add ErrorBoundary wrapper for graceful error handling
-// TODO: Consider adding a loading.tsx for Suspense boundaries
-// TODO: Add Open Graph metadata for social media sharing
-// TODO: Add Twitter Card metadata
-// TODO: Consider adding favicon and app icons
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3847';
 
 export const metadata: Metadata = {
   title: {
     default: 'Anvara — Sponsorship Marketplace',
     template: '%s | Anvara',
   },
-  description: 'Sponsorship marketplace connecting sponsors with publishers',
-  icons: { icon: '/favicon.png' },
+  description:
+    'Anvara connects sponsors with premium publishers. Browse ad slots, request quotes, and launch campaigns — all in one marketplace.',
+  metadataBase: new URL(siteUrl),
+  icons: {
+    icon: '/favicon.png',
+    apple: '/favicon.png',
+  },
   openGraph: {
     siteName: 'Anvara',
     type: 'website',
+    title: 'Anvara — Sponsorship Marketplace',
+    description:
+      'Connect with premium publishers and launch sponsorship campaigns in minutes.',
+    url: siteUrl,
+    images: [{ url: '/logo.png', width: 120, height: 21, alt: 'Anvara' }],
+  },
+  twitter: {
+    card: 'summary',
+    title: 'Anvara — Sponsorship Marketplace',
+    description:
+      'Connect with premium publishers and launch sponsorship campaigns in minutes.',
+    images: ['/logo.png'],
   },
 };
 
