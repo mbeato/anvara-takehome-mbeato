@@ -3,7 +3,10 @@ import { prisma } from '../db.js';
 
 const router: IRouter = Router();
 
-// GET /api/dashboard/stats - Get overall platform stats
+// GET /api/dashboard/stats - Platform-wide aggregate statistics
+// PUBLIC ENDPOINT (intentional) - Used by the marketing landing page for social proof stats.
+// Returns only aggregate counts and metrics (no PII, no individual user data).
+// See SEC-06: Dashboard stats endpoint is explicitly documented as intentionally public.
 router.get('/stats', async (_req: Request, res: Response) => {
   try {
     const [sponsorCount, publisherCount, activeCampaigns, totalPlacements, placementMetrics] =
@@ -40,7 +43,9 @@ router.get('/stats', async (_req: Request, res: Response) => {
     });
   } catch (error) {
     console.error('Error fetching dashboard stats:', error);
-    res.status(500).json({ error: 'Failed to fetch dashboard stats' });
+    res.status(500).json({
+      error: { code: 'INTERNAL_ERROR', status: 500, message: 'Failed to fetch dashboard stats' },
+    });
   }
 });
 
