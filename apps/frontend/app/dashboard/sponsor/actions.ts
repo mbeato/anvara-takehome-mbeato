@@ -22,9 +22,16 @@ export async function createCampaign(
 
   const fieldErrors: Record<string, string> = {};
   if (!name?.trim()) fieldErrors.name = 'Name is required';
-  if (!budget?.trim()) fieldErrors.budget = 'Budget is required';
+  if (!budget?.trim()) {
+    fieldErrors.budget = 'Budget is required';
+  } else if (isNaN(Number(budget)) || Number(budget) <= 0) {
+    fieldErrors.budget = 'Budget must be a positive number';
+  }
   if (!startDate) fieldErrors.startDate = 'Start date is required';
   if (!endDate) fieldErrors.endDate = 'End date is required';
+  if (startDate && endDate && new Date(startDate) >= new Date(endDate)) {
+    fieldErrors.endDate = 'End date must be after start date';
+  }
 
   if (Object.keys(fieldErrors).length > 0) {
     return { fieldErrors };
@@ -80,9 +87,16 @@ export async function updateCampaign(
   const fieldErrors: Record<string, string> = {};
   if (!id) fieldErrors.id = 'Missing campaign ID';
   if (!name?.trim()) fieldErrors.name = 'Name is required';
-  if (!budget?.trim()) fieldErrors.budget = 'Budget is required';
+  if (!budget?.trim()) {
+    fieldErrors.budget = 'Budget is required';
+  } else if (isNaN(Number(budget)) || Number(budget) <= 0) {
+    fieldErrors.budget = 'Budget must be a positive number';
+  }
   if (!startDate) fieldErrors.startDate = 'Start date is required';
   if (!endDate) fieldErrors.endDate = 'End date is required';
+  if (startDate && endDate && new Date(startDate) >= new Date(endDate)) {
+    fieldErrors.endDate = 'End date must be after start date';
+  }
 
   if (Object.keys(fieldErrors).length > 0) {
     return { fieldErrors };

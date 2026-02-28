@@ -22,7 +22,11 @@ export async function createAdSlot(
   const fieldErrors: Record<string, string> = {};
   if (!name?.trim()) fieldErrors.name = 'Name is required';
   if (!type) fieldErrors.type = 'Type is required';
-  if (!basePrice?.trim()) fieldErrors.basePrice = 'Base price is required';
+  if (!basePrice?.trim()) {
+    fieldErrors.basePrice = 'Base price is required';
+  } else if (isNaN(Number(basePrice)) || Number(basePrice) <= 0) {
+    fieldErrors.basePrice = 'Base price must be a positive number';
+  }
 
   if (Object.keys(fieldErrors).length > 0) {
     return { fieldErrors };
@@ -76,7 +80,11 @@ export async function updateAdSlot(
   if (!id) fieldErrors.id = 'Missing ad slot ID';
   if (!name?.trim()) fieldErrors.name = 'Name is required';
   if (!type) fieldErrors.type = 'Type is required';
-  if (!basePrice?.trim()) fieldErrors.basePrice = 'Base price is required';
+  if (!basePrice?.trim()) {
+    fieldErrors.basePrice = 'Base price is required';
+  } else if (isNaN(Number(basePrice)) || Number(basePrice) <= 0) {
+    fieldErrors.basePrice = 'Base price must be a positive number';
+  }
 
   if (Object.keys(fieldErrors).length > 0) {
     return { fieldErrors };
