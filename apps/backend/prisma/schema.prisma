@@ -38,8 +38,9 @@ model Sponsor {
   updatedAt   DateTime @updatedAt
 
   // Relations
-  campaigns   Campaign[]
-  payments    Payment[]
+  campaigns     Campaign[]
+  payments      Payment[]
+  bookedAdSlots AdSlot[] @relation("BookedAdSlots")
 
   @@map("sponsors")
 }
@@ -141,6 +142,9 @@ model AdSlot {
   cpmFloor    Decimal? @db.Decimal(10, 2)
 
   isAvailable Boolean  @default(true)
+
+  bookedBySponsorId String?
+  bookedBy          Sponsor?  @relation("BookedAdSlots", fields: [bookedBySponsorId], references: [id], onDelete: SetNull)
 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
