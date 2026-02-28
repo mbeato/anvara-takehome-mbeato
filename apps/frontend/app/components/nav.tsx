@@ -212,8 +212,8 @@ export function Nav() {
 
       {/* Mobile slide-out panel — starts below header */}
       <div
-        className={`fixed right-0 z-30 flex w-[280px] flex-col border-l border-[var(--color-border)] bg-[var(--color-background)] transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] md:hidden ${
-          menuOpen && user ? 'translate-x-0' : 'translate-x-full'
+        className={`fixed right-0 z-30 flex w-[280px] flex-col border-l border-[var(--color-border)] bg-[var(--color-background)] transition-[transform,visibility] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] md:hidden ${
+          menuOpen && user ? 'visible translate-x-0' : 'invisible translate-x-full'
         }`}
         style={{ top: headerH, height: `calc(100% - ${headerH}px)` }}
         aria-hidden={!menuOpen}
