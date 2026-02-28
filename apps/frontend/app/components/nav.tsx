@@ -210,13 +210,11 @@ export function Nav() {
         </div>
       </nav>
 
-      {/* Mobile slide-out panel — starts below header */}
+      {/* Mobile slide-out panel — starts below header; only mounted when open */}
+      {menuOpen && user && (
       <div
-        className={`fixed right-0 z-30 flex w-[280px] flex-col border-l border-[var(--color-border)] bg-[var(--color-background)] transition-[transform,visibility] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] md:hidden ${
-          menuOpen && user ? 'visible translate-x-0' : 'invisible translate-x-full'
-        }`}
+        className="fixed right-0 z-30 flex w-[280px] translate-x-0 flex-col border-l border-[var(--color-border)] bg-[var(--color-background)] md:hidden"
         style={{ top: headerH, height: `calc(100% - ${headerH}px)` }}
-        aria-hidden={!menuOpen}
       >
         {/* Panel links */}
         <div className="flex flex-1 flex-col gap-1 px-2">
@@ -272,6 +270,7 @@ export function Nav() {
           </div>
         )}
       </div>
+      )}
 
       {/* Click-to-close overlay on pushed content area only */}
       {menuOpen && user && (
