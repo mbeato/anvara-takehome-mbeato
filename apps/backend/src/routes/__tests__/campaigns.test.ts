@@ -72,7 +72,7 @@ vi.mock('../../db.js', () => ({
 // Mock auth.js -- default: sponsor user authenticated
 vi.mock('../../auth.js', () => ({
   requireAuth: vi.fn(
-    (req: Record<string, unknown>, _res: unknown, next: () => void) => {
+    async (req: Record<string, unknown>, _res: unknown, next: () => void) => {
       req.user = {
         id: 'user-1',
         email: 'sponsor@test.com',
@@ -97,7 +97,10 @@ vi.mock('../../logger.js', () => ({
 import request from 'supertest';
 import app from '../../app.js';
 import { prisma } from '../../db.js';
-import { requireAuth } from '../../auth.js';
+import { requireAuth, type AuthRequest } from '../../auth.js';
+import type { Response, NextFunction } from 'express';
+
+type AuthMiddleware = (req: AuthRequest, res: Response, next: NextFunction) => Promise<void>;
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -145,17 +148,15 @@ describe('Campaign endpoints', () => {
     vi.clearAllMocks();
 
     // Restore default requireAuth behavior (sponsor user)
-    vi.mocked(requireAuth).mockImplementation(
-      (req: Record<string, unknown>, _res: unknown, next: () => void) => {
-        req.user = {
-          id: 'user-1',
-          email: 'sponsor@test.com',
-          role: 'SPONSOR',
-          sponsorId: 'sponsor-1',
-        };
-        next();
-      },
-    );
+    vi.mocked(requireAuth).mockImplementation(((req: Record<string, unknown>, _res: unknown, next: () => void) => {
+      req.user = {
+        id: 'user-1',
+        email: 'sponsor@test.com',
+        role: 'SPONSOR',
+        sponsorId: 'sponsor-1',
+      };
+      next();
+    }) as unknown as AuthMiddleware);
   });
 
   // =========================================================================
@@ -176,13 +177,11 @@ describe('Campaign endpoints', () => {
     });
 
     it('returns 401 when not authenticated', async () => {
-      vi.mocked(requireAuth).mockImplementationOnce(
-        (_req: unknown, res: { status: (n: number) => { json: (b: unknown) => void } }, _next: () => void) => {
-          res.status(401).json({
-            error: { code: 'UNAUTHORIZED', status: 401, message: 'Not authenticated' },
-          });
-        },
-      );
+      vi.mocked(requireAuth).mockImplementationOnce((async (_req: unknown, res: { status: (n: number) => { json: (b: unknown) => void } }, _next: () => void) => {
+        res.status(401).json({
+          error: { code: 'UNAUTHORIZED', status: 401, message: 'Not authenticated' },
+        });
+      }) as unknown as AuthMiddleware);
 
       const res = await request(app).get('/api/campaigns');
 
@@ -273,18 +272,16 @@ describe('Campaign endpoints', () => {
     });
 
     it('returns 403 when publisher tries to create campaign', async () => {
-      vi.mocked(requireAuth).mockImplementationOnce(
-        (req: Record<string, unknown>, _res: unknown, next: () => void) => {
-          req.user = {
-            id: 'user-2',
-            email: 'publisher@test.com',
-            role: 'PUBLISHER',
-            publisherId: 'pub-1',
-            // no sponsorId
-          };
-          next();
-        },
-      );
+      vi.mocked(requireAuth).mockImplementationOnce(((req: Record<string, unknown>, _res: unknown, next: () => void) => {
+        req.user = {
+          id: 'user-2',
+          email: 'publisher@test.com',
+          role: 'PUBLISHER',
+          publisherId: 'pub-1',
+          // no sponsorId
+        };
+        next();
+      }) as unknown as AuthMiddleware);
 
       const res = await request(app)
         .post('/api/campaigns')

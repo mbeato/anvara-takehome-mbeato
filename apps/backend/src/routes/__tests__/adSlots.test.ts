@@ -72,7 +72,7 @@ vi.mock('../../db.js', () => ({
 // Mock auth.js -- default: PUBLISHER user (ad slots are primarily a publisher resource)
 vi.mock('../../auth.js', () => ({
   requireAuth: vi.fn(
-    (req: Record<string, unknown>, _res: unknown, next: () => void) => {
+    async (req: Record<string, unknown>, _res: unknown, next: () => void) => {
       req.user = {
         id: 'user-1',
         email: 'publisher@test.com',
@@ -97,7 +97,10 @@ vi.mock('../../logger.js', () => ({
 import request from 'supertest';
 import app from '../../app.js';
 import { prisma } from '../../db.js';
-import { requireAuth } from '../../auth.js';
+import { requireAuth, type AuthRequest } from '../../auth.js';
+import type { Response, NextFunction } from 'express';
+
+type AuthMiddleware = (req: AuthRequest, res: Response, next: NextFunction) => Promise<void>;
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -137,17 +140,15 @@ function validAdSlotBody() {
 
 /** Switch requireAuth to a SPONSOR user for the next request */
 function mockAsSponsor() {
-  vi.mocked(requireAuth).mockImplementationOnce(
-    (req: Record<string, unknown>, _res: unknown, next: () => void) => {
-      req.user = {
-        id: 'user-2',
-        email: 'sponsor@test.com',
-        role: 'SPONSOR',
-        sponsorId: 'sponsor-1',
-      };
-      next();
-    },
-  );
+  vi.mocked(requireAuth).mockImplementationOnce(((req: Record<string, unknown>, _res: unknown, next: () => void) => {
+    req.user = {
+      id: 'user-2',
+      email: 'sponsor@test.com',
+      role: 'SPONSOR',
+      sponsorId: 'sponsor-1',
+    };
+    next();
+  }) as unknown as AuthMiddleware);
 }
 
 // ---------------------------------------------------------------------------
@@ -159,17 +160,15 @@ describe('Ad-slot endpoints', () => {
     vi.clearAllMocks();
 
     // Restore default requireAuth behavior (publisher user)
-    vi.mocked(requireAuth).mockImplementation(
-      (req: Record<string, unknown>, _res: unknown, next: () => void) => {
-        req.user = {
-          id: 'user-1',
-          email: 'publisher@test.com',
-          role: 'PUBLISHER',
-          publisherId: 'publisher-1',
-        };
-        next();
-      },
-    );
+    vi.mocked(requireAuth).mockImplementation(((req: Record<string, unknown>, _res: unknown, next: () => void) => {
+      req.user = {
+        id: 'user-1',
+        email: 'publisher@test.com',
+        role: 'PUBLISHER',
+        publisherId: 'publisher-1',
+      };
+      next();
+    }) as unknown as AuthMiddleware);
   });
 
   // =========================================================================
