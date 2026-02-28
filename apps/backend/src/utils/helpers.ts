@@ -58,17 +58,14 @@ export const buildFilters = (
   return filters;
 };
 
-// BUG: This function has a logic error - it doesn't handle negative numbers correctly
+// Clamp a numeric value between min and max (inclusive)
 export function clampValue(value: number, min: number, max: number): number {
-  // Should use Math.max(min, Math.min(max, value)) but this is wrong
-  if (value < min) return min;
-  if (value > max) return max;
-  return value;
+  return Math.max(min, Math.min(max, value));
 }
 
-// TODO: Add proper date formatting helper
-// This is a stub that candidates might notice and implement
+// Format a date as a localized date string, returning 'Invalid date' for bad input
 export function formatDate(date: string | Date): string {
-  // BUG: Doesn't handle invalid dates
-  return new Date(date).toLocaleDateString();
+  const d = new Date(date);
+  if (isNaN(d.getTime())) return 'Invalid date';
+  return d.toLocaleDateString();
 }
