@@ -58,15 +58,9 @@ test.describe('Funnel Events Verification', () => {
     // --- Step 1: Navigate to /marketplace -> expect marketplace_view ---
     await page.goto('/marketplace');
     await page.waitForLoadState('networkidle');
-    // Wait a bit for client-side hydration and track() call
-    await page.waitForTimeout(1000);
-
-    const marketplaceViewFired = analyticsEvents.some(
-      (e) => e.name === 'marketplace_view'
-    );
-    expect(
-      marketplaceViewFired,
-      'marketplace_view event should fire on /marketplace page load'
+    await expect.poll(
+      () => analyticsEvents.some((e) => e.name === 'marketplace_view'),
+      { message: 'marketplace_view event should fire after page load', timeout: 10000 }
     ).toBe(true);
 
     // --- Step 2: Click a listing -> expect view_item ---
@@ -77,12 +71,9 @@ test.describe('Funnel Events Verification', () => {
 
     // Wait for detail page to load and view_item to fire
     await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(2000); // view_item waits for both loading + roleLoading
-
-    const viewItemFired = analyticsEvents.some((e) => e.name === 'view_item');
-    expect(
-      viewItemFired,
-      'view_item event should fire on detail page load'
+    await expect.poll(
+      () => analyticsEvents.some((e) => e.name === 'view_item'),
+      { message: 'view_item event should fire on detail page load', timeout: 10000 }
     ).toBe(true);
 
     // --- Step 3: Interact with booking form -> expect begin_checkout ---
@@ -93,26 +84,25 @@ test.describe('Funnel Events Verification', () => {
     // Try textarea focus first (available for sponsor role)
     if (await messageTextarea.isVisible({ timeout: 5000 })) {
       await messageTextarea.focus();
-      await page.waitForTimeout(500);
+      await expect.poll(
+        () => analyticsEvents.some((e) => e.name === 'begin_checkout'),
+        { message: 'begin_checkout event should fire on form interaction', timeout: 5000 }
+      ).toBe(true);
     } else if (await quoteButton.isVisible({ timeout: 2000 })) {
       // Quote button click also triggers handleBeginCheckout('quote')
       await quoteButton.click();
-      await page.waitForTimeout(500);
+      await expect.poll(
+        () => analyticsEvents.some((e) => e.name === 'begin_checkout'),
+        { message: 'begin_checkout event should fire on quote button click', timeout: 5000 }
+      ).toBe(true);
     }
-
-    const beginCheckoutFired = analyticsEvents.some(
-      (e) => e.name === 'begin_checkout'
-    );
-    expect(
-      beginCheckoutFired,
-      'begin_checkout event should fire on booking form interaction'
-    ).toBe(true);
 
     // --- Step 4: Submit quote form -> expect generate_lead ---
     // Open the quote request modal if not already open
     if (await quoteButton.isVisible({ timeout: 2000 })) {
       await quoteButton.click();
-      await page.waitForTimeout(500);
+      const quoteModal = page.locator('dialog[open], [role="dialog"]');
+      await expect(quoteModal).toBeVisible({ timeout: 5000 });
     }
 
     // Fill out required quote form fields
@@ -135,16 +125,11 @@ test.describe('Funnel Events Verification', () => {
       await submitButton.click();
 
       // Wait for server response and generate_lead to fire
-      await page.waitForTimeout(3000);
+      await expect.poll(
+        () => analyticsEvents.some((e) => e.name === 'generate_lead'),
+        { message: 'generate_lead event should fire on successful quote submission', timeout: 15000 }
+      ).toBe(true);
     }
-
-    const generateLeadFired = analyticsEvents.some(
-      (e) => e.name === 'generate_lead'
-    );
-    expect(
-      generateLeadFired,
-      'generate_lead event should fire on successful quote submission'
-    ).toBe(true);
 
     // --- Verify event order ---
     const expectedOrder = [
@@ -205,15 +190,9 @@ test.describe('Funnel Events Verification', () => {
     await loginAsSponsor(page);
     await page.goto('/marketplace');
     await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(1000);
-
-    // Check that funnel_step 'browse' appears in console output
-    const hasBrowseStep = paramsMessages.some((msg) =>
-      msg.includes('browse')
-    );
-    expect(
-      hasBrowseStep,
-      'marketplace_view params should include funnel_step: browse'
+    await expect.poll(
+      () => paramsMessages.some((msg) => msg.includes('browse')),
+      { message: 'marketplace_view params should include funnel_step: browse', timeout: 10000 }
     ).toBe(true);
 
     await context.close();
@@ -249,13 +228,9 @@ test.describe('Funnel Events Verification', () => {
     await firstListing.click();
 
     await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(2000);
-
-    // Check for view_item related params
-    const hasViewStep = paramsMessages.some((msg) => msg.includes('view'));
-    expect(
-      hasViewStep,
-      'view_item params should include funnel_step: view'
+    await expect.poll(
+      () => paramsMessages.some((msg) => msg.includes('view')),
+      { message: 'view_item params should include funnel_step: view', timeout: 10000 }
     ).toBe(true);
 
     await context.close();
