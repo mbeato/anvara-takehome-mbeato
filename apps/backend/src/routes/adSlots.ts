@@ -2,6 +2,7 @@ import { Router, type Request, type Response, type IRouter } from 'express';
 import { requireAuth, type AuthRequest } from '../auth.js';
 import { prisma, AdSlotType } from '../db.js';
 import { getParam, parsePagination } from '../utils/helpers.js';
+import { validate, createAdSlotSchema, updateAdSlotSchema } from '../utils/validation.js';
 
 const router: IRouter = Router();
 
@@ -208,7 +209,7 @@ router.get('/:id', async (req: AuthRequest, res: Response) => {
 });
 
 // POST /api/ad-slots - Create new ad slot
-router.post('/', async (req: AuthRequest, res: Response) => {
+router.post('/', validate(createAdSlotSchema), async (req: AuthRequest, res: Response) => {
   try {
     const user = req.user;
     if (!user) {
@@ -225,17 +226,6 @@ router.post('/', async (req: AuthRequest, res: Response) => {
     }
 
     const { name, description, type, position, width, height, basePrice } = req.body;
-
-    if (!name || !type || !basePrice) {
-      res.status(400).json({
-        error: {
-          code: 'VALIDATION_ERROR',
-          status: 400,
-          message: 'Name, type, and basePrice are required',
-        },
-      });
-      return;
-    }
 
     if (!Object.values(AdSlotType).includes(type as AdSlotType)) {
       res.status(400).json({
@@ -274,7 +264,7 @@ router.post('/', async (req: AuthRequest, res: Response) => {
 });
 
 // PUT /api/ad-slots/:id - Update an ad slot
-router.put('/:id', async (req: AuthRequest, res: Response) => {
+router.put('/:id', validate(updateAdSlotSchema), async (req: AuthRequest, res: Response) => {
   try {
     const user = req.user;
     if (!user) {
