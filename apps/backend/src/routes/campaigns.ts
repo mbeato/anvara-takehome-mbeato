@@ -3,6 +3,7 @@ import { requireAuth, type AuthRequest } from '../auth.js';
 import { prisma, CampaignStatus } from '../db.js';
 import { getParam, parsePagination } from '../utils/helpers.js';
 import { validate, createCampaignSchema, updateCampaignSchema } from '../utils/validation.js';
+import { apiError } from '../utils/errors.js';
 import { logger } from '../logger.js';
 
 const router: IRouter = Router();
@@ -15,7 +16,7 @@ router.get('/', async (req: AuthRequest, res: Response) => {
   try {
     const user = req.user;
     if (!user) {
-      res.status(401).json({ error: { code: 'UNAUTHORIZED', status: 401, message: 'Not authenticated' } });
+      res.status(401).json(apiError(401, 'UNAUTHORIZED', 'Not authenticated'));
       return;
     }
 
@@ -65,9 +66,7 @@ router.get('/', async (req: AuthRequest, res: Response) => {
     res.json(campaigns);
   } catch (error) {
     logger.error('Error fetching campaigns:', error);
-    res.status(500).json({
-      error: { code: 'INTERNAL_ERROR', status: 500, message: 'Failed to fetch campaigns' },
-    });
+    res.status(500).json(apiError(500, 'INTERNAL_ERROR', 'Failed to fetch campaigns'));
   }
 });
 
@@ -76,12 +75,12 @@ router.get('/stats', async (req: AuthRequest, res: Response) => {
   try {
     const user = req.user;
     if (!user) {
-      res.status(401).json({ error: { code: 'UNAUTHORIZED', status: 401, message: 'Not authenticated' } });
+      res.status(401).json(apiError(401, 'UNAUTHORIZED', 'Not authenticated'));
       return;
     }
 
     if (!user.sponsorId) {
-      res.status(403).json({ error: { code: 'FORBIDDEN', status: 403, message: 'Sponsor access required' } });
+      res.status(403).json(apiError(403, 'FORBIDDEN', 'Sponsor access required'));
       return;
     }
 
@@ -103,9 +102,7 @@ router.get('/stats', async (req: AuthRequest, res: Response) => {
     });
   } catch (error) {
     logger.error('Error fetching campaign stats:', error);
-    res.status(500).json({
-      error: { code: 'INTERNAL_ERROR', status: 500, message: 'Failed to fetch campaign stats' },
-    });
+    res.status(500).json(apiError(500, 'INTERNAL_ERROR', 'Failed to fetch campaign stats'));
   }
 });
 
@@ -114,7 +111,7 @@ router.get('/:id', async (req: AuthRequest, res: Response) => {
   try {
     const user = req.user;
     if (!user) {
-      res.status(401).json({ error: { code: 'UNAUTHORIZED', status: 401, message: 'Not authenticated' } });
+      res.status(401).json(apiError(401, 'UNAUTHORIZED', 'Not authenticated'));
       return;
     }
 
@@ -134,25 +131,19 @@ router.get('/:id', async (req: AuthRequest, res: Response) => {
     });
 
     if (!campaign) {
-      res.status(404).json({
-        error: { code: 'NOT_FOUND', status: 404, message: 'Campaign not found' },
-      });
+      res.status(404).json(apiError(404, 'NOT_FOUND', 'Campaign not found'));
       return;
     }
 
     if (campaign.sponsorId !== user.sponsorId) {
-      res.status(403).json({
-        error: { code: 'FORBIDDEN', status: 403, message: "You don't own this campaign" },
-      });
+      res.status(403).json(apiError(403, 'FORBIDDEN', "You don't own this campaign"));
       return;
     }
 
     res.json(campaign);
   } catch (error) {
     logger.error('Error fetching campaign:', error);
-    res.status(500).json({
-      error: { code: 'INTERNAL_ERROR', status: 500, message: 'Failed to fetch campaign' },
-    });
+    res.status(500).json(apiError(500, 'INTERNAL_ERROR', 'Failed to fetch campaign'));
   }
 });
 
@@ -161,12 +152,12 @@ router.post('/', validate(createCampaignSchema), async (req: AuthRequest, res: R
   try {
     const user = req.user;
     if (!user) {
-      res.status(401).json({ error: { code: 'UNAUTHORIZED', status: 401, message: 'Not authenticated' } });
+      res.status(401).json(apiError(401, 'UNAUTHORIZED', 'Not authenticated'));
       return;
     }
 
     if (!user.sponsorId) {
-      res.status(403).json({ error: { code: 'FORBIDDEN', status: 403, message: 'Only sponsors can create campaigns' } });
+      res.status(403).json(apiError(403, 'FORBIDDEN', 'Only sponsors can create campaigns'));
       return;
     }
 
@@ -203,9 +194,7 @@ router.post('/', validate(createCampaignSchema), async (req: AuthRequest, res: R
     res.status(201).json(campaign);
   } catch (error) {
     logger.error('Error creating campaign:', error);
-    res.status(500).json({
-      error: { code: 'INTERNAL_ERROR', status: 500, message: 'Failed to create campaign' },
-    });
+    res.status(500).json(apiError(500, 'INTERNAL_ERROR', 'Failed to create campaign'));
   }
 });
 
@@ -214,7 +203,7 @@ router.put('/:id', validate(updateCampaignSchema), async (req: AuthRequest, res:
   try {
     const user = req.user;
     if (!user) {
-      res.status(401).json({ error: { code: 'UNAUTHORIZED', status: 401, message: 'Not authenticated' } });
+      res.status(401).json(apiError(401, 'UNAUTHORIZED', 'Not authenticated'));
       return;
     }
 
@@ -222,16 +211,12 @@ router.put('/:id', validate(updateCampaignSchema), async (req: AuthRequest, res:
     const campaign = await prisma.campaign.findUnique({ where: { id } });
 
     if (!campaign) {
-      res.status(404).json({
-        error: { code: 'NOT_FOUND', status: 404, message: 'Campaign not found' },
-      });
+      res.status(404).json(apiError(404, 'NOT_FOUND', 'Campaign not found'));
       return;
     }
 
     if (campaign.sponsorId !== user.sponsorId) {
-      res.status(403).json({
-        error: { code: 'FORBIDDEN', status: 403, message: "You don't own this campaign" },
-      });
+      res.status(403).json(apiError(403, 'FORBIDDEN', "You don't own this campaign"));
       return;
     }
 
@@ -252,13 +237,7 @@ router.put('/:id', validate(updateCampaignSchema), async (req: AuthRequest, res:
     if (status !== undefined) {
       const validStatuses = Object.values(CampaignStatus);
       if (!validStatuses.includes(status)) {
-        res.status(400).json({
-          error: {
-            code: 'VALIDATION_ERROR',
-            status: 400,
-            message: `Invalid status. Valid values: ${validStatuses.join(', ')}`,
-          },
-        });
+        res.status(400).json(apiError(400, 'VALIDATION_ERROR', `Invalid status. Valid values: ${validStatuses.join(', ')}`));
         return;
       }
     }
@@ -277,13 +256,7 @@ router.put('/:id', validate(updateCampaignSchema), async (req: AuthRequest, res:
     if (status !== undefined) data.status = status;
 
     if (Object.keys(data).length === 0) {
-      res.status(400).json({
-        error: {
-          code: 'VALIDATION_ERROR',
-          status: 400,
-          message: 'At least one field must be provided for update',
-        },
-      });
+      res.status(400).json(apiError(400, 'VALIDATION_ERROR', 'At least one field must be provided for update'));
       return;
     }
 
@@ -298,9 +271,7 @@ router.put('/:id', validate(updateCampaignSchema), async (req: AuthRequest, res:
     res.json(updated);
   } catch (error) {
     logger.error('Error updating campaign:', error);
-    res.status(500).json({
-      error: { code: 'INTERNAL_ERROR', status: 500, message: 'Failed to update campaign' },
-    });
+    res.status(500).json(apiError(500, 'INTERNAL_ERROR', 'Failed to update campaign'));
   }
 });
 
@@ -309,7 +280,7 @@ router.delete('/:id', async (req: AuthRequest, res: Response) => {
   try {
     const user = req.user;
     if (!user) {
-      res.status(401).json({ error: { code: 'UNAUTHORIZED', status: 401, message: 'Not authenticated' } });
+      res.status(401).json(apiError(401, 'UNAUTHORIZED', 'Not authenticated'));
       return;
     }
 
@@ -317,16 +288,12 @@ router.delete('/:id', async (req: AuthRequest, res: Response) => {
     const campaign = await prisma.campaign.findUnique({ where: { id } });
 
     if (!campaign) {
-      res.status(404).json({
-        error: { code: 'NOT_FOUND', status: 404, message: 'Campaign not found' },
-      });
+      res.status(404).json(apiError(404, 'NOT_FOUND', 'Campaign not found'));
       return;
     }
 
     if (campaign.sponsorId !== user.sponsorId) {
-      res.status(403).json({
-        error: { code: 'FORBIDDEN', status: 403, message: "You don't own this campaign" },
-      });
+      res.status(403).json(apiError(403, 'FORBIDDEN', "You don't own this campaign"));
       return;
     }
 
@@ -334,9 +301,7 @@ router.delete('/:id', async (req: AuthRequest, res: Response) => {
     res.status(204).send();
   } catch (error) {
     logger.error('Error deleting campaign:', error);
-    res.status(500).json({
-      error: { code: 'INTERNAL_ERROR', status: 500, message: 'Failed to delete campaign' },
-    });
+    res.status(500).json(apiError(500, 'INTERNAL_ERROR', 'Failed to delete campaign'));
   }
 });
 

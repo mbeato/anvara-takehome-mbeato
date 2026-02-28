@@ -3,6 +3,7 @@ import { requireAuth, type AuthRequest } from '../auth.js';
 import { prisma, AdSlotType } from '../db.js';
 import { getParam, parsePagination } from '../utils/helpers.js';
 import { validate, createAdSlotSchema, updateAdSlotSchema } from '../utils/validation.js';
+import { apiError } from '../utils/errors.js';
 import { logger } from '../logger.js';
 
 const router: IRouter = Router();
@@ -40,9 +41,7 @@ router.get('/featured', async (req: Request, res: Response) => {
     });
   } catch (error) {
     logger.error('Error fetching featured ad slots:', error);
-    res.status(500).json({
-      error: { code: 'INTERNAL_ERROR', status: 500, message: 'Failed to fetch featured ad slots' },
-    });
+    res.status(500).json(apiError(500, 'INTERNAL_ERROR', 'Failed to fetch featured ad slots'));
   }
 });
 
@@ -58,7 +57,7 @@ router.get('/', async (req: AuthRequest, res: Response) => {
   try {
     const user = req.user;
     if (!user) {
-      res.status(401).json({ error: { code: 'UNAUTHORIZED', status: 401, message: 'Not authenticated' } });
+      res.status(401).json(apiError(401, 'UNAUTHORIZED', 'Not authenticated'));
       return;
     }
 
@@ -119,9 +118,7 @@ router.get('/', async (req: AuthRequest, res: Response) => {
     res.json(adSlots);
   } catch (error) {
     logger.error('Error fetching ad slots:', error);
-    res.status(500).json({
-      error: { code: 'INTERNAL_ERROR', status: 500, message: 'Failed to fetch ad slots' },
-    });
+    res.status(500).json(apiError(500, 'INTERNAL_ERROR', 'Failed to fetch ad slots'));
   }
 });
 
@@ -130,12 +127,12 @@ router.get('/stats', async (req: AuthRequest, res: Response) => {
   try {
     const user = req.user;
     if (!user) {
-      res.status(401).json({ error: { code: 'UNAUTHORIZED', status: 401, message: 'Not authenticated' } });
+      res.status(401).json(apiError(401, 'UNAUTHORIZED', 'Not authenticated'));
       return;
     }
 
     if (!user.publisherId) {
-      res.status(403).json({ error: { code: 'FORBIDDEN', status: 403, message: 'Publisher access required' } });
+      res.status(403).json(apiError(403, 'FORBIDDEN', 'Publisher access required'));
       return;
     }
 
@@ -157,9 +154,7 @@ router.get('/stats', async (req: AuthRequest, res: Response) => {
     });
   } catch (error) {
     logger.error('Error fetching ad slot stats:', error);
-    res.status(500).json({
-      error: { code: 'INTERNAL_ERROR', status: 500, message: 'Failed to fetch ad slot stats' },
-    });
+    res.status(500).json(apiError(500, 'INTERNAL_ERROR', 'Failed to fetch ad slot stats'));
   }
 });
 
@@ -168,7 +163,7 @@ router.get('/:id', async (req: AuthRequest, res: Response) => {
   try {
     const user = req.user;
     if (!user) {
-      res.status(401).json({ error: { code: 'UNAUTHORIZED', status: 401, message: 'Not authenticated' } });
+      res.status(401).json(apiError(401, 'UNAUTHORIZED', 'Not authenticated'));
       return;
     }
 
@@ -186,26 +181,20 @@ router.get('/:id', async (req: AuthRequest, res: Response) => {
     });
 
     if (!adSlot) {
-      res.status(404).json({
-        error: { code: 'NOT_FOUND', status: 404, message: 'Ad slot not found' },
-      });
+      res.status(404).json(apiError(404, 'NOT_FOUND', 'Ad slot not found'));
       return;
     }
 
     // Publishers can only view their own ad slots; sponsors can view any (marketplace)
     if (user.role === 'PUBLISHER' && adSlot.publisherId !== user.publisherId) {
-      res.status(403).json({
-        error: { code: 'FORBIDDEN', status: 403, message: "You don't own this ad slot" },
-      });
+      res.status(403).json(apiError(403, 'FORBIDDEN', "You don't own this ad slot"));
       return;
     }
 
     res.json(adSlot);
   } catch (error) {
     logger.error('Error fetching ad slot:', error);
-    res.status(500).json({
-      error: { code: 'INTERNAL_ERROR', status: 500, message: 'Failed to fetch ad slot' },
-    });
+    res.status(500).json(apiError(500, 'INTERNAL_ERROR', 'Failed to fetch ad slot'));
   }
 });
 
@@ -214,28 +203,20 @@ router.post('/', validate(createAdSlotSchema), async (req: AuthRequest, res: Res
   try {
     const user = req.user;
     if (!user) {
-      res.status(401).json({ error: { code: 'UNAUTHORIZED', status: 401, message: 'Not authenticated' } });
+      res.status(401).json(apiError(401, 'UNAUTHORIZED', 'Not authenticated'));
       return;
     }
 
     // Only publishers can create ad slots
     if (!user.publisherId) {
-      res.status(403).json({
-        error: { code: 'FORBIDDEN', status: 403, message: 'Only publishers can create ad slots' },
-      });
+      res.status(403).json(apiError(403, 'FORBIDDEN', 'Only publishers can create ad slots'));
       return;
     }
 
     const { name, description, type, position, width, height, basePrice } = req.body;
 
     if (!Object.values(AdSlotType).includes(type as AdSlotType)) {
-      res.status(400).json({
-        error: {
-          code: 'VALIDATION_ERROR',
-          status: 400,
-          message: `Invalid type. Must be one of: ${Object.values(AdSlotType).join(', ')}`,
-        },
-      });
+      res.status(400).json(apiError(400, 'VALIDATION_ERROR', `Invalid type. Must be one of: ${Object.values(AdSlotType).join(', ')}`));
       return;
     }
 
@@ -258,9 +239,7 @@ router.post('/', validate(createAdSlotSchema), async (req: AuthRequest, res: Res
     res.status(201).json(adSlot);
   } catch (error) {
     logger.error('Error creating ad slot:', error);
-    res.status(500).json({
-      error: { code: 'INTERNAL_ERROR', status: 500, message: 'Failed to create ad slot' },
-    });
+    res.status(500).json(apiError(500, 'INTERNAL_ERROR', 'Failed to create ad slot'));
   }
 });
 
@@ -269,7 +248,7 @@ router.put('/:id', validate(updateAdSlotSchema), async (req: AuthRequest, res: R
   try {
     const user = req.user;
     if (!user) {
-      res.status(401).json({ error: { code: 'UNAUTHORIZED', status: 401, message: 'Not authenticated' } });
+      res.status(401).json(apiError(401, 'UNAUTHORIZED', 'Not authenticated'));
       return;
     }
 
@@ -278,16 +257,12 @@ router.put('/:id', validate(updateAdSlotSchema), async (req: AuthRequest, res: R
     const adSlot = await prisma.adSlot.findUnique({ where: { id } });
 
     if (!adSlot) {
-      res.status(404).json({
-        error: { code: 'NOT_FOUND', status: 404, message: 'Ad slot not found' },
-      });
+      res.status(404).json(apiError(404, 'NOT_FOUND', 'Ad slot not found'));
       return;
     }
 
     if (adSlot.publisherId !== user.publisherId) {
-      res.status(403).json({
-        error: { code: 'FORBIDDEN', status: 403, message: "You don't own this ad slot" },
-      });
+      res.status(403).json(apiError(403, 'FORBIDDEN', "You don't own this ad slot"));
       return;
     }
 
@@ -306,24 +281,12 @@ router.put('/:id', validate(updateAdSlotSchema), async (req: AuthRequest, res: R
     if (isAvailable !== undefined) data.isAvailable = isAvailable;
 
     if (Object.keys(data).length === 0) {
-      res.status(400).json({
-        error: {
-          code: 'VALIDATION_ERROR',
-          status: 400,
-          message: 'At least one field must be provided for update',
-        },
-      });
+      res.status(400).json(apiError(400, 'VALIDATION_ERROR', 'At least one field must be provided for update'));
       return;
     }
 
     if (type !== undefined && !Object.values(AdSlotType).includes(type as AdSlotType)) {
-      res.status(400).json({
-        error: {
-          code: 'VALIDATION_ERROR',
-          status: 400,
-          message: `Invalid type. Must be one of: ${Object.values(AdSlotType).join(', ')}`,
-        },
-      });
+      res.status(400).json(apiError(400, 'VALIDATION_ERROR', `Invalid type. Must be one of: ${Object.values(AdSlotType).join(', ')}`));
       return;
     }
 
@@ -338,9 +301,7 @@ router.put('/:id', validate(updateAdSlotSchema), async (req: AuthRequest, res: R
     res.json(updated);
   } catch (error) {
     logger.error('Error updating ad slot:', error);
-    res.status(500).json({
-      error: { code: 'INTERNAL_ERROR', status: 500, message: 'Failed to update ad slot' },
-    });
+    res.status(500).json(apiError(500, 'INTERNAL_ERROR', 'Failed to update ad slot'));
   }
 });
 
@@ -349,7 +310,7 @@ router.delete('/:id', async (req: AuthRequest, res: Response) => {
   try {
     const user = req.user;
     if (!user) {
-      res.status(401).json({ error: { code: 'UNAUTHORIZED', status: 401, message: 'Not authenticated' } });
+      res.status(401).json(apiError(401, 'UNAUTHORIZED', 'Not authenticated'));
       return;
     }
 
@@ -358,16 +319,12 @@ router.delete('/:id', async (req: AuthRequest, res: Response) => {
     const adSlot = await prisma.adSlot.findUnique({ where: { id } });
 
     if (!adSlot) {
-      res.status(404).json({
-        error: { code: 'NOT_FOUND', status: 404, message: 'Ad slot not found' },
-      });
+      res.status(404).json(apiError(404, 'NOT_FOUND', 'Ad slot not found'));
       return;
     }
 
     if (adSlot.publisherId !== user.publisherId) {
-      res.status(403).json({
-        error: { code: 'FORBIDDEN', status: 403, message: "You don't own this ad slot" },
-      });
+      res.status(403).json(apiError(403, 'FORBIDDEN', "You don't own this ad slot"));
       return;
     }
 
@@ -376,9 +333,7 @@ router.delete('/:id', async (req: AuthRequest, res: Response) => {
     res.status(204).send();
   } catch (error) {
     logger.error('Error deleting ad slot:', error);
-    res.status(500).json({
-      error: { code: 'INTERNAL_ERROR', status: 500, message: 'Failed to delete ad slot' },
-    });
+    res.status(500).json(apiError(500, 'INTERNAL_ERROR', 'Failed to delete ad slot'));
   }
 });
 
@@ -388,7 +343,7 @@ router.post('/:id/book', async (req: AuthRequest, res: Response) => {
   try {
     const user = req.user;
     if (!user) {
-      res.status(401).json({ error: { code: 'UNAUTHORIZED', status: 401, message: 'Not authenticated' } });
+      res.status(401).json(apiError(401, 'UNAUTHORIZED', 'Not authenticated'));
       return;
     }
 
@@ -398,9 +353,7 @@ router.post('/:id/book', async (req: AuthRequest, res: Response) => {
     // Only sponsors can book ad slots
     const authenticatedSponsorId = user.sponsorId;
     if (!authenticatedSponsorId) {
-      res.status(403).json({
-        error: { code: 'FORBIDDEN', status: 403, message: 'Only sponsors can book ad slots' },
-      });
+      res.status(403).json(apiError(403, 'FORBIDDEN', 'Only sponsors can book ad slots'));
       return;
     }
 
@@ -411,20 +364,12 @@ router.post('/:id/book', async (req: AuthRequest, res: Response) => {
     });
 
     if (!adSlot) {
-      res.status(404).json({
-        error: { code: 'NOT_FOUND', status: 404, message: 'Ad slot not found' },
-      });
+      res.status(404).json(apiError(404, 'NOT_FOUND', 'Ad slot not found'));
       return;
     }
 
     if (!adSlot.isAvailable) {
-      res.status(400).json({
-        error: {
-          code: 'VALIDATION_ERROR',
-          status: 400,
-          message: 'Ad slot is no longer available',
-        },
-      });
+      res.status(400).json(apiError(400, 'VALIDATION_ERROR', 'Ad slot is no longer available'));
       return;
     }
 
@@ -448,9 +393,7 @@ router.post('/:id/book', async (req: AuthRequest, res: Response) => {
     });
   } catch (error) {
     logger.error('Error booking ad slot:', error);
-    res.status(500).json({
-      error: { code: 'INTERNAL_ERROR', status: 500, message: 'Failed to book ad slot' },
-    });
+    res.status(500).json(apiError(500, 'INTERNAL_ERROR', 'Failed to book ad slot'));
   }
 });
 
@@ -459,14 +402,12 @@ router.post('/:id/unbook', async (req: AuthRequest, res: Response) => {
   try {
     const user = req.user;
     if (!user) {
-      res.status(401).json({ error: { code: 'UNAUTHORIZED', status: 401, message: 'Not authenticated' } });
+      res.status(401).json(apiError(401, 'UNAUTHORIZED', 'Not authenticated'));
       return;
     }
 
     if (!user.sponsorId) {
-      res.status(403).json({
-        error: { code: 'FORBIDDEN', status: 403, message: 'Only sponsors can unbook ad slots' },
-      });
+      res.status(403).json(apiError(403, 'FORBIDDEN', 'Only sponsors can unbook ad slots'));
       return;
     }
 
@@ -474,24 +415,18 @@ router.post('/:id/unbook', async (req: AuthRequest, res: Response) => {
     const adSlot = await prisma.adSlot.findUnique({ where: { id } });
 
     if (!adSlot) {
-      res.status(404).json({
-        error: { code: 'NOT_FOUND', status: 404, message: 'Ad slot not found' },
-      });
+      res.status(404).json(apiError(404, 'NOT_FOUND', 'Ad slot not found'));
       return;
     }
 
     if (adSlot.isAvailable) {
-      res.status(400).json({
-        error: { code: 'VALIDATION_ERROR', status: 400, message: 'Ad slot is not currently booked' },
-      });
+      res.status(400).json(apiError(400, 'VALIDATION_ERROR', 'Ad slot is not currently booked'));
       return;
     }
 
     // Verify the caller is the sponsor who booked the slot
     if (adSlot.bookedBySponsorId !== user.sponsorId) {
-      res.status(403).json({
-        error: { code: 'FORBIDDEN', status: 403, message: 'Only the booking sponsor can unbook this slot' },
-      });
+      res.status(403).json(apiError(403, 'FORBIDDEN', 'Only the booking sponsor can unbook this slot'));
       return;
     }
 
@@ -510,9 +445,7 @@ router.post('/:id/unbook', async (req: AuthRequest, res: Response) => {
     });
   } catch (error) {
     logger.error('Error unbooking ad slot:', error);
-    res.status(500).json({
-      error: { code: 'INTERNAL_ERROR', status: 500, message: 'Failed to unbook ad slot' },
-    });
+    res.status(500).json(apiError(500, 'INTERNAL_ERROR', 'Failed to unbook ad slot'));
   }
 });
 
