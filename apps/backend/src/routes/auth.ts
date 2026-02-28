@@ -2,6 +2,7 @@ import { Router, type Request, type Response, type IRouter } from 'express';
 import { requireAuth, type AuthRequest } from '../auth.js';
 import { prisma } from '../db.js';
 import { getParam } from '../utils/helpers.js';
+import { apiError } from '../utils/errors.js';
 
 const router: IRouter = Router();
 
@@ -10,17 +11,14 @@ const router: IRouter = Router();
 
 // POST /api/auth/login - Placeholder (Better Auth handles login via frontend)
 router.post('/login', async (_req: Request, res: Response) => {
-  res.status(400).json({
-    error: 'Use the frontend login at /login instead',
-    hint: 'Better Auth handles authentication via the Next.js frontend',
-  });
+  res.status(400).json(apiError(400, 'BAD_REQUEST', 'Use the frontend login at /login instead. Better Auth handles authentication via the Next.js frontend'));
 });
 
 // GET /api/auth/me - Get current user profile
 router.get('/me', requireAuth, async (req: AuthRequest, res: Response) => {
   const user = req.user;
   if (!user) {
-    res.status(401).json({ error: { code: 'UNAUTHORIZED', status: 401, message: 'Not authenticated' } });
+    res.status(401).json(apiError(401, 'UNAUTHORIZED', 'Not authenticated'));
     return;
   }
 
@@ -38,7 +36,7 @@ router.get('/role/:userId', requireAuth, async (req: AuthRequest, res: Response)
   try {
     const user = req.user;
     if (!user) {
-      res.status(401).json({ error: { code: 'UNAUTHORIZED', status: 401, message: 'Not authenticated' } });
+      res.status(401).json(apiError(401, 'UNAUTHORIZED', 'Not authenticated'));
       return;
     }
 
@@ -46,9 +44,7 @@ router.get('/role/:userId', requireAuth, async (req: AuthRequest, res: Response)
 
     // Only allow looking up your own role
     if (userId !== user.id) {
-      res.status(403).json({
-        error: { code: 'FORBIDDEN', status: 403, message: 'Can only look up your own role' },
-      });
+      res.status(403).json(apiError(403, 'FORBIDDEN', 'Can only look up your own role'));
       return;
     }
 
@@ -78,7 +74,7 @@ router.get('/role/:userId', requireAuth, async (req: AuthRequest, res: Response)
     res.json({ role: null });
   } catch (error) {
     console.error('Error fetching user role:', error);
-    res.status(500).json({ error: 'Failed to fetch user role' });
+    res.status(500).json(apiError(500, 'INTERNAL_ERROR', 'Failed to fetch user role'));
   }
 });
 
