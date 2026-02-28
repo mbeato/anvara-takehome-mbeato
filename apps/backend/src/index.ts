@@ -1,6 +1,7 @@
 import express, { type Application } from 'express';
 import cors from 'cors';
 import routes from './routes/index.js';
+import { logger } from './logger.js';
 
 const app: Application = express();
 const PORT = process.env.BACKEND_PORT || 4291;
@@ -22,33 +23,33 @@ app.use('/api', routes);
 // ============================================================================
 
 app.listen(PORT, () => {
-  console.log(`\n🚀 Backend server running at http://localhost:${PORT}\n`);
-  console.log('Available API endpoints:');
-  console.log('  Auth:');
-  console.log('    POST   /api/auth/login');
-  console.log('  Sponsors:');
-  console.log('    GET    /api/sponsors');
-  console.log('    GET    /api/sponsors/:id');
-  console.log('    POST   /api/sponsors');
-  console.log('  Publishers:');
-  console.log('    GET    /api/publishers');
-  console.log('    GET    /api/publishers/:id');
-  console.log('  Campaigns:');
-  console.log('    GET    /api/campaigns');
-  console.log('    GET    /api/campaigns/:id');
-  console.log('    POST   /api/campaigns');
-  console.log('  Ad Slots:');
-  console.log('    GET    /api/ad-slots');
-  console.log('    GET    /api/ad-slots/:id');
-  console.log('    POST   /api/ad-slots');
-  console.log('  Placements:');
-  console.log('    GET    /api/placements');
-  console.log('    POST   /api/placements');
-  console.log('  Dashboard:');
-  console.log('    GET    /api/dashboard/stats');
-  console.log('  Health:');
-  console.log('    GET    /api/health');
-  console.log('');
+  logger.info(`\n🚀 Backend server running at http://localhost:${PORT}\n`);
+  logger.info('Available API endpoints:');
+  logger.info('  Auth:');
+  logger.info('    POST   /api/auth/login');
+  logger.info('  Sponsors:');
+  logger.info('    GET    /api/sponsors');
+  logger.info('    GET    /api/sponsors/:id');
+  logger.info('    POST   /api/sponsors');
+  logger.info('  Publishers:');
+  logger.info('    GET    /api/publishers');
+  logger.info('    GET    /api/publishers/:id');
+  logger.info('  Campaigns:');
+  logger.info('    GET    /api/campaigns');
+  logger.info('    GET    /api/campaigns/:id');
+  logger.info('    POST   /api/campaigns');
+  logger.info('  Ad Slots:');
+  logger.info('    GET    /api/ad-slots');
+  logger.info('    GET    /api/ad-slots/:id');
+  logger.info('    POST   /api/ad-slots');
+  logger.info('  Placements:');
+  logger.info('    GET    /api/placements');
+  logger.info('    POST   /api/placements');
+  logger.info('  Dashboard:');
+  logger.info('    GET    /api/dashboard/stats');
+  logger.info('  Health:');
+  logger.info('    GET    /api/health');
+  logger.info('');
 });
 
 export default app;

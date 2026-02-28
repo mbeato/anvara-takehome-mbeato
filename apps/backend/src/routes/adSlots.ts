@@ -3,6 +3,7 @@ import { requireAuth, type AuthRequest } from '../auth.js';
 import { prisma, AdSlotType } from '../db.js';
 import { getParam, parsePagination } from '../utils/helpers.js';
 import { validate, createAdSlotSchema, updateAdSlotSchema } from '../utils/validation.js';
+import { logger } from '../logger.js';
 
 const router: IRouter = Router();
 
@@ -38,7 +39,7 @@ router.get('/featured', async (req: Request, res: Response) => {
       pagination: { limit, offset, total, hasMore: offset + limit < total },
     });
   } catch (error) {
-    console.error('Error fetching featured ad slots:', error);
+    logger.error('Error fetching featured ad slots:', error);
     res.status(500).json({
       error: { code: 'INTERNAL_ERROR', status: 500, message: 'Failed to fetch featured ad slots' },
     });
@@ -117,7 +118,7 @@ router.get('/', async (req: AuthRequest, res: Response) => {
     const adSlots = await prisma.adSlot.findMany({ where, include, orderBy });
     res.json(adSlots);
   } catch (error) {
-    console.error('Error fetching ad slots:', error);
+    logger.error('Error fetching ad slots:', error);
     res.status(500).json({
       error: { code: 'INTERNAL_ERROR', status: 500, message: 'Failed to fetch ad slots' },
     });
@@ -155,7 +156,7 @@ router.get('/stats', async (req: AuthRequest, res: Response) => {
       avgPrice: priceAgg._avg.basePrice?.toString() ?? '0',
     });
   } catch (error) {
-    console.error('Error fetching ad slot stats:', error);
+    logger.error('Error fetching ad slot stats:', error);
     res.status(500).json({
       error: { code: 'INTERNAL_ERROR', status: 500, message: 'Failed to fetch ad slot stats' },
     });
@@ -201,7 +202,7 @@ router.get('/:id', async (req: AuthRequest, res: Response) => {
 
     res.json(adSlot);
   } catch (error) {
-    console.error('Error fetching ad slot:', error);
+    logger.error('Error fetching ad slot:', error);
     res.status(500).json({
       error: { code: 'INTERNAL_ERROR', status: 500, message: 'Failed to fetch ad slot' },
     });
@@ -256,7 +257,7 @@ router.post('/', validate(createAdSlotSchema), async (req: AuthRequest, res: Res
 
     res.status(201).json(adSlot);
   } catch (error) {
-    console.error('Error creating ad slot:', error);
+    logger.error('Error creating ad slot:', error);
     res.status(500).json({
       error: { code: 'INTERNAL_ERROR', status: 500, message: 'Failed to create ad slot' },
     });
@@ -336,7 +337,7 @@ router.put('/:id', validate(updateAdSlotSchema), async (req: AuthRequest, res: R
 
     res.json(updated);
   } catch (error) {
-    console.error('Error updating ad slot:', error);
+    logger.error('Error updating ad slot:', error);
     res.status(500).json({
       error: { code: 'INTERNAL_ERROR', status: 500, message: 'Failed to update ad slot' },
     });
@@ -374,7 +375,7 @@ router.delete('/:id', async (req: AuthRequest, res: Response) => {
 
     res.status(204).send();
   } catch (error) {
-    console.error('Error deleting ad slot:', error);
+    logger.error('Error deleting ad slot:', error);
     res.status(500).json({
       error: { code: 'INTERNAL_ERROR', status: 500, message: 'Failed to delete ad slot' },
     });
@@ -436,7 +437,7 @@ router.post('/:id/book', async (req: AuthRequest, res: Response) => {
       },
     });
 
-    console.log(
+    logger.info(
       `Ad slot ${id} booked by sponsor ${authenticatedSponsorId}. Message: ${message || 'None'}`
     );
 
@@ -446,7 +447,7 @@ router.post('/:id/book', async (req: AuthRequest, res: Response) => {
       adSlot: updatedSlot,
     });
   } catch (error) {
-    console.error('Error booking ad slot:', error);
+    logger.error('Error booking ad slot:', error);
     res.status(500).json({
       error: { code: 'INTERNAL_ERROR', status: 500, message: 'Failed to book ad slot' },
     });
@@ -508,7 +509,7 @@ router.post('/:id/unbook', async (req: AuthRequest, res: Response) => {
       adSlot: updatedSlot,
     });
   } catch (error) {
-    console.error('Error unbooking ad slot:', error);
+    logger.error('Error unbooking ad slot:', error);
     res.status(500).json({
       error: { code: 'INTERNAL_ERROR', status: 500, message: 'Failed to unbook ad slot' },
     });

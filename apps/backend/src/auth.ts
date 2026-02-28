@@ -3,6 +3,7 @@ import { betterAuth } from 'better-auth';
 import { fromNodeHeaders } from 'better-auth/node';
 import { Pool } from 'pg';
 import { prisma } from './db.js';
+import { logger } from './logger.js';
 
 // ============================================================================
 // Types
@@ -105,7 +106,7 @@ export async function requireAuth(
 
     next();
   } catch (error) {
-    console.error('Auth middleware error:', error);
+    logger.error('Auth middleware error:', error);
     res.status(401).json({
       error: {
         code: 'UNAUTHORIZED',

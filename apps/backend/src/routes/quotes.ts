@@ -1,5 +1,6 @@
 import crypto from 'node:crypto';
 import { Router, type Request, type Response, type IRouter } from 'express';
+import { logger } from '../logger.js';
 
 const router: IRouter = Router();
 
@@ -75,7 +76,7 @@ router.post('/request', (req: Request, res: Response) => {
 
   const quoteId = `QR-${crypto.randomUUID().slice(0, 8).toUpperCase()}`;
 
-  console.log(
+  logger.info(
     `Quote request ${quoteId} for ad slot ${adSlotId} from ${companyName} (${email})`
   );
 

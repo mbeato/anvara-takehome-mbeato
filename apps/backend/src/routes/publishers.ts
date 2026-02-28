@@ -3,6 +3,7 @@ import { requireAuth, type AuthRequest } from '../auth.js';
 import { prisma } from '../db.js';
 import { getParam } from '../utils/helpers.js';
 import { apiError } from '../utils/errors.js';
+import { logger } from '../logger.js';
 
 const router: IRouter = Router();
 
@@ -39,7 +40,7 @@ router.get('/', async (req: AuthRequest, res: Response) => {
 
     res.json(publisher);
   } catch (error) {
-    console.error('Error fetching publisher:', error);
+    logger.error('Error fetching publisher:', error);
     res.status(500).json(apiError(500, 'INTERNAL_ERROR', 'Failed to fetch publisher'));
   }
 });
@@ -82,7 +83,7 @@ router.get('/:id', async (req: AuthRequest, res: Response) => {
 
     res.json(publisher);
   } catch (error) {
-    console.error('Error fetching publisher:', error);
+    logger.error('Error fetching publisher:', error);
     res.status(500).json(apiError(500, 'INTERNAL_ERROR', 'Failed to fetch publisher'));
   }
 });

@@ -4,6 +4,7 @@ import { prisma } from '../db.js';
 import { getParam } from '../utils/helpers.js';
 import { apiError } from '../utils/errors.js';
 import { validate, createPlacementSchema } from '../utils/validation.js';
+import { logger } from '../logger.js';
 
 const router: IRouter = Router();
 
@@ -55,7 +56,7 @@ router.get('/', async (req: AuthRequest, res: Response) => {
 
     res.json(placements);
   } catch (error) {
-    console.error('Error fetching placements:', error);
+    logger.error('Error fetching placements:', error);
     res.status(500).json(apiError(500, 'INTERNAL_ERROR', 'Failed to fetch placements'));
   }
 });
@@ -120,7 +121,7 @@ router.post('/', validate(createPlacementSchema), async (req: AuthRequest, res: 
 
     res.status(201).json(placement);
   } catch (error) {
-    console.error('Error creating placement:', error);
+    logger.error('Error creating placement:', error);
     res.status(500).json(apiError(500, 'INTERNAL_ERROR', 'Failed to create placement'));
   }
 });

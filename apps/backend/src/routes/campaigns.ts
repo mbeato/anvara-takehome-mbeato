@@ -3,6 +3,7 @@ import { requireAuth, type AuthRequest } from '../auth.js';
 import { prisma, CampaignStatus } from '../db.js';
 import { getParam, parsePagination } from '../utils/helpers.js';
 import { validate, createCampaignSchema, updateCampaignSchema } from '../utils/validation.js';
+import { logger } from '../logger.js';
 
 const router: IRouter = Router();
 
@@ -63,7 +64,7 @@ router.get('/', async (req: AuthRequest, res: Response) => {
     const campaigns = await prisma.campaign.findMany({ where, include, orderBy });
     res.json(campaigns);
   } catch (error) {
-    console.error('Error fetching campaigns:', error);
+    logger.error('Error fetching campaigns:', error);
     res.status(500).json({
       error: { code: 'INTERNAL_ERROR', status: 500, message: 'Failed to fetch campaigns' },
     });
@@ -101,7 +102,7 @@ router.get('/stats', async (req: AuthRequest, res: Response) => {
       avgBudget: budgetAgg._avg.budget?.toString() ?? '0',
     });
   } catch (error) {
-    console.error('Error fetching campaign stats:', error);
+    logger.error('Error fetching campaign stats:', error);
     res.status(500).json({
       error: { code: 'INTERNAL_ERROR', status: 500, message: 'Failed to fetch campaign stats' },
     });
@@ -148,7 +149,7 @@ router.get('/:id', async (req: AuthRequest, res: Response) => {
 
     res.json(campaign);
   } catch (error) {
-    console.error('Error fetching campaign:', error);
+    logger.error('Error fetching campaign:', error);
     res.status(500).json({
       error: { code: 'INTERNAL_ERROR', status: 500, message: 'Failed to fetch campaign' },
     });
@@ -201,7 +202,7 @@ router.post('/', validate(createCampaignSchema), async (req: AuthRequest, res: R
 
     res.status(201).json(campaign);
   } catch (error) {
-    console.error('Error creating campaign:', error);
+    logger.error('Error creating campaign:', error);
     res.status(500).json({
       error: { code: 'INTERNAL_ERROR', status: 500, message: 'Failed to create campaign' },
     });
@@ -296,7 +297,7 @@ router.put('/:id', validate(updateCampaignSchema), async (req: AuthRequest, res:
 
     res.json(updated);
   } catch (error) {
-    console.error('Error updating campaign:', error);
+    logger.error('Error updating campaign:', error);
     res.status(500).json({
       error: { code: 'INTERNAL_ERROR', status: 500, message: 'Failed to update campaign' },
     });
@@ -332,7 +333,7 @@ router.delete('/:id', async (req: AuthRequest, res: Response) => {
     await prisma.campaign.delete({ where: { id } });
     res.status(204).send();
   } catch (error) {
-    console.error('Error deleting campaign:', error);
+    logger.error('Error deleting campaign:', error);
     res.status(500).json({
       error: { code: 'INTERNAL_ERROR', status: 500, message: 'Failed to delete campaign' },
     });

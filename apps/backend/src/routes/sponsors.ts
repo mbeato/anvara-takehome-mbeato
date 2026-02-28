@@ -3,6 +3,7 @@ import { requireAuth, type AuthRequest } from '../auth.js';
 import { prisma } from '../db.js';
 import { apiError } from '../utils/errors.js';
 import { validate, createSponsorSchema, updateSponsorSchema } from '../utils/validation.js';
+import { logger } from '../logger.js';
 
 const router: IRouter = Router();
 
@@ -39,7 +40,7 @@ router.get('/', async (req: AuthRequest, res: Response) => {
 
     res.json(sponsor);
   } catch (error) {
-    console.error('Error fetching sponsor:', error);
+    logger.error('Error fetching sponsor:', error);
     res.status(500).json(apiError(500, 'INTERNAL_ERROR', 'Failed to fetch sponsor'));
   }
 });
@@ -83,7 +84,7 @@ router.get('/:id', async (req: AuthRequest, res: Response) => {
 
     res.json(sponsor);
   } catch (error) {
-    console.error('Error fetching sponsor:', error);
+    logger.error('Error fetching sponsor:', error);
     res.status(500).json(apiError(500, 'INTERNAL_ERROR', 'Failed to fetch sponsor'));
   }
 });
@@ -111,7 +112,7 @@ router.post('/', validate(createSponsorSchema), async (req: AuthRequest, res: Re
 
     res.status(201).json(sponsor);
   } catch (error) {
-    console.error('Error creating sponsor:', error);
+    logger.error('Error creating sponsor:', error);
     res.status(500).json(apiError(500, 'INTERNAL_ERROR', 'Failed to create sponsor'));
   }
 });
@@ -156,7 +157,7 @@ router.put('/:id', validate(updateSponsorSchema), async (req: AuthRequest, res: 
     const updated = await prisma.sponsor.update({ where: { id }, data });
     res.json(updated);
   } catch (error) {
-    console.error('Error updating sponsor:', error);
+    logger.error('Error updating sponsor:', error);
     res.status(500).json(apiError(500, 'INTERNAL_ERROR', 'Failed to update sponsor'));
   }
 });

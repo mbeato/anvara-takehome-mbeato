@@ -3,6 +3,7 @@ import { requireAuth, type AuthRequest } from '../auth.js';
 import { prisma } from '../db.js';
 import { getParam } from '../utils/helpers.js';
 import { apiError } from '../utils/errors.js';
+import { logger } from '../logger.js';
 
 const router: IRouter = Router();
 
@@ -73,7 +74,7 @@ router.get('/role/:userId', requireAuth, async (req: AuthRequest, res: Response)
     // User has no role assigned
     res.json({ role: null });
   } catch (error) {
-    console.error('Error fetching user role:', error);
+    logger.error('Error fetching user role:', error);
     res.status(500).json(apiError(500, 'INTERNAL_ERROR', 'Failed to fetch user role'));
   }
 });
