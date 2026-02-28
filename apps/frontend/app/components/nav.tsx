@@ -55,6 +55,7 @@ export function Nav() {
 
   // Close menu on route change
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional: close menu as side-effect of navigation
     setMenuOpen(false);
   }, [pathname]);
 

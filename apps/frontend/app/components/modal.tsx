@@ -20,13 +20,13 @@ const sizeClasses: Record<NonNullable<ModalProps['size']>, string> = {
 export function Modal({ open, onClose, title, size = 'md', children }: ModalProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(
+    () => typeof window !== 'undefined' && window.matchMedia('(max-width: 767px)').matches
+  );
 
-  // SSR-safe mobile detection
+  // SSR-safe mobile detection: subscribe to future changes
   useEffect(() => {
     const mql = window.matchMedia('(max-width: 767px)');
-    setIsMobile(mql.matches);
-
     const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
     mql.addEventListener('change', handler);
     return () => mql.removeEventListener('change', handler);

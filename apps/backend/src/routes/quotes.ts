@@ -14,10 +14,7 @@ router.post('/request', (req: Request, res: Response) => {
     companyName,
     budgetRange,
     adSlotId,
-    phone,
-    campaignGoals,
     timeline,
-    specialRequirements,
   } = req.body;
 
   // Validate required fields

@@ -23,10 +23,12 @@ export default function Template({ children }: { children: React.ReactNode }) {
   const segment = topSegment(pathname);
   const prevSegmentRef = useRef(segment);
 
-  // Determine whether this navigation crosses a top-level section boundary.
+  // Intentional: ref tracks previous render value for cross-section animation gating
+  // eslint-disable-next-line react-hooks/refs -- safe: ref only used for cross-render comparison
   const isTopLevelChange = segment !== prevSegmentRef.current;
 
   // Update ref AFTER reading the comparison value.
+  // eslint-disable-next-line react-hooks/refs -- safe: ref only stores previous segment for comparison
   prevSegmentRef.current = segment;
 
   // Only animate when moving between top-level sections (e.g., / -> /marketplace,

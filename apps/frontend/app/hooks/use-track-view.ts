@@ -13,6 +13,5 @@ export function useTrackView(
     if (hasFired.current) return;
     hasFired.current = true;
     track(eventName, params);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 }
