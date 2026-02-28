@@ -440,7 +440,7 @@ router.post('/:id/book', async (req: AuthRequest, res: Response) => {
     // Mark slot as unavailable
     const updatedSlot = await prisma.adSlot.update({
       where: { id },
-      data: { isAvailable: false },
+      data: { isAvailable: false, bookedBySponsorId: authenticatedSponsorId },
       include: {
         publisher: { select: { id: true, name: true } },
       },
@@ -463,14 +463,50 @@ router.post('/:id/book', async (req: AuthRequest, res: Response) => {
   }
 });
 
-// POST /api/ad-slots/:id/unbook - Reset ad slot to available (for testing)
+// POST /api/ad-slots/:id/unbook - Release a booked ad slot (booking owner only)
 router.post('/:id/unbook', async (req: AuthRequest, res: Response) => {
   try {
+    const user = req.user;
+    if (!user) {
+      res.status(401).json({ error: { code: 'UNAUTHORIZED', status: 401, message: 'Not authenticated' } });
+      return;
+    }
+
+    if (!user.sponsorId) {
+      res.status(403).json({
+        error: { code: 'FORBIDDEN', status: 403, message: 'Only sponsors can unbook ad slots' },
+      });
+      return;
+    }
+
     const id = getParam(req.params.id);
+    const adSlot = await prisma.adSlot.findUnique({ where: { id } });
+
+    if (!adSlot) {
+      res.status(404).json({
+        error: { code: 'NOT_FOUND', status: 404, message: 'Ad slot not found' },
+      });
+      return;
+    }
+
+    if (adSlot.isAvailable) {
+      res.status(400).json({
+        error: { code: 'VALIDATION_ERROR', status: 400, message: 'Ad slot is not currently booked' },
+      });
+      return;
+    }
+
+    // Verify the caller is the sponsor who booked the slot
+    if (adSlot.bookedBySponsorId !== user.sponsorId) {
+      res.status(403).json({
+        error: { code: 'FORBIDDEN', status: 403, message: 'Only the booking sponsor can unbook this slot' },
+      });
+      return;
+    }
 
     const updatedSlot = await prisma.adSlot.update({
       where: { id },
-      data: { isAvailable: true },
+      data: { isAvailable: true, bookedBySponsorId: null },
       include: {
         publisher: { select: { id: true, name: true } },
       },
