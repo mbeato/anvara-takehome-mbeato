@@ -40,7 +40,7 @@ router.get('/stats', async (_req: Request, res: Response) => {
               ((placementMetrics._sum.clicks || 0) / placementMetrics._sum.impressions) *
               100
             ).toFixed(2)
-          : 0,
+          : '0.00',
       },
     });
   } catch (error) {

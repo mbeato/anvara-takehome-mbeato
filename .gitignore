@@ -45,6 +45,7 @@ test-results/
 .internal/
 
 # Generated files
+*.tsbuildinfo
 **/generated/
 
 # Planning

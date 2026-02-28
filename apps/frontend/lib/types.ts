@@ -234,7 +234,7 @@ export interface DashboardMetrics {
   totalImpressions: number;
   totalClicks: number;
   totalConversions: number;
-  avgCtr: string | number;
+  avgCtr: string;
 }
 
 export interface DashboardStats {
