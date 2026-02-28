@@ -2,6 +2,7 @@ import { Router, type Response, type IRouter } from 'express';
 import { requireAuth, type AuthRequest } from '../auth.js';
 import { prisma, CampaignStatus } from '../db.js';
 import { getParam, parsePagination } from '../utils/helpers.js';
+import { validate, createCampaignSchema, updateCampaignSchema } from '../utils/validation.js';
 
 const router: IRouter = Router();
 
@@ -155,7 +156,7 @@ router.get('/:id', async (req: AuthRequest, res: Response) => {
 });
 
 // POST /api/campaigns - Create new campaign
-router.post('/', async (req: AuthRequest, res: Response) => {
+router.post('/', validate(createCampaignSchema), async (req: AuthRequest, res: Response) => {
   try {
     const user = req.user;
     if (!user) {
@@ -179,17 +180,6 @@ router.post('/', async (req: AuthRequest, res: Response) => {
       targetCategories,
       targetRegions,
     } = req.body;
-
-    if (!name || !budget || !startDate || !endDate) {
-      res.status(400).json({
-        error: {
-          code: 'VALIDATION_ERROR',
-          status: 400,
-          message: 'Name, budget, startDate, and endDate are required',
-        },
-      });
-      return;
-    }
 
     const campaign = await prisma.campaign.create({
       data: {
@@ -219,7 +209,7 @@ router.post('/', async (req: AuthRequest, res: Response) => {
 });
 
 // PUT /api/campaigns/:id - Update campaign details
-router.put('/:id', async (req: AuthRequest, res: Response) => {
+router.put('/:id', validate(updateCampaignSchema), async (req: AuthRequest, res: Response) => {
   try {
     const user = req.user;
     if (!user) {
