@@ -16,11 +16,21 @@ router.post('/login', async (_req: Request, res: Response) => {
   });
 });
 
-// GET /api/auth/me - Get current user (for API clients)
-router.get('/me', async (req: Request, res: Response) => {
-  // TODO: Challenge 3 - Implement auth middleware to validate session
-  // For now, return unauthorized
-  res.status(401).json({ error: 'Not authenticated' });
+// GET /api/auth/me - Get current user profile
+router.get('/me', requireAuth, async (req: AuthRequest, res: Response) => {
+  const user = req.user;
+  if (!user) {
+    res.status(401).json({ error: { code: 'UNAUTHORIZED', status: 401, message: 'Not authenticated' } });
+    return;
+  }
+
+  res.json({
+    id: user.id,
+    email: user.email,
+    role: user.role,
+    sponsorId: user.sponsorId ?? null,
+    publisherId: user.publisherId ?? null,
+  });
 });
 
 // GET /api/auth/role/:userId - Get user role based on Sponsor/Publisher records

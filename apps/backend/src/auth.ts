@@ -29,9 +29,14 @@ if (!databaseUrl) {
   throw new Error('DATABASE_URL environment variable is required');
 }
 
+const authSecret = process.env.BETTER_AUTH_SECRET;
+if (!authSecret && process.env.NODE_ENV === 'production') {
+  throw new Error('BETTER_AUTH_SECRET environment variable is required in production');
+}
+
 export const auth = betterAuth({
   database: new Pool({ connectionString: databaseUrl }),
-  secret: process.env.BETTER_AUTH_SECRET || 'fallback-secret-for-dev',
+  secret: authSecret || 'dev-only-insecure-secret',
   baseURL: process.env.BETTER_AUTH_URL || 'http://localhost:3847',
   emailAndPassword: { enabled: true },
   advanced: { disableCSRFCheck: true },
