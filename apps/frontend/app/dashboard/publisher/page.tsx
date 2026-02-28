@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   },
 };
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4291';
+import { API_URL } from '@/lib/config';
 
 async function fetchAdSlotStats(cookie: string): Promise<AdSlotStats | null> {
   try {

@@ -5,7 +5,8 @@ import { ListingCard } from './listing-card';
 import { trackCtaClick } from '@/lib/analytics';
 import type { FeaturedListing, FeaturedListingsPagination } from '@/lib/types';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4291';
+import { API_URL } from '@/lib/config';
+
 const SCROLL_SPEED = 0.5; // pixels per frame
 
 interface OpportunitiesSectionProps {

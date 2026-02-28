@@ -1,6 +1,5 @@
 import { headers as nextHeaders } from 'next/headers';
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4291';
+import { API_URL } from '@/lib/config';
 
 export type UserRole = 'sponsor' | 'publisher' | null;
 

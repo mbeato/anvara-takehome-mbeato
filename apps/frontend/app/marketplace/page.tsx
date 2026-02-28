@@ -16,7 +16,8 @@ export const metadata: Metadata = {
   },
 };
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4291';
+import { API_URL } from '@/lib/config';
+
 const PAGE_SIZE = 12;
 
 interface Props {

@@ -7,6 +7,7 @@ import { usePathname } from 'next/navigation';
 import { motion } from 'motion/react';
 import { authClient } from '@/auth-client';
 import { DURATION, EASE } from '@/lib/motion';
+import { API_URL } from '@/lib/config';
 
 type UserRole = 'sponsor' | 'publisher' | null;
 
@@ -37,7 +38,7 @@ export function Nav() {
 
     let cancelled = false;
 
-    fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4291'}/api/auth/role/${userId}`, {
+    fetch(`${API_URL}/api/auth/role/${userId}`, {
       credentials: 'include',
     })
       .then((res) => res.json())

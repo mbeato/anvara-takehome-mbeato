@@ -8,6 +8,7 @@ import type { AdSlot } from '@/lib/types';
 import { QuoteRequestButton } from './quote-request-button';
 import { track } from '@/lib/analytics';
 import { toGA4Item } from '@/lib/ab-tests';
+import { API_URL } from '@/lib/config';
 import { useABTest } from '@/app/hooks/use-ab-test';
 import { formatCompactNumber } from '@/lib/utils';
 
@@ -71,7 +72,7 @@ export function AdSlotDetail({ id }: Props) {
 
           // Fetch role info from backend
           fetch(
-            `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4291'}/api/auth/role/${sessionUser.id}`,
+            `${API_URL}/api/auth/role/${sessionUser.id}`,
             { credentials: 'include' }
           )
             .then((res) => res.json())
@@ -104,7 +105,7 @@ export function AdSlotDetail({ id }: Props) {
     if (!adSlot?.publisherId) return;
 
     fetch(
-      `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4291'}/api/ad-slots`,
+      `${API_URL}/api/ad-slots`,
       { credentials: 'include' }
     )
       .then((res) => res.json())
@@ -140,7 +141,7 @@ export function AdSlotDetail({ id }: Props) {
 
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4291'}/api/ad-slots/${adSlot.id}/book`,
+        `${API_URL}/api/ad-slots/${adSlot.id}/book`,
         {
           method: 'POST',
           credentials: 'include',
@@ -181,7 +182,7 @@ export function AdSlotDetail({ id }: Props) {
 
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4291'}/api/ad-slots/${adSlot.id}/unbook`,
+        `${API_URL}/api/ad-slots/${adSlot.id}/unbook`,
         {
           method: 'POST',
           credentials: 'include',

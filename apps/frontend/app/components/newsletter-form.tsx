@@ -5,7 +5,8 @@ import { trackNewsletterSignupAttempt, trackNewsletterSignup } from '@/lib/analy
 
 type Status = 'idle' | 'submitting' | 'success' | 'error' | 'duplicate';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4291';
+import { API_URL } from '@/lib/config';
+
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export function NewsletterForm() {

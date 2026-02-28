@@ -5,8 +5,7 @@ import { HowItWorks } from './components/landing/how-it-works';
 import { OpportunitiesSection } from './components/landing/opportunities-section';
 import { StatsSection } from './components/landing/stats-section';
 import { BottomCta } from './components/landing/bottom-cta';
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4291';
+import { API_URL } from '@/lib/config';
 
 export const metadata: Metadata = {
   title: 'Anvara — Sponsorship Marketplace for Publishers & Sponsors',
