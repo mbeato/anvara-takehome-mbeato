@@ -24,6 +24,7 @@ Do not open pull requests to the original repo.
   - [Table of Contents](#table-of-contents)
   - [tl;dr](#tldr)
   - [About This Assessment](#about-this-assessment)
+  - [Current State](#current-state)
   - [Tech Stack](#tech-stack)
   - [Assumptions](#assumptions)
   - [Project Structure](#project-structure)
@@ -37,6 +38,7 @@ Do not open pull requests to the original repo.
   - [Documentation](#documentation)
     - [Individual Challenges](#individual-challenges)
     - [Bonus Challenges](#bonus-challenges)
+  - [v1.3: Hard Bonuses](#v13-hard-bonuses)
   - [Resources](#resources)
   - [Need Help?](#need-help)
 
@@ -53,6 +55,17 @@ This take-home test is designed to evaluate your skills across multiple areas of
 
 **Take your time.** Work at your own pace, and submit when you feel you've shown us your best work. Where you stop tells us about your current skill level, and that's perfectly okay. We'd rather see quality work on fewer challenges than rushed attempts at all of them.
 A sponsorship marketplace connecting sponsors with publishers, built with modern best practices.
+
+## Current State
+
+All 5 core challenges and all bonus challenges through v1.3 (Hard Bonuses) are complete:
+
+- **v1.0 Core Challenges**: TypeScript fixes, server-side data fetching, API security, CRUD operations, server actions
+- **v1.1 Easy Bonuses**: Newsletter signup, pagination, quote request feature
+- **v1.2 Medium Bonuses**: Landing page, dashboard redesign, campaign builder, mobile responsive, dark mode, component library
+- **v1.3 Hard Bonuses**: Google Analytics, conversion tracking, A/B testing framework, marketplace conversion optimization
+
+For a guided walkthrough of all v1.3 features, see [VERIFICATION.md](VERIFICATION.md).
 
 ## Tech Stack
 
@@ -220,6 +233,56 @@ Explore [all bonus challenges](docs/bonus-challenges/README.md) organized by cat
 - [Google Analytics Setup](docs/bonus-challenges/analytics/01-google-analytics.md)
 - [Conversion Tracking](docs/bonus-challenges/analytics/02-conversion-tracking.md)
 - [A/B Testing Framework](docs/bonus-challenges/analytics/03-ab-testing.md)
+
+## v1.3: Hard Bonuses
+
+The v1.3 milestone covers analytics, conversion optimization, and A/B testing -- the "hard bonus" challenges.
+
+### A/B Testing Framework
+
+Cookie-based variant assignment with server-side randomization at the edge:
+
+- **Edge middleware** (`proxy.ts`): Sets `ab_[experiment-name]` cookies on first visit via Next.js middleware. Variants are assigned server-side before page render using weighted random selection.
+- **Client hook** (`useABTest`): Reads the cookie client-side, fires a one-time `ab_test_exposure` event (ref-guarded against duplicates), and returns the active variant.
+- **Experiment registry** (`ab-tests.ts`): Single source of truth for all experiments. Both the edge middleware and client hook read from the same `EXPERIMENTS` array, preventing config drift.
+- **Debug URL overrides**: Append `?ab_cta-copy=B` to any URL to force a variant. Stored in sessionStorage for the session duration.
+- **Live experiment**: `cta-copy` A/B test on the detail page CTA -- "Book This Placement" (A) vs. "Reach N Monthly Readers" (B), 50/50 split.
+
+### Conversion Tracking
+
+Full-funnel GA4 event instrumentation from browse through convert:
+
+- **5 funnel events**: `marketplace_view` (browse), `view_item` (view), `begin_checkout` (engage), `purchase` and `generate_lead` (convert)
+- **Micro-conversions**: `filter_used`, `pagination_used` for engagement tracking
+- **Automatic enrichment**: Every event includes `user_type` (authenticated/anonymous) and all active A/B variant values via the `track()` function
+- **GA4 ecommerce**: Standard ecommerce parameters (`items`, `value`, `currency`, `transaction_id`) on checkout and conversion events via `toGA4Item()`
+- **Dev console output**: In development mode, events log to the browser console with structured formatting instead of sending to GA4
+
+### Marketplace Conversion Optimization
+
+Analysis-driven UX improvements documented in [CONVERSION_ANALYSIS.md](CONVERSION_ANALYSIS.md):
+
+- **Publisher trust signals**: Audience metrics (monthly views, subscriber count), category badges, and verified publisher indicators on detail pages
+- **Enriched marketplace cards**: Audience reach, publisher category, and "Popular" badges for listings with booking history
+- **Availability filtering**: "Available Only" toggle using existing backend `?available=true` support
+- **B2B-appropriate scarcity**: "In Demand" indicators based on real placement data (no artificial urgency)
+- **Value-oriented CTA**: A/B tested -- dynamic copy showing publisher audience reach vs. generic "Book This Placement"
+- **Related listings**: "More from this publisher" section on detail pages to reduce bounce-to-exit
+
+### Key Documents
+
+| Document | Description |
+|----------|-------------|
+| [VERIFICATION.md](VERIFICATION.md) | Step-by-step verification guide for all v1.3 features |
+| [CONVERSION_ANALYSIS.md](CONVERSION_ANALYSIS.md) | Marketplace conversion analysis with 8 friction points and measurement plans |
+
+### E2E Tests
+
+```bash
+pnpm e2e
+```
+
+Runs the Playwright test suite covering A/B cookie assignment, funnel event sequencing, and mobile responsiveness at 375px.
 
 ## Resources
 
