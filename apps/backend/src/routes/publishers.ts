@@ -2,6 +2,7 @@ import { Router, type Response, type IRouter } from 'express';
 import { requireAuth, type AuthRequest } from '../auth.js';
 import { prisma } from '../db.js';
 import { getParam } from '../utils/helpers.js';
+import { apiError } from '../utils/errors.js';
 
 const router: IRouter = Router();
 
@@ -13,12 +14,12 @@ router.get('/', async (req: AuthRequest, res: Response) => {
   try {
     const user = req.user;
     if (!user) {
-      res.status(401).json({ error: { code: 'UNAUTHORIZED', status: 401, message: 'Not authenticated' } });
+      res.status(401).json(apiError(401, 'UNAUTHORIZED', 'Not authenticated'));
       return;
     }
 
     if (!user.publisherId) {
-      res.status(403).json({ error: { code: 'FORBIDDEN', status: 403, message: 'Publisher access required' } });
+      res.status(403).json(apiError(403, 'FORBIDDEN', 'Publisher access required'));
       return;
     }
 
@@ -32,16 +33,14 @@ router.get('/', async (req: AuthRequest, res: Response) => {
     });
 
     if (!publisher) {
-      res.status(404).json({ error: { code: 'NOT_FOUND', status: 404, message: 'Publisher not found' } });
+      res.status(404).json(apiError(404, 'NOT_FOUND', 'Publisher not found'));
       return;
     }
 
     res.json(publisher);
   } catch (error) {
     console.error('Error fetching publisher:', error);
-    res.status(500).json({
-      error: { code: 'INTERNAL_ERROR', status: 500, message: 'Failed to fetch publisher' },
-    });
+    res.status(500).json(apiError(500, 'INTERNAL_ERROR', 'Failed to fetch publisher'));
   }
 });
 
@@ -50,7 +49,7 @@ router.get('/:id', async (req: AuthRequest, res: Response) => {
   try {
     const user = req.user;
     if (!user) {
-      res.status(401).json({ error: { code: 'UNAUTHORIZED', status: 401, message: 'Not authenticated' } });
+      res.status(401).json(apiError(401, 'UNAUTHORIZED', 'Not authenticated'));
       return;
     }
 
@@ -58,9 +57,7 @@ router.get('/:id', async (req: AuthRequest, res: Response) => {
 
     // Publishers can only view their own profile
     if (user.publisherId !== id) {
-      res.status(403).json({
-        error: { code: 'FORBIDDEN', status: 403, message: "You don't own this publisher profile" },
-      });
+      res.status(403).json(apiError(403, 'FORBIDDEN', "You don't own this publisher profile"));
       return;
     }
 
@@ -79,18 +76,14 @@ router.get('/:id', async (req: AuthRequest, res: Response) => {
     });
 
     if (!publisher) {
-      res.status(404).json({
-        error: { code: 'NOT_FOUND', status: 404, message: 'Publisher not found' },
-      });
+      res.status(404).json(apiError(404, 'NOT_FOUND', 'Publisher not found'));
       return;
     }
 
     res.json(publisher);
   } catch (error) {
     console.error('Error fetching publisher:', error);
-    res.status(500).json({
-      error: { code: 'INTERNAL_ERROR', status: 500, message: 'Failed to fetch publisher' },
-    });
+    res.status(500).json(apiError(500, 'INTERNAL_ERROR', 'Failed to fetch publisher'));
   }
 });
 

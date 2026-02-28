@@ -1,5 +1,6 @@
 import { Router, type Request, type Response, type IRouter } from 'express';
 import { prisma } from '../db.js';
+import { apiError } from '../utils/errors.js';
 
 const router: IRouter = Router();
 
@@ -43,9 +44,7 @@ router.get('/stats', async (_req: Request, res: Response) => {
     });
   } catch (error) {
     console.error('Error fetching dashboard stats:', error);
-    res.status(500).json({
-      error: { code: 'INTERNAL_ERROR', status: 500, message: 'Failed to fetch dashboard stats' },
-    });
+    res.status(500).json(apiError(500, 'INTERNAL_ERROR', 'Failed to fetch dashboard stats'));
   }
 });
 
