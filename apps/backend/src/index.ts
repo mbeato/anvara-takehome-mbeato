@@ -1,26 +1,7 @@
-import express, { type Application } from 'express';
-import cors from 'cors';
-import routes from './routes/index.js';
+import app from './app.js';
 import { logger } from './logger.js';
 
-const app: Application = express();
 const PORT = process.env.BACKEND_PORT || 4291;
-
-// Middleware
-app.use(
-  cors({
-    origin: process.env.BETTER_AUTH_URL || 'http://localhost:3847',
-    credentials: true,
-  })
-);
-app.use(express.json());
-
-// Mount all API routes
-app.use('/api', routes);
-
-// ============================================================================
-// SERVER STARTUP
-// ============================================================================
 
 app.listen(PORT, () => {
   logger.info(`\n🚀 Backend server running at http://localhost:${PORT}\n`);
