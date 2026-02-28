@@ -61,7 +61,7 @@ test.describe('Mobile Responsive Verification (375px)', () => {
     await page.waitForLoadState('networkidle');
 
     // Wait for the detail content to load (client-side fetch)
-    await page.waitForTimeout(2000);
+    await expect(page.getByRole('link', { name: /back to marketplace/i })).toBeVisible({ timeout: 10000 });
 
     // Check for horizontal overflow
     const hasOverflow = await page.evaluate(() => {
@@ -120,7 +120,6 @@ test.describe('Mobile Responsive Verification (375px)', () => {
     await loginAsSponsor(page);
     await page.goto('/marketplace/1');
     await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(2000);
 
     // Check that the back link is visible
     const backLink = page.getByRole('link', { name: /back to marketplace/i });
